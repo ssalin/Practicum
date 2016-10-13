@@ -1,5 +1,5 @@
 
-SPARKFUN PRODUCTS
+SPARKFUN PRODUCTS - we should use these where possible becuase there is a nice library for eaglecad
   TMP36 (temp)
 	   https://www.sparkfun.com/products/10988
   SEN-09088 (photocell)
