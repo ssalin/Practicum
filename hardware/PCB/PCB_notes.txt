@@ -1,0 +1,1 @@
+schematic should say all votages and tolerances for electrical components
