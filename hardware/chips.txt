@@ -1,0 +1,34 @@
+this file exists as a log of some sensor ideas that were kicked around but should be ignored in its current state
+most of this file's contents should be transferred to a spreadsheet w/ green for parts that are being used and red for abadoned
+	
+					                    SENSOR IDEAS
+					
+SPARKFUN PRODUCTS - we should use these where possible becuase there is a nice library for eaglecad
+  TMP36 (temp)
+	   -https://www.sparkfun.com/products/10988
+  SEN-09088 (photocell)
+     -pretty straightforwards, we should use one
+  	 -https://www.sparkfun.com/products/9088
+  SEN-10293 (piezo)
+	   -$1.50
+	   -https://www.sparkfun.com/products/10293
+  RHT03/DHT22 (temp, humiditiy)
+      -looks hard to communicate with
+	    -https://www.sparkfun.com/products/10167
+   US1881(magnet)
+      -on here for completeness, dont know why we would care about magnet feilds
+	    -https://www.sparkfun.com/products/9312
+				
+				                     INTERNAL CHIPS
+MAX486
+  -voltage polaritry protector
+  -http://www.alldatasheet.com/view.jsp?Searchword=MAX486
+  
+atmel 328p
+  -processor
+				
+			                        	ACTUATORS
+RELAY
+  -https://www.sparkfun.com/products/100
+  -$1.50
+   
