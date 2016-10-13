@@ -1,6 +1,0 @@
-MAX486
-  voltage polaritry protector
-  http://www.alldatasheet.com/view.jsp?Searchword=MAX486
-  
-atmel 328p
-  -processor
