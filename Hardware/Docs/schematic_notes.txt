@@ -1,0 +1,13 @@
+schematic should say all votages and tolerances for electrical components
+in eagle we use US resistors, EU capacitors
+
+
+
+
+Part Sizes:
+
+http://www.radio-electronics.com/info/data/smt/smt_packages.php
+http://www.radio-electronics.com/info/data/resistor/smd_resistor/smd_resistor.php
+
+Resistors & Caps: 0805
+Small IC’s: SOT-23

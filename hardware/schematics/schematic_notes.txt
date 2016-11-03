@@ -1,2 +1,0 @@
-schematic should say all votages and tolerances for electrical components
-in eagle we use US resistors, EU capacitors
