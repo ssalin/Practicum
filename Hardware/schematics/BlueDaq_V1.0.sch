@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.7.0">
+<eagle version="7.6.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="1" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
@@ -15811,7 +15811,7 @@ We've spent an enormous amount of time creating and checking these footprints an
 <attribute name="NAME" x="55.88" y="172.72" size="1.778" layer="95"/>
 <attribute name="VALUE" x="50.8" y="165.1" size="1.778" layer="96"/>
 </instance>
-<instance part="P+5" gate="VCC" x="116.84" y="160.02"/>
+<instance part="P+5" gate="VCC" x="116.84" y="167.64"/>
 <instance part="PIR_SENSOR" gate="A" x="60.96" y="30.48" smashed="yes" rot="R180">
 <attribute name="NAME" x="56.515" y="36.83" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="67.31" y="38.1" size="1.778" layer="96" rot="R180"/>
@@ -15937,7 +15937,7 @@ We've spent an enormous amount of time creating and checking these footprints an
 <pinref part="C4" gate="G$1" pin="1"/>
 <wire x1="116.84" y1="152.4" x2="116.84" y2="154.94" width="0.1524" layer="91"/>
 <pinref part="P+5" gate="VCC" pin="VCC"/>
-<wire x1="116.84" y1="157.48" x2="116.84" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="165.1" x2="116.84" y2="154.94" width="0.1524" layer="91"/>
 <junction x="116.84" y="154.94"/>
 <pinref part="R4" gate="G$1" pin="2"/>
 </segment>
