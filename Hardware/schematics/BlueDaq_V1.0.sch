@@ -15562,42 +15562,6 @@ Footprint unproven</description>
 </deviceset>
 </devicesets>
 </library>
-<library name="SparkFun-Aesthetics">
-<description>&lt;h3&gt;SparkFun Electronics' preferred foot prints&lt;/h3&gt;
-In this library you'll find non-functional items- supply symbols, logos, notations, frame blocks, etc.&lt;br&gt;&lt;br&gt;
-We've spent an enormous amount of time creating and checking these footprints and parts, but it is the end user's responsibility to ensure correctness and suitablity for a given componet or application. If you enjoy using this library, please buy one of our products at www.sparkfun.com.
-&lt;br&gt;&lt;br&gt;
-&lt;b&gt;Licensing:&lt;/b&gt; CC v3.0 Share-Alike You are welcome to use this library for commercial purposes. For attribution, we ask that when you begin to sell your device using our footprint, you email us with a link to the product being sold. We want bragging rights that we helped (in a very small part) to create your 8th world wonder. We would like the opportunity to feature your device on our homepage.</description>
-<packages>
-<package name="CREATIVE_COMMONS">
-<text x="-20.32" y="5.08" size="1.778" layer="27">Released under the Creative Commons Attribution Share-Alike 3.0 License</text>
-<text x="0" y="2.54" size="1.778" layer="27">http://creativecommons.org/licenses/by-sa/3.0</text>
-<text x="11.43" y="0" size="1.778" layer="27">Designed by:</text>
-</package>
-</packages>
-<symbols>
-<symbol name="CREATIVE_COMMONS">
-<text x="0" y="5.08" size="1.778" layer="95">Released under the Creative Commons Attribution Share-Alike 3.0 License</text>
-<text x="0" y="2.54" size="1.778" layer="95">http://creativecommons.org/licenses/by-sa/3.0</text>
-<text x="0" y="0" size="1.778" layer="95">Design by:</text>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="CREATIVE_COMMONS">
-<description>Creative Commons License summary</description>
-<gates>
-<gate name="G$1" symbol="CREATIVE_COMMONS" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="CREATIVE_COMMONS">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 </libraries>
 <attributes>
 </attributes>
@@ -15728,7 +15692,6 @@ We've spent an enormous amount of time creating and checking these footprints an
 <part name="C13" library="microbuilder" deviceset="CAP_CERAMIC" device="0805-NOOUTLINE" value="0.1uF"/>
 <part name="U$21" library="microbuilder" deviceset="GND" device=""/>
 <part name="U$22" library="SparkFun" deviceset="OSHW-LOGO" device="S"/>
-<part name="U$23" library="SparkFun-Aesthetics" deviceset="CREATIVE_COMMONS" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -15911,7 +15874,6 @@ We've spent an enormous amount of time creating and checking these footprints an
 <instance part="C13" gate="G$1" x="81.28" y="223.52"/>
 <instance part="U$21" gate="G$1" x="81.28" y="218.44"/>
 <instance part="U$22" gate="G$1" x="302.26" y="15.24"/>
-<instance part="U$23" gate="G$1" x="193.04" y="12.7"/>
 </instances>
 <busses>
 </busses>
