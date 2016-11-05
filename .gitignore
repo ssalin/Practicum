@@ -1,3 +1,9 @@
 Hardware/schematics/Schematic.s#1
 Hardware/schematics/BlueDaq_V1.0.s#1
 Hardware/schematics/BlueDaq_V1.0.brd
+Hardware/schematics/BlueDaq_V1.0.b##
+*.job
+Hardware/schematics/BlueDaq_V1.0.b#2
+Hardware/schematics/.BlueDaq_V1.0.sch.lck
+*.lck
+Hardware/schematics/BlueDaq_V1.0.b#1
