@@ -1,0 +1,28 @@
+﻿<Window x:Class="BluDaq_Host.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BluDaq_Host"
+        mc:Ignorable="d"
+        Title="BluDaq Host" Height="400" Width="525" ResizeMode="NoResize" BorderBrush="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
+    <Window.Background>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FF1BDEF1" Offset="0"/>
+            <GradientStop Color="White" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
+    <Grid>
+        <TextBox x:Name="tmp_view" HorizontalAlignment="Left" Height="23" Margin="240,236,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="245"/>
+        <TextBox x:Name="prs_view" HorizontalAlignment="Left" Height="23" Margin="240,288,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="245"/>
+        <TextBox x:Name="hum_view" HorizontalAlignment="Left" Height="23" Margin="240,334,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="245"/>
+        <Label x:Name="tmp_label" Content="Temperature:" HorizontalAlignment="Left" Margin="10,236,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.117,-0.789" Width="185"/>
+        <Label x:Name="prs_lable" Content="Pressure:" HorizontalAlignment="Left" Margin="10,284,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.117,-0.789" Width="185"/>
+        <Label x:Name="hum_label" Content="Relative Humidity:" HorizontalAlignment="Left" Margin="10,330,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.117,-0.789" Width="185"/>
+        <Image x:Name="logo_pane" HorizontalAlignment="Left" Height="86" Margin="10,10,0,0" VerticalAlignment="Top" Width="367" Source="BlueDaq-Logo.png"/>
+        <Label x:Name="pir_label" Content="PIR State:" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.117,-0.789" Width="185"/>
+        <Label x:Name="lts_label" Content="Light Sensor:" HorizontalAlignment="Left" Margin="10,182,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.117,-0.789" Width="185"/>
+        <TextBox x:Name="lts_view" HorizontalAlignment="Left" Height="23" Margin="240,182,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="245"/>
+
+    </Grid>
+</Window>
