@@ -6,94 +6,65 @@
  */
 
 #include "blu_defs.h"   // Macros & Prototypes
-#include "Wire.h"
+#include <EEPROM.h>
 
-// Init:
+// Init: initialize serial begins and create struct pointers which is defined inside blu_defs.h
 void setup() {
 
-    Wire.begin();   
-   #ifdef SERIAL_EN
-    Serial.begin(9600);
-  #endif
+  Serial.begin(9600);
 
-  #ifdef DEBUG_EN
-    Serial.print("DEBUG ENABLED\n");
-  #endif
+  auto_data temp;
+  int eeAddress = 0;   //Location we want the data to be put.
 
+  //simple function calls to get or put new struct object to memory address.
+  //put(eeAddress, &temp);
+  //delay(3000);
+  get(eeAddress);
 }
 
 
-// Main:
+// This funciton will create new content for the struct object and then puts it in the specified memory location
+void put(int address, auto_data *foo)
+{
+  foo->en_R0 = 1;   // Enable
+  foo->dec_0 = 0;   // Descending set point
+  foo->tog_0 = 1;   // Toggle Relay
+  foo->temp_0 = 0;  // Temperature Sensor
+  foo->pres_0 = 1;  // Pressure Sensor
+  foo->humi_0 = 1;  // Humidity sensor
+  foo->ls_0 = 0;    // Light sensor
+  foo->pir_0 = 0;   // PIR Motion Sensor
+    
+  foo->setpoint_0 = 50.0;   // Setpoint 
+  foo->t_duration_0 = 300;   // Toggle Duration
+
+  EEPROM.put(address, *foo);
+}
+
+// This funciton will create a new object and get the information from the specified memory address 
+void get(int address)
+{
+  auto_data foo;
+  EEPROM.get(address, foo);
+  Serial.print(F("==========================\n"));
+  Serial.println( foo.en_R0 ); 
+  Serial.println( foo.dec_0 );      
+  Serial.println( foo.tog_0 );
+  Serial.println( foo.temp_0 );
+  Serial.println( foo.pres_0 );
+  Serial.println( foo.humi_0 );
+  Serial.println( foo.ls_0 );
+  Serial.println( foo.pir_0 );
+  Serial.println( foo.setpoint_0 );
+  Serial.println( foo.t_duration_0 );
+  
+}
+
 void loop() {
-  
-    int addr = 0;
-    byte value = 0;
-
-    // Check bluetooth flag is connected
-
-    // Write to EEPROM memory
-    writeaddr(addr,value);
-
-    // Read from EEPROM memory
-    byte readval = readaddr(addr);
-
-}
-
-// Write to sensor value to address
-void writeaddr(int address, byte val){
-  
-  Wire.beginTransmission(EEPROM_I2C_ADDRESS);
-  Wire.write((int)(address >> 8));   // MSB
-  Wire.write((int)(address & 0xFF)); // LSB
-     
-  Wire.write(val);
-  Wire.endTransmission();
-}
-
-// Read from memory address
-byte readaddr(int address){
-  
-  byte rData = 0xFF;
-  
-  Wire.beginTransmission(EEPROM_I2C_ADDRESS);
-  
-  Wire.write((int)(address >> 8));   // MSB
-  Wire.write((int)(address & 0xFF)); // LSB
-  Wire.endTransmission();  
-
-  Wire.requestFrom(EEPROM_I2C_ADDRESS, 1);  
-
-  rData =  Wire.read();
-  return rData;
+  /* Empty loop */
 }
 
 
 
 
 
-
-// Load from EEPROM
-void load(int address){
-  
-  if (address < EEPROM_SIZE)
-  { 
-    Serial.println(EEPROM.read(address));
-  }
-  else
-  {
-    Serial.println("Address is out of range");  
-  }
-}
-// Store to EEPROM
-void store(int address, int content){
-  
-  EEPROM.write(address,content);  
-  if (address < EEPROM_SIZE && content != NULL)
-  { 
-    EEPROM.write(address,content);
-  }
-  else
-  {
-    Serial.println("Address is out of range"); 
-  }
-}

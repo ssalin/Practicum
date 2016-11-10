@@ -17,8 +17,8 @@ typedef struct{
   int ls;               // Light Sensor Analog Value (0-1023)
   bool PIR;             // Motion Sensor State
   float temp;           // Temperature
-  float pressure        // Pressure
-  float humidity        // Humidity
+  float pressure;        // Pressure
+  float humidity;        // Humidity
   float sealevel_alt;   // Provided by Host?
   
 } sensor_data, *s_data;
@@ -47,17 +47,17 @@ typedef struct {
   int t_duration_0;   // Toggle Duration
 
   // Relay 1 Automation Flags:
-  byte en_R1 : 1;   // Enable
-  byte dec_1 : 1;   // Descending set point
-  byte tog_1 : 1;   // Toggle Relay
-  byte temp_1 : 1;  // Temperature Sensor
-  byte pres_1 : 1;  // Pressure Sensor
-  byte humi_1 : 1;  // Humidity sensor
-  byte ls_1 : 1;    // Light sensor
-  byte pir_1 : 1;   // PIR Motion Sensor
+  //byte en_R1 : 1;   // Enable
+  //byte dec_1 : 1;   // Descending set point
+  //byte tog_1 : 1;   // Toggle Relay
+  //byte temp_1 : 1;  // Temperature Sensor
+  //byte pres_1 : 1;  // Pressure Sensor
+  //byte humi_1 : 1;  // Humidity sensor
+  //byte ls_1 : 1;    // Light sensor
+  //byte pir_1 : 1;   // PIR Motion Sensor
   
-  float setpoint_1;   // Setpoint 
-  int t_duration_1;   // Toggle Duration
+  //float setpoint_1;   // Setpoint 
+  //int t_duration_1;   // Toggle Duration
   
 } auto_data, *a_data;
  
@@ -75,6 +75,31 @@ typedef struct {
 
 #define EEPROM_SIZE=1024;
 #define EEPROM_FLAG=False;
+
+//  Sample Code I found
+#include <EEPROM.h>
+#include <Arduino.h>  // for type definitions
+
+template <class T> int EEPROM_writeAnything(int ee, const T& value)
+{
+    const byte* p = (const byte*)(const void*)&value;
+    unsigned int i;
+    for (i = 0; i < sizeof(value); i++)
+          EEPROM.write(ee++, *p++);
+    return i;
+}
+
+template <class T> int EEPROM_readAnything(int ee, T& value)
+{
+    byte* p = (byte*)(void*)&value;
+    unsigned int i;
+    for (i = 0; i < sizeof(value); i++)
+          *p++ = EEPROM.read(ee++);
+    return i;
+}
+
+
+
 
 //
 // Pins //
