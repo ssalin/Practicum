@@ -1,111 +1,43 @@
+
 /*
- * 
- * 
  * BluDaq Firmware
  * Macro Definitions File
+ * Nov 2016
  * 
  */
 
 //
-// Structs  //
+//  Libraries and Refrences:
 //
 
-
-// Sensor Data
-typedef struct{
-
-  int ls;               // Light Sensor Analog Value (0-1023)
-  bool PIR;             // Motion Sensor State
-  float temp;           // Temperature
-  float pressure;        // Pressure
-  float humidity;        // Humidity
-  float sealevel_alt;   // Provided by Host?
-  
-} sensor_data, *s_data;
-
-// Automation 
-//
-// Note: Sizes
-// bool = 1 byte 
-// int / word = 2 byte
-// long / float/ double = 4 byte
-//
-
-typedef struct {
-
-  // Relay 0 Automation Flags (1 byte):
-  byte en_R0 : 1;   // Enable
-  byte dec_0 : 1;   // Descending set point
-  byte tog_0 : 1;   // Toggle Relay
-  byte temp_0 : 1;  // Temperature Sensor
-  byte pres_0 : 1;  // Pressure Sensor
-  byte humi_0 : 1;  // Humidity sensor
-  byte ls_0 : 1;    // Light sensor
-  byte pir_0 : 1;   // PIR Motion Sensor
-
-  float setpoint_0;   // Setpoint 
-  int t_duration_0;   // Toggle Duration
-
-  // Relay 1 Automation Flags:
-  //byte en_R1 : 1;   // Enable
-  //byte dec_1 : 1;   // Descending set point
-  //byte tog_1 : 1;   // Toggle Relay
-  //byte temp_1 : 1;  // Temperature Sensor
-  //byte pres_1 : 1;  // Pressure Sensor
-  //byte humi_1 : 1;  // Humidity sensor
-  //byte ls_1 : 1;    // Light sensor
-  //byte pir_1 : 1;   // PIR Motion Sensor
-  
-  //float setpoint_1;   // Setpoint 
-  //int t_duration_1;   // Toggle Duration
-  
-} auto_data, *a_data;
- 
-//
-// Debug //
-//
-
-//#define DEBUG_EN   // Comment to disable serial debugging 
-#define SERIAL_EN  // Comment to disable serial com
-
-
-//
-// EEPROM //
-//
-
-#define EEPROM_SIZE=1024;
-#define EEPROM_FLAG=False;
-
-//  Sample Code I found
-#include <EEPROM.h>
-#include <Arduino.h>  // for type definitions
-
-template <class T> int EEPROM_writeAnything(int ee, const T& value)
-{
-    const byte* p = (const byte*)(const void*)&value;
-    unsigned int i;
-    for (i = 0; i < sizeof(value); i++)
-          EEPROM.write(ee++, *p++);
-    return i;
-}
-
-template <class T> int EEPROM_readAnything(int ee, T& value)
-{
-    byte* p = (byte*)(void*)&value;
-    unsigned int i;
-    for (i = 0; i < sizeof(value); i++)
-          *p++ = EEPROM.read(ee++);
-    return i;
-}
-
+#include <Arduino.h>  // Arduino Type Definitions
+#include <EEPROM.h>   // EEPROM Library
+#include <Wire.h>     // I2C Library
 
 
 
 //
-// Pins //
+// Debug and Option Flags:
 //
 
-#define BT_DSR          // BT DSR Pin
+//#define DEBUG_EN   // Disable Auth
+#define SERIAL_EN  // Enable Serial Debug Statements
+
+
+
+//
+// Defined Constants:
+//
+
+#define NUM_RELAY 2           // Number of Relays
+//#define BAUD_RATE 115200      // Better Baud Rate for Serial
+#define BAUD_RATE 9600        // Typical Baud Rate for Serial
+
+
+//
+// ATMega328/P Pin Definitions:
+//
+
 #define BT_STS 3        // BT Status Pin 
 #define PIR0 4          // PIR motion sensor (active low)
 #define R0_SET 5        // Set Relay 0
@@ -113,4 +45,57 @@ template <class T> int EEPROM_readAnything(int ee, T& value)
 #define R1_SET 7        // Set Relay 1
 #define R1_RSET 8       // Reset Relay 1
 #define LIGHT_SENSOR 0  // Analog 5v input
+
+
+
+//
+// Data Structures:
+//
+
+// Auth Data - For validating the host
+typedef struct{
+  bool auth_set;    // Authentication Paired
+  int touch;        // Last-updated (date/time)
+  double key;       // Auth-key
+  double poll_freq; // Polling Frequency (power management)
+} auth_data;
+
+// Sensor Data - Stores "current" values
+typedef struct{
+
+  int ls;               // Light Sensor Analog Value (0-1023)
+  bool PIR;             // Motion Sensor State
+  float temp;           // Temperature
+  float pressure;       // Pressure
+  float humidity;       // Humidity
+} sensor_data;
+
+// Automation - Settings for Relay automation
+typedef struct {
+
+  // Relay 0 Automation Flags (1 byte):
+  byte en   : 1;   // Enable
+  byte dec  : 1;   // Descending set point
+  byte tog  : 1;   // Toggle Relay
+  byte tmp  : 1;   // Temperature Sensor
+  byte pres : 1;   // Pressure Sensor
+  byte hum  : 1;   // Humidity sensor
+  byte ls   : 1;   // Light sensor
+  byte pir  : 1;   // PIR Motion Sensor
+
+  float setpoint_0;   // Setpoint 
+  int t_duration_0;   // Toggle Duration
+} auto_data;
+ 
+
+
+//
+// EEPROM Settings:
+//
+
+#define EEPROM_SIZE 1024;     // Size of EEPROM in Bytes
+#define AUTH_ADDR             // Address of Authentication Structure
+#define AUTO_ADDR             // Address of Automation Structure(s)
+#define AUTO_SIZE             // Size of Automation Struct
+#define AUTH_SIZE             // Size of Authentication Struct
 
