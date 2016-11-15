@@ -1,3 +1,5 @@
+
+
 /*
  * 
  * BluDaq Firmware V0.1
@@ -6,6 +8,9 @@
  */
 
 #include "blu_defs.h"   // Macros & Prototypes
+#include <Arduino.h>  // Arduino Type Definitions
+#include <EEPROM.h>   // EEPROM Library
+#include <Wire.h>     // I2C Library
 
 // Global Vars:
 bool EEPROM_LD = false;           // EEPROM Load Flag

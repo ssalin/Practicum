@@ -1,4 +1,3 @@
-#include <TimerOne.h>
 
 bool ISR = false;
 volatile unsigned long count = 0;

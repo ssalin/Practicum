@@ -1,4 +1,3 @@
-
 /*
  * BluDaq Firmware
  * Macro Definitions File
@@ -10,9 +9,8 @@
 //  Libraries and Refrences:
 //
 
-#include <Arduino.h>  // Arduino Type Definitions
-#include <EEPROM.h>   // EEPROM Library
-#include <Wire.h>     // I2C Library
+
+
 
 
 
