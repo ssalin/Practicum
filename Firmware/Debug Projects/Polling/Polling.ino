@@ -1,3 +1,4 @@
+#include <TimerOne.h>
 
 bool ISR = false;
 volatile unsigned long count = 0;
@@ -26,6 +27,7 @@ void INTR(void)
    }
 }
 
+// Main loop
 void loop(void)
 {
   if (ISR == true)
