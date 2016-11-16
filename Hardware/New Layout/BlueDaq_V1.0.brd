@@ -142,10 +142,10 @@
 </layers>
 <board>
 <plain>
-<wire x1="0" y1="0" x2="70.5" y2="0" width="0" layer="20"/>
-<wire x1="70.5" y1="0" x2="70.5" y2="81" width="0" layer="20"/>
+<wire x1="0" y1="6" x2="70.5" y2="6" width="0" layer="20"/>
+<wire x1="70.5" y1="6" x2="70.5" y2="81" width="0" layer="20"/>
 <wire x1="70.5" y1="81" x2="0" y2="81" width="0" layer="20"/>
-<wire x1="0" y1="81" x2="0" y2="0" width="0" layer="20"/>
+<wire x1="0" y1="81" x2="0" y2="6" width="0" layer="20"/>
 </plain>
 <libraries>
 <library name="adafruit">
@@ -2363,7 +2363,7 @@ Please make sure your boards conform to these design rules.</description>
 <attribute name="MF" value="" x="48" y="53" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="OC_FARNELL" value="9171371" x="48" y="53" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
-<element name="JP1" library="SparkFun" package="JST-2-SMD" value="LiPo" x="6.37" y="50.25" rot="MR90"/>
+<element name="JP1" library="SparkFun" package="JST-2-SMD" value="LiPo" x="10.25" y="46.13" rot="MR180"/>
 <element name="JTAG" library="pinhead" package="2X03" value="" x="32" y="53" rot="R270"/>
 <element name="L1" library="SparkFun" package="CDRH2D09" value="4.7uH, 1.2A" x="37" y="61.5"/>
 <element name="PD0" library="photo-elements" package="M9960" value="M9960_11A" x="36" y="76"/>
@@ -2412,7 +2412,7 @@ Please make sure your boards conform to these design rules.</description>
 <element name="U5" library="SparkFun-PowerIC" package="SOT23-5" value="MIC5219 5V" x="24" y="67">
 <attribute name="PROD_ID" value="VREG-10107" x="24" y="67" size="1.778" layer="27" display="off"/>
 </element>
-<element name="X1" library="SparkFun" package="USB-MICROB" value="USB-MICROB" x="67" y="71" rot="MR270"/>
+<element name="X1" library="SparkFun" package="USB-MICROB" value="USB-MICROB" x="69" y="71" rot="MR270"/>
 <element name="X2" library="microbuilder" package="TERMBLOCK_1X3-3.5MM" value="3.5mm" x="11.5" y="13" rot="MR0"/>
 <element name="X4" library="microbuilder" package="TERMBLOCK_1X3-3.5MM" value="3.5mm" x="61.5" y="15"/>
 <element name="Y1" library="SparkFun-FreqCtrl" package="HC49U-V" value="16 mhz" x="66" y="52" rot="R270"/>
@@ -2449,8 +2449,8 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="34" y1="78" x2="34" y2="76" width="0.254" layer="1"/>
 <wire x1="34" y1="76" x2="34.25" y2="76" width="0.254" layer="1"/>
 <wire x1="16.05" y1="59.5" x2="15.05" y2="65" width="0.4064" layer="1"/>
-<wire x1="16.05" y1="59.5" x2="16.05" y2="57.5" width="0.254" layer="1"/>
-<wire x1="16.05" y1="57.5" x2="33" y2="57.5" width="0.254" layer="1"/>
+<wire x1="16.05" y1="59.5" x2="16.05" y2="57.5" width="0.4064" layer="1"/>
+<wire x1="16.05" y1="57.5" x2="33" y2="57.5" width="0.4064" layer="1"/>
 <wire x1="53.5" y1="54" x2="54" y2="53.5" width="0.254" layer="1"/>
 <wire x1="54" y1="53.5" x2="54" y2="53" width="0.254" layer="1"/>
 <wire x1="59.5" y1="38" x2="60.5" y2="38" width="0.254" layer="1"/>
@@ -2480,7 +2480,7 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="16.5" y1="70" x2="16.5" y2="73.5" width="0.254" layer="16"/>
 <via x="16.5" y="73.5" extent="1-16" drill="0.6" shape="square"/>
 <wire x1="16.5" y1="73.5" x2="16.5" y2="76" width="0.254" layer="1"/>
-<wire x1="33" y1="57.5" x2="33.27" y2="55.54" width="0.254" layer="1"/>
+<wire x1="33" y1="57.5" x2="33.27" y2="55.54" width="0.4064" layer="1"/>
 <wire x1="35.5" y1="44" x2="35.5" y2="55.5" width="0.254" layer="16"/>
 <via x="35.5" y="55.5" extent="1-16" drill="0.6" shape="square"/>
 <wire x1="35.5" y1="55.5" x2="33.27" y2="55.54" width="0.254" layer="1"/>
@@ -2534,14 +2534,14 @@ Please make sure your boards conform to these design rules.</description>
 <polygon width="0.4064" layer="1">
 <vertex x="-1" y="81"/>
 <vertex x="71" y="81"/>
-<vertex x="71" y="-1"/>
-<vertex x="-1" y="-1"/>
+<vertex x="70.5" y="6.5"/>
+<vertex x="-1.5" y="6.5"/>
 </polygon>
 <polygon width="0.4064" layer="16">
 <vertex x="-1" y="81"/>
 <vertex x="71" y="81"/>
-<vertex x="71" y="-1"/>
-<vertex x="-1" y="-1"/>
+<vertex x="70.5" y="6.5"/>
+<vertex x="-1.5" y="6.5"/>
 </polygon>
 <wire x1="38.5" y1="53.5" x2="39" y2="50.5" width="0.254" layer="1"/>
 <wire x1="39" y1="50.5" x2="40" y2="50.5" width="0.254" layer="1"/>
@@ -2714,7 +2714,7 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="52.05" y1="66.8001" x2="52.05" y2="67.5" width="0.4064" layer="1"/>
 <wire x1="52.05" y1="67.5" x2="52.05" y2="69.35" width="0.4064" layer="1"/>
 <wire x1="52.05" y1="69.35" x2="52" y2="69.35" width="0.254" layer="1"/>
-<wire x1="2.67" y1="51.25" x2="13" y2="51.33" width="0.4064" layer="16"/>
+<wire x1="11.25" y1="49.83" x2="13" y2="51.33" width="0.4064" layer="16"/>
 <wire x1="13" y1="51.33" x2="13" y2="65" width="0.4064" layer="16"/>
 <wire x1="13" y1="65" x2="9.5" y2="65" width="0.4064" layer="16"/>
 <wire x1="38.5" y1="61.5" x2="39.972615625" y2="62.7008125" width="0.4064" layer="1"/>
@@ -3277,7 +3277,7 @@ Please make sure your boards conform to these design rules.</description>
 <contactref element="R23" pad="1"/>
 <wire x1="60.63" y1="75.93" x2="62" y2="74" width="0.4064" layer="1"/>
 <via x="62" y="74" extent="1-16" drill="0.6" shape="square"/>
-<wire x1="62" y1="74" x2="64.35" y2="72.3" width="0.4064" layer="16"/>
+<wire x1="62" y1="74" x2="66.35" y2="72.3" width="0.4064" layer="16"/>
 <wire x1="57.35" y1="72" x2="60.63" y2="75.93" width="0.4064" layer="1"/>
 <wire x1="11" y1="76" x2="11" y2="80" width="0.4064" layer="1"/>
 <wire x1="11" y1="80" x2="60.5" y2="80" width="0.4064" layer="1"/>
