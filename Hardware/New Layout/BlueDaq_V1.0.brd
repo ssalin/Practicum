@@ -3349,6 +3349,33 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="22.5" y1="66.3495" x2="19" y2="66.3495" width="0.254" layer="1"/>
 <wire x1="19" y1="66.3495" x2="19" y2="66.5" width="0.254" layer="1"/>
 </signal>
+<signal name="N$19">
+<via x="2.5" y="68.5" extent="1-16" drill="0.6"/>
+</signal>
+<signal name="N$21">
+<via x="61.5" y="55.5" extent="1-16" drill="0.6"/>
+</signal>
+<signal name="N$24">
+<via x="11.5" y="27.5" extent="1-16" drill="0.6"/>
+</signal>
+<signal name="N$29">
+<via x="44" y="14" extent="1-16" drill="0.6"/>
+</signal>
+<signal name="N$30">
+<via x="52" y="6.5" extent="1-16" drill="0.6"/>
+</signal>
+<signal name="N$31">
+<via x="19" y="18.5" extent="1-16" drill="0.6"/>
+</signal>
+<signal name="N$32">
+<via x="45.5" y="56.5" extent="1-16" drill="0.6"/>
+</signal>
+<signal name="N$33">
+<via x="63.5" y="28.5" extent="1-16" drill="0.6"/>
+</signal>
+<signal name="N$34">
+<via x="29.5" y="28.5" extent="1-16" drill="0.6"/>
+</signal>
 </signals>
 </board>
 </drawing>

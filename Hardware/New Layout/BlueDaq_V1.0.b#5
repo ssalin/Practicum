@@ -2610,13 +2610,23 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="41.5" y1="62.13" x2="42.96" y2="62.13" width="0.254" layer="1"/>
 <wire x1="37.5" y1="61.525" x2="37.5" y2="60" width="0.3048" layer="1"/>
 <wire x1="37.5" y1="60" x2="38" y2="60" width="0.3048" layer="1"/>
-<wire x1="25.2" y1="44.75" x2="25.2" y2="42.8" width="0.254" layer="1"/>
+<wire x1="25.2" y1="44.75" x2="25.2" y2="43" width="0.254" layer="1"/>
+<wire x1="25.2" y1="43" x2="25.2" y2="42.8" width="0.254" layer="1"/>
 <wire x1="25.2" y1="42.8" x2="25.5" y2="42.5" width="0.254" layer="1"/>
 <wire x1="25.5" y1="42.5" x2="27" y2="42.5" width="0.254" layer="1"/>
 <wire x1="27" y1="42.5" x2="27.5" y2="42" width="0.254" layer="1"/>
 <wire x1="27.5" y1="42" x2="30.81" y2="42" width="0.254" layer="1"/>
 <wire x1="30.81" y1="42" x2="33.27" y2="44.46" width="0.254" layer="1"/>
-<wire x1="27.5" y1="42" x2="24" y2="30.05" width="0" layer="19" extent="1-1"/>
+<wire x1="24" y1="30.05" x2="26.5" y2="30.05" width="0.254" layer="1"/>
+<wire x1="26.5" y1="30.05" x2="26.5" y2="30" width="0.254" layer="1"/>
+<via x="26.5" y="30" extent="1-16" drill="0.6"/>
+<wire x1="26.5" y1="30" x2="26.5" y2="30.5" width="0.254" layer="16"/>
+<wire x1="26.5" y1="30.5" x2="21" y2="36" width="0.254" layer="16"/>
+<wire x1="21" y1="36" x2="21" y2="41" width="0.254" layer="16"/>
+<wire x1="21" y1="41" x2="20" y2="42" width="0.254" layer="16"/>
+<via x="20" y="42" extent="1-16" drill="0.6"/>
+<wire x1="20" y1="42" x2="21" y2="43" width="0.254" layer="1"/>
+<wire x1="21" y1="43" x2="25.2" y2="43" width="0.254" layer="1"/>
 </signal>
 <signal name="BT_RX">
 <contactref element="IC1" pad="30"/>
