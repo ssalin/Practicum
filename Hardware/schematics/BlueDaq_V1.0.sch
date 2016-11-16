@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.7.0">
+<eagle version="7.6.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -55,7 +55,7 @@
 <layer number="90" name="Modules" color="5" fill="1" visible="yes" active="yes"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
-<layer number="93" name="Pins" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="93" name="Pins" color="2" fill="1" visible="no" active="yes"/>
 <layer number="94" name="Symbols" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="95" name="Names" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="96" name="Values" color="7" fill="1" visible="yes" active="yes"/>
@@ -16639,7 +16639,6 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <part name="U2" library="SparkFun" deviceset="TPS61200" device=""/>
 <part name="C5" library="SparkFun" deviceset="CAP" device="0402-CAP" value="0.1uF"/>
 <part name="C6" library="CH_passive" deviceset="CAP" device="1206" value="10uF"/>
-<part name="GND4" library="SparkFun" deviceset="GND" device=""/>
 <part name="L1" library="SparkFun" deviceset="INDUCTOR" device="." value="4.7uH, 1.2A"/>
 <part name="P+5" library="supply1" deviceset="VCC" device=""/>
 <part name="PIR_SENSOR" library="pinhead" deviceset="PINHD-1X3" device=""/>
@@ -16739,6 +16738,7 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <part name="GND19" library="SparkFun" deviceset="GND" device=""/>
 <part name="GND21" library="SparkFun" deviceset="GND" device=""/>
 <part name="D8" library="adafruit" deviceset="DIODE" device="SMA"/>
+<part name="GND4" library="SparkFun" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -16814,7 +16814,6 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <attribute name="NAME" x="16.764" y="160.782" size="1.778" layer="95"/>
 <attribute name="VALUE" x="14.224" y="155.194" size="1.778" layer="96"/>
 </instance>
-<instance part="GND4" gate="1" x="40.64" y="134.62"/>
 <instance part="L1" gate="G$1" x="58.42" y="170.18" smashed="yes" rot="R270">
 <attribute name="NAME" x="55.88" y="172.72" size="1.778" layer="95"/>
 <attribute name="VALUE" x="50.8" y="165.1" size="1.778" layer="96"/>
@@ -16930,6 +16929,7 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <instance part="GND19" gate="1" x="116.84" y="142.24"/>
 <instance part="GND21" gate="1" x="20.32" y="152.4"/>
 <instance part="D8" gate="G$1" x="180.34" y="223.52" rot="R90"/>
+<instance part="GND4" gate="1" x="40.64" y="134.62"/>
 </instances>
 <busses>
 </busses>
@@ -17211,6 +17211,24 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <segment>
 <pinref part="C6" gate="G$1" pin="2"/>
 <pinref part="GND21" gate="1" pin="GND"/>
+</segment>
+<segment>
+<wire x1="43.18" y1="144.78" x2="40.64" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="144.78" x2="40.64" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="142.24" x2="40.64" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="142.24" x2="40.64" y2="139.7" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="139.7" x2="40.64" y2="139.7" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="139.7" x2="40.64" y2="137.16" width="0.1524" layer="91"/>
+<junction x="40.64" y="142.24"/>
+<junction x="40.64" y="139.7"/>
+<pinref part="U2" gate="G$1" pin="PAD@1"/>
+<pinref part="U2" gate="G$1" pin="PAD@2"/>
+<pinref part="U2" gate="G$1" pin="PAD@3"/>
+<pinref part="U2" gate="G$1" pin="GND"/>
+<wire x1="43.18" y1="147.32" x2="40.64" y2="147.32" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="147.32" x2="40.64" y2="144.78" width="0.1524" layer="91"/>
+<junction x="40.64" y="144.78"/>
+<pinref part="GND4" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="BT_RX" class="0">
@@ -17516,26 +17534,6 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <pinref part="U$18" gate="G$1" pin="3.3V"/>
 </segment>
 </net>
-<net name="PGND" class="0">
-<segment>
-<wire x1="43.18" y1="144.78" x2="40.64" y2="144.78" width="0.1524" layer="91"/>
-<wire x1="40.64" y1="144.78" x2="40.64" y2="142.24" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="142.24" x2="40.64" y2="142.24" width="0.1524" layer="91"/>
-<wire x1="40.64" y1="142.24" x2="40.64" y2="139.7" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="139.7" x2="40.64" y2="139.7" width="0.1524" layer="91"/>
-<wire x1="40.64" y1="139.7" x2="40.64" y2="137.16" width="0.1524" layer="91"/>
-<junction x="40.64" y="142.24"/>
-<junction x="40.64" y="139.7"/>
-<pinref part="U2" gate="G$1" pin="PAD@1"/>
-<pinref part="U2" gate="G$1" pin="PAD@2"/>
-<pinref part="U2" gate="G$1" pin="PAD@3"/>
-<pinref part="GND4" gate="1" pin="GND"/>
-<pinref part="U2" gate="G$1" pin="GND"/>
-<wire x1="43.18" y1="147.32" x2="40.64" y2="147.32" width="0.1524" layer="91"/>
-<wire x1="40.64" y1="147.32" x2="40.64" y2="144.78" width="0.1524" layer="91"/>
-<junction x="40.64" y="144.78"/>
-</segment>
-</net>
 <net name="R0_SET" class="0">
 <segment>
 <pinref part="R7" gate="G$1" pin="1"/>
@@ -17832,7 +17830,7 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <pinref part="S2" gate="G$1" pin="4"/>
 </segment>
 </net>
-<net name="N$20" class="0">
+<net name="VOUT" class="0">
 <segment>
 <pinref part="U2" gate="G$1" pin="VOUT"/>
 <wire x1="78.74" y1="154.94" x2="104.14" y2="154.94" width="0.1524" layer="91"/>
@@ -17893,30 +17891,10 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 </sheet>
 </sheets>
 <errors>
-<approved hash="102,1,45.72,172.72,GND,PGND,,,,"/>
-<approved hash="102,1,45.72,170.18,PAD,PGND,,,,"/>
-<approved hash="102,1,45.72,167.64,PAD,PGND,,,,"/>
-<approved hash="102,1,45.72,165.1,PAD,PGND,,,,"/>
-<approved hash="102,1,81.28,167.64,PAD,PGND,,,,"/>
-<approved hash="102,1,81.28,170.18,PAD,PGND,,,,"/>
-<approved hash="102,1,45.72,182.88,VIN,VBATT,,,,"/>
-<approved hash="102,1,43.18,162.56,GND,PGND,,,,"/>
-<approved hash="102,1,165.1,185.42,OUT,3.3V,,,,"/>
-<approved hash="201,1,43.18,162.56,GND,GND\, PGND,,,,"/>
-<approved hash="201,1,45.72,172.72,GND,GND\, PGND,,,,"/>
 <approved hash="104,1,271.78,200.66,IC1,AVCC,VCC,,,"/>
-<approved hash="104,1,63.5,226.06,U1,VIN,5VIN,,,"/>
-<approved hash="104,1,83.82,226.06,U1,VBAT,VBATT,,,"/>
-<approved hash="104,1,83.82,220.98,U1,VSS,GND,,,"/>
-<approved hash="104,1,33.02,127,U3,VDDIO,3.3V,,,"/>
-<approved hash="104,1,33.02,129.54,U3,VDD,3.3V,,,"/>
-<approved hash="104,1,144.78,185.42,U4,IN,VCC,,,"/>
-<approved hash="110,1,63.5,226.06,N$14,5VIN,,,,"/>
-<approved hash="111,1,63.5,226.06,N$14,,,,,"/>
 <approved hash="113,1,193.571,130.071,FRAME1,,,,,"/>
 <approved hash="113,1,31.7077,31.8812,JTAG,,,,,"/>
 <approved hash="113,1,61.8702,29.4974,PIR_SENSOR,,,,,"/>
-<approved hash="113,1,95.7962,29.0788,BLUETOOTH,,,,,"/>
 </errors>
 </schematic>
 </drawing>
