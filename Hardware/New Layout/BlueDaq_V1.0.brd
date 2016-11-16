@@ -2455,8 +2455,7 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="59.5" y1="32" x2="60.5" y2="32" width="0.254" layer="1"/>
 <wire x1="60.5" y1="32" x2="60.5" y2="42" width="0.254" layer="1"/>
 <wire x1="60.5" y1="42" x2="58.5" y2="42.5" width="0.254" layer="1"/>
-<wire x1="58.5" y1="42.5" x2="54.75" y2="46.25" width="0.254" layer="1"/>
-<wire x1="54.75" y1="46.25" x2="54.25" y2="46.75" width="0.254" layer="1"/>
+<wire x1="58.5" y1="42.5" x2="54.25" y2="46.75" width="0.254" layer="1"/>
 <wire x1="54.25" y1="46.75" x2="54" y2="47" width="0.254" layer="1"/>
 <wire x1="27.66" y1="36.5" x2="30" y2="36.5" width="0.254" layer="1"/>
 <wire x1="30" y1="36.5" x2="30" y2="38.5" width="0.254" layer="1"/>
@@ -2490,7 +2489,6 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="42" y1="49" x2="43.7074" y2="49" width="0.6096" layer="1"/>
 <wire x1="43.7074" y1="49" x2="46" y2="49" width="0.6096" layer="1"/>
 <wire x1="46" y1="49" x2="47" y2="48" width="1.016" layer="1"/>
-<wire x1="47" y1="48" x2="54.75" y2="48" width="0.3048" layer="1"/>
 <contactref element="IC1" pad="6"/>
 <contactref element="IC1" pad="4"/>
 <contactref element="C14" pad="2"/>
@@ -2504,12 +2502,11 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="6" y1="33.5" x2="6" y2="30.5" width="0.254" layer="1"/>
 <wire x1="6" y1="30.5" x2="2" y2="30.5" width="0.254" layer="1"/>
 <wire x1="2" y1="30.5" x2="2" y2="30.19" width="0.254" layer="1"/>
-<wire x1="54" y1="47" x2="54" y2="47.5" width="0.254" layer="1"/>
-<wire x1="54" y1="47.5" x2="53.3" y2="48.2" width="0.254" layer="1"/>
-<wire x1="53.3" y1="48.2" x2="52.2926" y2="48.2" width="0.254" layer="1"/>
+<wire x1="53.3" y1="48.2" x2="52.2926" y2="48.2" width="0.6096" layer="1"/>
 <wire x1="52.2926" y1="46.6" x2="54.25" y2="46.6" width="0.254" layer="1"/>
 <wire x1="54.25" y1="46.6" x2="54.25" y2="46.75" width="0.254" layer="1"/>
-<wire x1="54.75" y1="48" x2="54.75" y2="46.25" width="0.254" layer="1"/>
+<wire x1="47" y1="48" x2="52.2926" y2="48.2" width="0.6096" layer="1"/>
+<wire x1="53.3" y1="48.2" x2="54" y2="47" width="0.6096" layer="1"/>
 </signal>
 <signal name="GND">
 <contactref element="C9" pad="2"/>
