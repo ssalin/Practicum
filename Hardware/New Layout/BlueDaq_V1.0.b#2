@@ -2416,9 +2416,9 @@ Please make sure your boards conform to these design rules.</description>
 <element name="X2" library="microbuilder" package="TERMBLOCK_1X3-3.5MM" value="3.5mm" x="11" y="5" rot="MR180"/>
 <element name="X4" library="microbuilder" package="TERMBLOCK_1X3-3.5MM" value="3.5mm" x="63.5" y="4.5"/>
 <element name="Y1" library="SparkFun-FreqCtrl" package="HC49U-V" value="16 mhz" x="66" y="52" rot="R270"/>
-<element name="C14" library="microbuilder" package="0805-NO@1" value="0.1uF" x="26" y="37.5" rot="R90"/>
-<element name="C11" library="microbuilder" package="0805-NO@1" value="0.1uF" x="30" y="37" rot="R90"/>
-<element name="BT" library="adafruit" package="1X06" value="" x="29.5" y="3" rot="R180"/>
+<element name="C14" library="microbuilder" package="0805-NO@1" value="0.1uF" x="24" y="37" rot="R90"/>
+<element name="C11" library="microbuilder" package="0805-NO@1" value="0.1uF" x="17.5" y="37" rot="R90"/>
+<element name="BT" library="adafruit" package="1X06" value="" x="2" y="41" rot="R270"/>
 </elements>
 <signals>
 <signal name="VCC">
@@ -2498,9 +2498,9 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="52.0926" y1="54" x2="52.2926" y2="54.2" width="0" layer="19" extent="1-1"/>
 <wire x1="53.5" y1="54" x2="52.2926" y2="54.2" width="0" layer="19" extent="1-1"/>
 <wire x1="52.2926" y1="52.6" x2="52.0926" y2="54" width="0" layer="19" extent="1-1"/>
-<wire x1="26" y1="38.45" x2="27.66" y2="42.5" width="0" layer="19" extent="1-1"/>
-<wire x1="30" y1="37.95" x2="26" y2="38.45" width="0" layer="19" extent="1-1"/>
-<wire x1="25.69" y1="3" x2="30" y2="37.95" width="0" layer="19" extent="1-1"/>
+<wire x1="24" y1="37.95" x2="27.66" y2="42.5" width="0" layer="19" extent="1-1"/>
+<wire x1="17.5" y1="37.95" x2="24" y2="37.95" width="0" layer="19" extent="1-1"/>
+<wire x1="2" y1="37.19" x2="17.5" y2="37.95" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="GND">
 <contactref element="C9" pad="2"/>
@@ -2583,7 +2583,7 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="37" y1="44" x2="37" y2="43" width="0.254" layer="1"/>
 <wire x1="37" y1="43" x2="34.24" y2="43" width="0.254" layer="1"/>
 <contactref element="BT" pad="2"/>
-<wire x1="33.31" y1="3" x2="34.24" y2="43" width="0" layer="19" extent="1-1"/>
+<wire x1="2" y1="44.81" x2="34.24" y2="43" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="BT_TX">
 <contactref element="IC1" pad="31"/>
@@ -2597,7 +2597,7 @@ Please make sure your boards conform to these design rules.</description>
 <via x="29.5" y="41" extent="1-16" drill="0.6" shape="square"/>
 <wire x1="29.5" y1="41" x2="29.2" y2="40.7" width="0.254" layer="1"/>
 <contactref element="BT" pad="3"/>
-<wire x1="30.77" y1="3" x2="29.2" y2="40.7" width="0" layer="19" extent="1-1"/>
+<wire x1="2" y1="42.27" x2="17.5" y2="43" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="SPI_MISO">
 <contactref element="JTAG" pad="1"/>
@@ -3052,7 +3052,7 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="50.8" y1="48.7074" x2="50.8" y2="45" width="0.254" layer="1"/>
 <wire x1="50.8" y1="45" x2="27.5" y2="45" width="0.254" layer="1"/>
 <contactref element="BT" pad="1"/>
-<wire x1="35.85" y1="3" x2="27.5" y2="45" width="0" layer="19" extent="1-1"/>
+<wire x1="2" y1="47.35" x2="27.5" y2="45" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="BT_STS">
 <contactref element="IC1" pad="1"/>
@@ -3063,7 +3063,7 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="23" y1="42" x2="23" y2="41.68" width="0.254" layer="1"/>
 <wire x1="52.2926" y1="42" x2="52" y2="42" width="0.254" layer="1"/>
 <contactref element="BT" pad="6"/>
-<wire x1="23.15" y1="3" x2="23" y2="41.68" width="0" layer="19" extent="1-1"/>
+<wire x1="2" y1="34.65" x2="23" y2="41.68" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="R1_SET">
 <contactref element="IC1" pad="11"/>
