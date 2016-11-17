@@ -3014,13 +3014,13 @@ Please make sure your boards conform to these design rules.</description>
 <contactref element="C12" pad="2"/>
 <polygon width="0.2032" layer="1">
 <vertex x="0.1" y="72"/>
-<vertex x="66.6" y="71.5"/>
+<vertex x="67" y="71.9"/>
 <vertex x="67.1" y="0.5"/>
 <vertex x="0.1" y="0"/>
 </polygon>
 <polygon width="0.4064" layer="16">
 <vertex x="0.1" y="72"/>
-<vertex x="66.6" y="71.5"/>
+<vertex x="67" y="71.5"/>
 <vertex x="67.1" y="0.5"/>
 <vertex x="0.1" y="0"/>
 </polygon>
