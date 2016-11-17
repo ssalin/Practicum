@@ -1,84 +1,84 @@
 Partlist
 
-Exported from BlueDaq_V1.0.sch at 11/17/2016 12:59 PM
+Exported from BlueDaq_V1.0.brd at 11/17/2016 1:10 PM
 
 EAGLE Version 7.6.0 Copyright (c) 1988-2016 CadSoft
 
 Assembly variant: 
 
-Part       Value                Device                    Package                Library           Sheet
+Part       Value                Package                Library           Position (mm)         Orientation
 
-+9V                             PINHD-1X1                 1X01                   adafruit          1
--9V                             PINHD-1X1                 1X01                   adafruit          1
-BT                              PINHD-1X6                 1X06                   adafruit          1
-C1         22p                  C-EUC0805                 C0805                  rcl               1
-C2         22p                  C-EUC0805                 C0805                  rcl               1
-C3         0.1uF                CAP_CERAMIC0805-NOOUTLINE 0805-NO@1              microbuilder      1
-C4         22uF                 CAP0805                   0805                   CH_passive        1
-C5         0.1uF                CAP0805                   0805                   SparkFun          1
-C6         10uF                 CAP1206                   1206                   CH_passive        1
-C7         10uF                 CAP_CERAMIC0805-NOOUTLINE 0805-NO@1              microbuilder      1
-C8         10uF                 CAP_CERAMIC0805-NOOUTLINE 0805-NO@1              microbuilder      1
-C9         4.7uF                CAP0805                   0805                   SparkFun          1
-C10        4.7uF                CAP0805                   0805                   SparkFun          1
-C11        0.1uF                CAP_CERAMIC0805-NOOUTLINE 0805-NO@1              microbuilder      1
-C12        .1uF                 CAP_CERAMIC0805-NOOUTLINE 0805-NO@1              microbuilder      1
-C13        10uF                 CAP_CERAMIC0805-NOOUTLINE 0805-NO@1              microbuilder      1
-C14        0.1uF                CAP_CERAMIC0805-NOOUTLINE 0805-NO@1              microbuilder      1
-C15        10uF                 CAP_CERAMIC0805-NOOUTLINE 0805-NO@1              microbuilder      1
-D1         1N4148               DIODESOD-323              SOD-323                microbuilder      1
-D2         GREEN                LED0805_NOOUTLINE         CHIPLED_0805_NOOUTLINE microbuilder      1
-D3         1N4148               DIODESOD-323              SOD-323                microbuilder      1
-D4         red                  LED0603                   LED-0603               SparkFun          1
-D5         1N4148               DIODESOD-323              SOD-323                microbuilder      1
-D6         GREEN                LED0805_NOOUTLINE         CHIPLED_0805_NOOUTLINE microbuilder      1
-D7         1N4148               DIODESOD-323              SOD-323                microbuilder      1
-D8                              DIODESMA                  SMADIODE               adafruit          1
-D10                             DIODESMA                  SMADIODE               adafruit          1
-IC1        MEGA8-AI             MEGA8-AI                  TQFP32-08              atmel             1
-JP1        LiPo                 M02-JST-2MM-SMT           JST-2-SMD              SparkFun          1
-JTAG                            PINHD-2X3                 2X03                   pinhead           1
-L1         4.7uH, 1.2A          INDUCTOR.                 CDRH2D09               SparkFun          1
-PD0        M9960_11A            M9960_11A                 M9960                  photo-elements    1
-PIR_SENSOR                      PINHD-1X3                 1X03                   pinhead           1
-Q1         MMBT2222             TRANSISTOR_NPN            SOT23-R                microbuilder      1
-Q2         MMBT2222             TRANSISTOR_NPN            SOT23-R                microbuilder      1
-Q3         MMBT2222             TRANSISTOR_NPN            SOT23-R                microbuilder      1
-Q4         MMBT2222             TRANSISTOR_NPN            SOT23-R                microbuilder      1
-R1         10k                  R-US_R0805                R0805                  adafruit          1
-R2         470                  R-US_R0805                R0805                  adafruit          1
-R3         2k                   R-US_R0805                R0805                  adafruit          1
-R4         1.7M                 R-US_R0805                R0805                  adafruit          1
-R5         180K                 R-US_R0805                R0805                  adafruit          1
-R6         4.7k                 R-US_R0805                R0805                  adafruit          1
-R7         1K                   RESISTOR0805_NOOUTLINE    0805-NO                microbuilder      1
-R8         10K                  RESISTOR0805_NOOUTLINE    0805-NO                microbuilder      1
-R9         1K                   RESISTOR0805_NOOUTLINE    0805-NO                microbuilder      1
-R10        1K                   RESISTOR0805_NOOUTLINE    0805-NO                microbuilder      1
-R11        10K                  RESISTOR0805_NOOUTLINE    0805-NO                microbuilder      1
-R12        1K                   RESISTOR0805_NOOUTLINE    0805-NO                microbuilder      1
-R13        1K                   RESISTOR0805_NOOUTLINE    0805-NO                microbuilder      1
-R14        10k                  R-US_R0805                R0805                  adafruit          1
-R15        10K                  RESISTOR0805_NOOUTLINE    0805-NO                microbuilder      1
-R16        1K                   RESISTOR0805_NOOUTLINE    0805-NO                microbuilder      1
-R17        1K                   RESISTOR0805_NOOUTLINE    0805-NO                microbuilder      1
-R18        10K                  RESISTOR0805_NOOUTLINE    0805-NO                microbuilder      1
-R19        1K                   RESISTOR0805_NOOUTLINE    0805-NO                microbuilder      1
-R20        0                    R-US_R0805                R0805                  adafruit          1
-R21        0                    R-US_R0805                R0805                  adafruit          1
-R22        0                    R-US_R0805                R0805                  adafruit          1
-R23        4.7k                 R-US_R0805                R0805                  adafruit          1
-RELAY_0    RELAY_LATCHINGEE2NUH RELAY_LATCHINGEE2NUH      RELAY_EE2_LATCH        microbuilder      1
-RELAY_1    RELAY_LATCHINGEE2NUH RELAY_LATCHINGEE2NUH      RELAY_EE2_LATCH        microbuilder      1
-S1         SKHMPSE010           SKHMPSE010                SKHMPXE010             switch            1
-TP1        TPTP19SQ             TPTP19SQ                  TP19SQ                 testpad           1
-TP2        TPTP19SQ             TPTP19SQ                  TP19SQ                 testpad           1
-U1         MCP73831             MCP73831                  SOT23-5                SparkFun          1
-U2         TPS61200             TPS61200                  QFN-10_PAD             SparkFun          1
-U3         BME280               BME280                    BME280                 microbuilder      1
-U4         MIC5225-3.3          VREG_SOT23-5              SOT23-5                microbuilder      1
-U5         MIC5219 5V           V_REG_MIC52195V           SOT23-5                SparkFun-PowerIC  1
-X1         USB-MICROB           USB-MICROB                USB-MICROB             SparkFun          1
-X2         3.5mm                TERMBLOCK_1X3             TERMBLOCK_1X3-3.5MM    microbuilder      1
-X4         3.5mm                TERMBLOCK_1X3             TERMBLOCK_1X3-3.5MM    microbuilder      1
-Y1         16 mhz               CRYSTALHC49UV             HC49U-V                SparkFun-FreqCtrl 1
++9V                             1X01                   adafruit          (19.5 50.5)           MR0
+-9V                             1X01                   adafruit          (26.5 50.5)           MR0
+BT                              1X06                   adafruit          (1.5 30.5)            R270
+C1         22p                  C0805                  rcl               (63.46 51.87)         R270
+C2         22p                  C0805                  rcl               (63.5 35)             R90
+C3         0.1uF                0805-NO@1              microbuilder      (4 29)                R270
+C4         22uF                 0805                   CH_passive        (42.46 57.73)         R90
+C5         0.1uF                0805                   SparkFun          (31.5 56.5)           R180
+C6         10uF                 1206                   CH_passive        (32 62.5)             R180
+C7         10uF                 0805-NO@1              microbuilder      (13.5 60.5)           R0
+C8         10uF                 0805-NO@1              microbuilder      (15.5 54)             R270
+C9         4.7uF                0805                   SparkFun          (60 62.5)             R270
+C10        4.7uF                0805                   SparkFun          (51.5 60.5)           R90
+C11        0.1uF                0805-NO@1              microbuilder      (29.5 38)             R0
+C12        .1uF                 0805-NO@1              microbuilder      (28.5 58.5)           R0
+C13        10uF                 0805-NO@1              microbuilder      (23 50.5)             R0
+C14        0.1uF                0805-NO@1              microbuilder      (18 27.5)             R90
+C15        10uF                 0805-NO@1              microbuilder      (19.5 56)             R180
+D1         1N4148               SOD-323                microbuilder      (30.5 19.5)           R90
+D2         GREEN                CHIPLED_0805_NOOUTLINE microbuilder      (23.46 22.29)         R90
+D3         1N4148               SOD-323                microbuilder      (30.5 12.5)           R90
+D5         1N4148               SOD-323                microbuilder      (30.5 6.5)            R90
+D6         GREEN                CHIPLED_0805_NOOUTLINE microbuilder      (23.5 8)              R270
+D7         1N4148               SOD-323                microbuilder      (29 2.5)              R90
+D8                              SMADIODE               adafruit          (23 64)               R270
+D9         GREEN                CHIPLED_0805_NOOUTLINE microbuilder      (57.1 66.5)           R90
+D10                             SMADIODE               adafruit          (8 60.5)              R90
+IC1        MEGA8-AI             TQFP32-08              atmel             (47.5 43.5)           R180
+JP1        LiPo                 JST-2-SMD              SparkFun          (3.63 42.75)          MR270
+JTAG                            2X03                   pinhead           (31.5 43.5)           R270
+L1         4.7uH, 1.2A          CDRH2D09               SparkFun          (36.5 52)             R0
+PD0        M9960_11A            M9960                  photo-elements    (35.5 66.5)           R0
+PIR_SENSOR                      1X03                   pinhead           (45.5 65.5)           R180
+Q1         MMBT2222             SOT23-R                microbuilder      (36.5 20.5)           R90
+Q2         MMBT2222             SOT23-R                microbuilder      (36.5 13.5)           R90
+Q3         MMBT2222             SOT23-R                microbuilder      (36.5 7.5)            R90
+Q4         MMBT2222             SOT23-R                microbuilder      (36.5 3.5)            R90
+R1         10k                  R0805                  adafruit          (59 29.5)             R270
+R2         470                  R0805                  adafruit          (53.5 65.5)           R90
+R3         2k                   R0805                  adafruit          (58.5 58)             R180
+R4         1.7M                 R0805                  adafruit          (47.74 60.54)         R180
+R5         180K                 R0805                  adafruit          (42.29 62.11)         R0
+R6         4.7k                 R0805                  adafruit          (36 38.5)             R90
+R7         1K                   0805-NO                microbuilder      (42.5 24.5)           R270
+R8         10K                  0805-NO                microbuilder      (45.03 20.94)         R90
+R9         1K                   0805-NO                microbuilder      (23.5 17.5)           R0
+R10        1K                   0805-NO                microbuilder      (41.5 16.5)           R270
+R11        10K                  0805-NO                microbuilder      (41.5 11.5)           R90
+R12        1K                   0805-NO                microbuilder      (23.5 13.5)           R0
+R13        1K                   0805-NO                microbuilder      (46.5 7)              R180
+R14        10k                  R0805                  adafruit          (39 44)               R180
+R15        10K                  0805-NO                microbuilder      (41.5 6)              R90
+R16        1K                   0805-NO                microbuilder      (23.5 5.5)            R0
+R17        1K                   0805-NO                microbuilder      (50 5.5)              R270
+R18        10K                  0805-NO                microbuilder      (46.5 4)              R270
+R19        1K                   0805-NO                microbuilder      (23.5 2.5)            R0
+R20        0                    R0805                  adafruit          (8 67)                R270
+R21        0                    R0805                  adafruit          (4 60.5)              R180
+R22        0                    R0805                  adafruit          (18.5 66.5)           R180
+R23        4.7k                 R0805                  adafruit          (37 27)               R270
+RELAY_0    RELAY_LATCHINGEE2NUH RELAY_EE2_LATCH        microbuilder      (9.5 16.5)            MR180
+RELAY_1    RELAY_LATCHINGEE2NUH RELAY_EE2_LATCH        microbuilder      (58 16.5)             MR180
+S1         SKHMPSE010           SKHMPXE010             switch            (20.5 43.5)           R180
+TP1        TPTP19SQ             TP19SQ                 testpad           (57.5 42.5)           R0
+TP2        TPTP19SQ             TP19SQ                 testpad           (57.5 46)             R0
+U1         MCP73831             SOT23-5                SparkFun          (52.5 56)             R180
+U2         TPS61200             QFN-10_PAD             SparkFun          (36.5 59.5)           R0
+U3         BME280               BME280                 microbuilder      (39.5 38.5)           R0
+U4         MIC5225-3.3          SOT23-5                microbuilder      (19.5 61.5)           R0
+U5         MIC5219 5V           SOT23-5                SparkFun-PowerIC  (23.5 56.5)           R0
+X1         USB-MICROB           USB-MICROB             SparkFun          (65.5 63)             MR270
+X2         3.5mm                TERMBLOCK_1X3-3.5MM    microbuilder      (11 4.5)              MR0
+X4         3.5mm                TERMBLOCK_1X3-3.5MM    microbuilder      (60.7 4)              MR0
+Y1         16 mhz               HC49U-V                SparkFun-FreqCtrl (63.5 44)             R270
