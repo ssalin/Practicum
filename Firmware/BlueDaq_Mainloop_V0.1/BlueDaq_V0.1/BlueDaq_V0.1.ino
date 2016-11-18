@@ -33,7 +33,6 @@ void setup(){
   *auth_dat = {false,0,0.0,0.0};
   *sensors_dat = {0,false,0.0,0.0,0.0};
   for (int i = 0; i < NUM_RELAY; i++){
-    
     auto_data_constructor(auto_dat[i]);
     Serial.print(F(" ======================== "));
     Serial.print(sizeof(*auto_dat[i]));
@@ -88,7 +87,8 @@ void loop() {
       }
       
       // If (automation){
-            // Read Sensor Data and store sensor to struct
+            // read_store_sensordata()  //Read Sensor Data and store sensor to struct
+    
       // }
       
       // If (Serial){
@@ -117,6 +117,27 @@ void loop() {
   }
 }
 
+// Read and store sensor data struct
+void read_store_sensordata(void){
+    // Read from sensors and store in sensors_dat struct
+    *sensors_dat->ls = 8;
+    *sensors_dat->PIR = true;
+    *sensors_dat->temp = 79.9;
+    *sensors_dat->pressure = 23.9;
+    *sensors_dat->humidity = 43.0;
+}
+
+// Reset sensor data struct
+void reset_sensordata(void){
+    *sensors_dat->ls = 0;
+    *sensors_dat->PIR = false;
+    *sensors_dat->temp = 0.0;
+    *sensors_dat->pressure = 0.0;
+    *sensors_dat->humidity = 0.0;
+  
+}
+
+
 // Store to EEPROM
 void store_EEPROM(){
 
@@ -125,7 +146,7 @@ void store_EEPROM(){
 
 
 // Load sensor data
-void load_data(){
+void upload_sensordata(){
   
   
 }
