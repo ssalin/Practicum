@@ -13,7 +13,7 @@
 
 // Global Vars:
 bool EEPROM_LD = false;           // EEPROM Load Flag
-bool Run = false;                 // ISR Flag
+volatile bool Run = false;        // ISR Flag
 auth_data *auth_dat;              // Auth Data
 sensor_data *sensors_dat;         // Sensor Data
 auto_data *auto_dat[NUM_RELAY];   // Automation Data
