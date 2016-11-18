@@ -8,7 +8,7 @@
 //
 //  Libraries and Refrences:
 //
-
+#include <Arduino.h>  // Arduino Type Definitions
 
 
 
@@ -81,8 +81,8 @@ typedef struct {
   byte ls   : 1;   // Light sensor
   byte pir  : 1;   // PIR Motion Sensor
 
-  float setpoint_0;   // Setpoint 
-  int t_duration_0;   // Toggle Duration
+  float setpoint;   // Setpoint 
+  int t_duration;   // Toggle Duration
 } auto_data;
  
 
