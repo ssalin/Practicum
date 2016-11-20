@@ -13,12 +13,12 @@
 
 // Global Vars:
 bool EEPROM_LD = false;           // EEPROM Load Flag
-bool Run = false;                 // ISR Flag
+volatile bool Run = false;        // ISR Flag
 auth_data *auth_dat;              // Auth Data
 sensor_data *sensors_dat;         // Sensor Data
 auto_data *auto_dat[NUM_RELAY];   // Automation Data
-int default_delay = 327680000;    // 32.758kHz 
-int f_delay;
+int default_delay = 327680000;    // deafult delay in ms 
+int f_delay;                      // variable used to pass delay
 
 // EEPROM Function Example:
 // EEPROM.put(address, *foo);
@@ -26,25 +26,28 @@ int f_delay;
 // noInterrupts();                //disable interrupt
 // interrupts();                  //re-enable interrupt
 
+
 // Setup *Run-Once
 void setup(){
     
-  // Constructor for all global structs
+  // Constructor for all global structs, only do this once. 
   *auth_dat = {false,0,0.0,0.0};
   *sensors_dat = {0,false,0.0,0.0,0.0};
   for (int i = 0; i < NUM_RELAY; i++){
-    
     auto_data_constructor(auto_dat[i]);
-    Serial.print(F(" ======================== "));
-    Serial.print(sizeof(*auto_dat[i]));
+    if (DEBUG_EN){                // Print when in debug mode
+      Serial.print(F(" ======================== "));
+      Serial.print(sizeof(*auto_dat[i]));
+    }
   }
 
   // get timer value from auth.delay (polling frequency)
-  if (auto_dat->poll_freq == null){ 
+  EEPROM.get(AUTH_ADDR,*auth_dat);
+  if (auth_data.poll_freq == 0.0){ 
       f_delay = default_delay;
   }
   else{
-      f_delay = auto_dat->poll_freq * 1000    // Result need to be in microseconds
+      f_delay = auth_data.poll_freq * 1000    // Result need to be in microseconds
   }
   
   Timer1.initialize(f_delay);     // Timer's period in microseconds. Library default is 1 us or 1 Mhz 
@@ -53,7 +56,7 @@ void setup(){
 
 }
 
-// constructor
+// constructor for automation data struct
 void auto_data_constructor(auto_data *foo){
   
   foo->en = 0;   // Enable
@@ -76,6 +79,7 @@ void INTR(void){
 
 // Main Loop
 void loop() {
+  
   /* Empty loop */
   if (Run){
       // noInterrupts();                //disable interrupt
@@ -83,12 +87,18 @@ void loop() {
       // Test EEPROM Flag
       if (EEPROM_LD == false){
           // Load EEPROM
+          // auth_data authen;              // Auth Data
+          // auto_data relay1,relay2;         // Sensor Data
+          // EEPROM.get(0, authen);
+          // EEPROM.get(12, relay1);
+          // EEPROM.get(19, relay2);
           EEPROM_LD = true;  
           // call Store to Automation Struct
       }
       
       // If (automation){
-            // Read Sensor Data and store sensor to struct
+            // read_store_sensordata()  //Read Sensor Data and store sensor to struct
+    
       // }
       
       // If (Serial){
@@ -97,16 +107,16 @@ void loop() {
               // }
 
               // else{
-                    // if (automation){
-                        // call store to EEPROM function
-                        // Update automation struct function
+                    // if (new automation){
+                        // call store to EEPROM 
+                        // Update automation struct 
                     // }
             
             
-                 // upload sensor data function
+                 // upload sensor data to BT device
               // }
             
-      //  serial flush()
+         Serial.flush()
       // }
       
       
@@ -117,7 +127,28 @@ void loop() {
   }
 }
 
-// Store to EEPROM
+// Read and store sensor data struct
+void read_store_sensordata(void){
+    // Read from sensors and store in sensors_dat struct
+    *sensors_dat->ls = 8;
+    *sensors_dat->PIR = true;
+    *sensors_dat->temp = 79.9;
+    *sensors_dat->pressure = 23.9;
+    *sensors_dat->humidity = 43.0;
+}
+
+// Reset sensor data struct
+void reset_sensordata(void){
+    *sensors_dat->ls = 0;
+    *sensors_dat->PIR = false;
+    *sensors_dat->temp = 0.0;
+    *sensors_dat->pressure = 0.0;
+    *sensors_dat->humidity = 0.0;
+  
+}
+
+
+// Function to update EEPROM automation struct
 void store_EEPROM(){
 
 
@@ -125,10 +156,7 @@ void store_EEPROM(){
 
 
 // Load sensor data
-void load_data(){
+void upload_sensordata(){
   
   
 }
-
-
-

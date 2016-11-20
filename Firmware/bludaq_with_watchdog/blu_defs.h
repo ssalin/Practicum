@@ -81,8 +81,8 @@ typedef struct {
   byte ls   : 1;   // Light sensor
   byte pir  : 1;   // PIR Motion Sensor
 
-  float setpoint;   // Setpoint 
-  int t_duration;   // Toggle Duration
+  float setpoint_0;   // Setpoint 
+  int t_duration_0;   // Toggle Duration
 } auto_data;
  
 
@@ -91,9 +91,10 @@ typedef struct {
 // EEPROM Settings:
 //
 
-#define EEPROM_SIZE 1024;     // Size of EEPROM in Bytes
+#define EEPROM_SIZE 1024;      // Size of EEPROM in Bytes
 #define AUTH_ADDR 0            // Address of Authentication Structure
-#define AUTO_ADDR 12            // Address of Automation Structure(s)
+#define AUTO_ADDR 12           // Address of Automation Structure(s)
 #define AUTO_SIZE 7            // Size of Automation Struct, 7 per struct, 14 for both structs
-#define AUTH_SIZE 11            // Size of Authentication Struct
+#define AUTH_SIZE 11           // Size of Authentication Struct
+                               // Size of sensor data is 15
 
