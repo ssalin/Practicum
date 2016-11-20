@@ -38,8 +38,8 @@ class bludaq_core_serial{
     
  
     // Recieved Message Types:
-    var msg_types: [String:Int] = [
-        "UNKO" : -1,    // Unknown Message
+    var rx_msg_types: [String:Int] = [
+        "UNKO=" : -1,    // Unknown Message
         "HELO=" : 0,     // Device Booted
         "AUTH=" : 1,     // Authentication State
         "SLEP=" : 2,     // Device Sleeping
@@ -50,25 +50,45 @@ class bludaq_core_serial{
         "DRLS=" : 7,     // Data: Photoresistor
         "DPIR=" : 8,     // Data: PIR State (Motion T/F)
         "DRL0=" : 9,     // Data: Relay 0 State
-        "DRL1=" : 10,     // Data: Relay 1 State
+        "DRL1=" : 10,    // Data: Relay 1 State
     ]
     
     
-    // Recieved Message (text) bodies:
+    var tx_msg_types: [Int: String] = [
+    
+        0: "AUTN=",    // Automation Channel Select = <Channel>
+        1: "AUTF=",    // Automation Flag Set = <Byte>
+        2: "AUTS=",    // Automation Setupoint = <Float> (4-byte)
+        3: "AUTD=",    // Automation Duration = <Int> (2-byte)
+        4: "AUTC=",    // Automation Complete = <Channel> (for confirmation)
+        5: "CPOL=",    // Configure Polling Frequency = <byte>
+        6: "DATA=",    // Perform Data Operations (Read Sensors)
+        7: "STAT="     // Ask for status
+    ]
+    
+    
+    // Message Bodies (TX/RX)
     var body_types: [Int:String] = [
 
         0 : "BADC",     // Bad Command or Value
         1 : "FALS",     // Logical False
         2 : "TRUE",     // Logical True
-        3 : "ERRR"      // Unknown Error with Vaue (default)
+        3 : "ERRR",     // Unknown Error (not caught)
+        4 : "NOAU",     // No Access (bad auth)
+        5 : "STRT",     // Begin Operation
+        6 : "ENDD",     // End Operation
+        7 : "AUTS",     // Automation Status
+        8 : "DATS"      // Data Status
     ]
+    
+    
     
     
     // Split message string into key : value
     func parse_message(message: String, t_type: transaction_req, completion: (_ t_resp: transaction_resp) -> Void) -> Bool{
         
         // Prase out Message Type:
-        let msg_keys = [String](msg_types.keys)
+        let msg_keys = [String](rx_msg_types.keys)
         
         for (key) in msg_keys {
             if message.uppercased().range(of: key) != nil {
@@ -81,7 +101,7 @@ class bludaq_core_serial{
                 let t_data = transaction_resp(
                     good_msg: true,
                     message: message,
-                    msg_type: msg_types[key]!,
+                    msg_type: rx_msg_types[key]!,
                     t_type: t_type,
                     body: message.substring(from: index))
                 
@@ -96,7 +116,7 @@ class bludaq_core_serial{
         let t_data = transaction_resp(
         good_msg: false,
         message: message,
-        msg_type: msg_types["UNKO"]!,
+        msg_type: rx_msg_types["UNKO"]!,
         t_type: t_type,
         body: message)
                 
