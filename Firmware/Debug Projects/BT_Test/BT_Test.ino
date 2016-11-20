@@ -14,7 +14,12 @@ typedef struct{
   double poll_freq; // Polling Frequency (power management)
 } auth_data;
 
+
 auth_data *auth_dat;              // Auth Data
+
+#define BUF 1024
+char mbuffer[BUF];
+int i = 0;
 
 
 void setup() {
@@ -28,7 +33,14 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  Serial.println("Test");
-  delay(10000);
+  
+  
+  if(Serial.available() > 0){
+    Serial.readBytesUntil('\n', mbuffer, BUF);
+    Serial.println(mbuffer);
+    for(i = 0; i < BUF; i++){
+      mbuffer[i]= '\0';
+    }
+  }
 
 }
