@@ -86,7 +86,7 @@ void setup(){
 
 //This function gets the WDT setting from the user using Serial comm
 void getSettings() {
-  Serial.begin(9600);
+  Serial.begin(BAUD_RATE);
   Serial.println("Select the Oscillator setting: 1 --> 16 ms, 2 --> 32 ms, 3 --> 64 ms");
   Serial.println("Select the Oscillator setting: 4 --> 0.125 s, 5 --> 0.25 s, 6 --> 0.5 ms");
   Serial.println("Select the Oscillator setting: 7 --> 1 s, 8 --> 2 s, 9 --> 4 s, 10 --> 8 s");
