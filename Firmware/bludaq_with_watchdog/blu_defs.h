@@ -11,9 +11,6 @@
 #include <Arduino.h>  // Arduino Type Definitions
 
 
-
-
-
 //
 // Debug and Option Flags:
 //
@@ -50,12 +47,12 @@
 // Data Structures:
 //
 
+
 // Auth Data - For validating the host
 typedef struct{
   bool auth_set;    // Authentication Paired
-  int touch;        // Last-updated (date/time)
-  double key;       // Auth-key
-  double poll_freq; // Polling Frequency (power management)
+  byte key;       // Auth-key
+  byte poll_freq; // Polling Frequency (power management)
 } auth_data;
 
 // Sensor Data - Stores "current" values
@@ -97,4 +94,48 @@ typedef struct {
 #define AUTO_SIZE 7            // Size of Automation Struct, 7 per struct, 14 for both structs
 #define AUTH_SIZE 11           // Size of Authentication Struct
                                // Size of sensor data is 15
+
+//
+// Serial Communication - Message Stack
+// Message Structure:  <Send Type> = <Body Type> or <Value>
+//
+
+
+// Send Message Types: 
+
+#define M_BADMSG "UNKO="   // Bad Message = <Incoming Message>
+#define M_HELLO  "HELO="   // Hello = <UUID?>
+#define M_AUTH   "AUTH="   // Authentication Status = <T/F>
+#define M_SLEEP  "SLEP="  // Device will sleep = <Duration>
+#define M_ERROR  "EROR="   // Device Error = <Error Message or ID>
+#define M_TEMP   "DTMP"    // Temperature = <Value>
+#define M_HUMID  "DHUM"    // Humidity = <Value>
+#define M_PRESS  "DPRS"    // Pressure = <Value>
+#define M_PHOTO  "DRLS"    // Photoresistor = <Value>
+#define M_PIR    "DPIR"    // Motion Sensor = <T/F>
+#define M_RL0    "DRL0"    // Relay 0 State = <T/F> (on / off)
+#define M_RL1    "DRL1"    // Relay 1 State = <T/F> (on / off)
+
+
+// Incoming Message Types: <Recieve Type> = <Body Type> or <Value>
+#define RM_AUTOCHAN  "AUTN="   // Automation Channel Select = <Channel>
+#define RM_AUTOFLAG  "AUTF="   // Automation Flag Set = <Byte>
+#define RM_AUTOSET   "AUTS="   // Automation Setupoint = <Float> (4-byte)
+#define RM_AUTODUR   "AUTD="   // Automation Duration = <Int> (2-byte)
+#define RM_AUTOCONF  "AUTC="   // Automation Complete = <Channel> (for confirmation)
+#define RM_CONFIGP   "CPOL="   // Configure Polling Frequency = <byte>
+#define RM_DATA      "DATA="   // Perform Data Operation = <Start / Stop>
+#define RM_STATUS    "STAT="   // Request Status  = <Operation Type>
+
+
+// Body Types:
+#define M_BAD    "BADC"    // Bad Message
+#define M_FALSE  "FALS"    // Logical False
+#define M_TRUE   "TRUE"    // Logical True
+#define M_ERROR  "ERRR"    // Unknown Error (not caught)
+#define M_NOAUTH "NOAU"    // Not Authenticated (timeout)
+#define M_START  "STRT"    // Start Operaton
+#define M_END    "ENDD"    // End Operaton 
+#define M_AUTOS  "AUTS"    // Automation Status
+#define M_DATAS  "DATS"    // Data Status
 
