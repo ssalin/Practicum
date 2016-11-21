@@ -37,7 +37,7 @@ class bludaq_core_serial{
     }
     
  
-    // Recieved Message Types:
+    // Recieved Message Types (RX):
     var rx_msg_types: [String:Int] = [
         "UNKO=" : -1,    // Unknown Message
         "HELO=" : 0,     // Device Booted
@@ -53,7 +53,7 @@ class bludaq_core_serial{
         "DRL1=" : 10,    // Data: Relay 1 State
     ]
     
-    
+    // Transmit Message Types (TX):
     var tx_msg_types: [Int: String] = [
     
         0: "AUTN=",    // Automation Channel Select = <Channel>
@@ -63,7 +63,8 @@ class bludaq_core_serial{
         4: "AUTC=",    // Automation Complete = <Channel> (for confirmation)
         5: "CPOL=",    // Configure Polling Frequency = <byte>
         6: "DATA=",    // Perform Data Operations (Read Sensors)
-        7: "STAT="     // Ask for status
+        7: "STAT=",    // Ask for status
+        8: "AUTK="     // Send Auth Key = <KEY>
     ]
     
     
@@ -78,7 +79,8 @@ class bludaq_core_serial{
         5 : "STRT",     // Begin Operation
         6 : "ENDD",     // End Operation
         7 : "AUTS",     // Automation Status
-        8 : "DATS"      // Data Status
+        8 : "DATS",     // Data Status
+        9 : "ATHS"      // Auth Status
     ]
     
     
@@ -96,6 +98,9 @@ class bludaq_core_serial{
                 // Find "=" index for substring:
                 let chars = message.characters;
                 let index = chars.index(of: "=")!
+                var body = message.substring(from: index)
+                body.remove(at: message.startIndex)
+                body = body.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
                 
                 // Populate Struct:
                 let t_data = transaction_resp(
@@ -103,7 +108,7 @@ class bludaq_core_serial{
                     message: message,
                     msg_type: rx_msg_types[key]!,
                     t_type: t_type,
-                    body: message.substring(from: index))
+                    body: body)
                 
                 // Execte Callback:
                 completion(t_data)
@@ -125,8 +130,6 @@ class bludaq_core_serial{
         return false
         
     } // END PARSER //
-    
-    
     
     
     // Special Parsers: Parse and cast to proper data type for display
@@ -155,6 +158,13 @@ class bludaq_core_serial{
     
         return 0
     
+    }
+    
+    // TX Functions:
+    
+    func send_key(msg_body: String) -> String{
+        
+        return tx_msg_types[8]! + msg_body + "\n"
     }
     
     

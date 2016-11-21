@@ -9,11 +9,7 @@
 import UIKit
 import CoreBluetooth
 import QuartzCore
-
-
-
-
-
+import Foundation
 
 final class InitViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, BluetoothSerialDelegate {
 
@@ -195,11 +191,7 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
         // Note: Value passed in callback function: t_resp is created by serial_core method instance
         if(serial_core.parse_message(message: message, t_type: this_message, completion: {(t_resp: bludaq_core_serial.transaction_resp) -> Void in
-            
-             passcode_label.text = t_resp.body
-            
-            
-            /*
+
             // Check "good" value:
             if(t_resp.good_msg){
                 
@@ -207,34 +199,31 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 if (serial_core.body_types[2] == t_resp.body){
                 
                     user_authd = true; // User has authed
+                    passcode_label.text = "Device Connected"
+                    enable_views()
+                    return
                 }
-                else{
-                
-                    passcode_label.text = t_resp.body
+                else if(serial_core.body_types[1] == t_resp.body){
+                    user_authd = false;
+                    passcode_label.text = "Access Denied"
+                    return
                 }
-                
             }
             
-            */
-            
+        
         })){ // Begin if(serial.core.parse_message()
         
         // Do nothing? (if callback worked we're authenticated...
-        passcode_label.text = "Device Connected"
-        enable_views()
-        return
         
         
         }
         else{
         
         // Message Not Recognized
-        
-        //passcode_label.text = "Device Error"
+        passcode_label.text = "Device Error"
         return
         
         }
-        
     }
 
 
@@ -252,9 +241,8 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
 
     // Passcode Button Pressed
     @IBAction func passcode_buttonp(_ sender: Any) {
-        
-        let passCode : String = getCode() + "\n"
-        serial.sendMessageToDevice(passCode)
+    
+        serial.sendMessageToDevice(serial_core.send_key(msg_body: getCode()))
     
     }
     
