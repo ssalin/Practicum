@@ -7,49 +7,53 @@
 
 #include "blu_defs.h"
 
-auth_data auth_dat;              // Auth Data
+// Memory Usage Note:
+// Global Values use a lot of memory!
 
-#define BUF 1024
-#define MAX_MSG_SIZE 18 // 18 Chars Max
+auth_data auth_dat;     // Auth Data Struct - Note that using pointers caused weird problems...
+bool device_authenticated = false;  // Device Host Auth Status
 
-bool device_authenticated = false;
-char mbuffer[BUF];
-int i = 0;
-
-
+// Setup Loop (Run Once at Boot)
 void setup() {
   
   auth_dat = {false,0,0};   // Init Auth Struct
   Serial.begin(9600);       // Enable Serial
 }
 
+
+// Main Loop:
 void loop() {
-  // put your main code here, to run repeatedly:
+  
+  char mbuffer[MAX_MSG_SIZE + 1];  // Incoming Message Buffer
+  int i = 0;  // Index for Clearning Buffer
   
   
   if(Serial.available() > 0){
-    Serial.readBytesUntil('\n', mbuffer, BUF);
+    Serial.readBytesUntil('\n', mbuffer, MAX_MSG_SIZE);
     
     // Call Parser:
     char * pntr = &mbuffer[0];
-    if(parseMessage(pntr, BUF)){
+    if(parseMessage(pntr, MAX_MSG_SIZE)){
      
      // Confirm Understood 
      
-     // Do something  
     }
     else{
     // Bad Message:
       Serial.println(M_BADMSG M_BAD);
     }
     
+
     // Clear Message Buffer
-    for(i = 0; i < BUF; i++){
+    for(i = 0; i < MAX_MSG_SIZE; i++){
       mbuffer[i]= '\0';
     }
   }
 
 } // END LOOP //
+
+
+
 
 // Incoming Message Parser
 // Uses global message buffer (may be bad)
@@ -86,7 +90,8 @@ byte parseMessage(char * msg, int len){
        }
        
        buf[i]= '\0';
-       continue;
+       //continue;
+       break;
      }
   }
     
@@ -95,30 +100,31 @@ byte parseMessage(char * msg, int len){
       
       case 0:    // Automation Channel Select <VALUE>
      
-      break;
+        break;
         
       case 1:    // Automation Flag Set       <VALUE>
       
-      break;
+        break;
       
       case 2:    // Automation Set Point      <VALUE>
       
-      break;
+        break;
       
       case 3:    // Automation Duration       <VALUE>
       
-      break;
+        break;
       
       case 4:    // Automation Complete (conf) <VALUE>
       
-      break;
+        break;
       
       case 5:    // Configure Polling Freq.    <VALUE>
-      break;
+      
+        break;
       
       case 6:    // Perform Data Operation (upload ready) <BODY>
       
-      break;
+        break;
       
       case 7:    // Perform Status <BODY>
         
@@ -162,13 +168,14 @@ byte parseMessage(char * msg, int len){
   return 0;
 }
 
-// Device Functions:
-  
+
   
 // Authenticate Device:
+// Checks auth_dat global structure
+// Updates global "authenticated" bool
 byte authenticate(int key){
 
-  // Set Passcode:
+  // No Key Set: Update
   if (auth_dat.auth_set == false){
     auth_dat.key = key;
     auth_dat.auth_set = true;
@@ -177,6 +184,8 @@ byte authenticate(int key){
     Serial.println(M_AUTH M_TRUE);  // Auth + True
     return 1;
   }
+  
+  // Key Set - Validate:
   else{
      
    if(auth_dat.key == key){

@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--BluDaq Control-->
+        <!--Device Selection-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="InitViewController" customModule="BlueDaq_Control" customModuleProvider="target" sceneMemberID="viewController">
@@ -22,7 +22,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Selected Device:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iob-TP-n2U">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Device Option:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iob-TP-n2U">
                                 <rect key="frame" x="16" y="93" width="170" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="21"/>
@@ -36,23 +36,6 @@
                                 <color key="textColor" red="0.09871536648545054" green="0.31891635936241969" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CFk-dh-X3E">
-                                <rect key="frame" x="157" y="68" width="229" height="70"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal">
-                                    <attributedString key="attributedTitle">
-                                        <fragment content="Choose Device">
-                                            <attributes>
-                                                <font key="NSFont" metaFont="system" size="21"/>
-                                            </attributes>
-                                        </fragment>
-                                    </attributedString>
-                                </state>
-                                <connections>
-                                    <action selector="connect_dev:" destination="BYZ-38-t0r" eventType="touchUpInside" id="g75-0i-bP0"/>
-                                    <segue destination="fhG-XN-NDz" kind="presentation" identifier="ShowScanner" modalTransitionStyle="coverVertical" id="MfB-tQ-SJt"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="UUID" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cDz-Pz-EXS">
                                 <rect key="frame" x="16" y="189" width="343" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -80,22 +63,95 @@
                                     <action selector="passcode_buttonp:" destination="BYZ-38-t0r" eventType="touchUpInside" id="S7C-Ro-nL5"/>
                                 </connections>
                             </button>
+                            <pageControl opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="QC7-8G-5X5">
+                                <rect key="frame" x="168" y="622" width="39" height="37"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="pageIndicatorTintColor" red="0.42329727560000002" green="0.42329727560000002" blue="0.42329727560000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="currentPageIndicatorTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </pageControl>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CFk-dh-X3E">
+                                <rect key="frame" x="146" y="68" width="229" height="70"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <accessibility key="accessibilityConfiguration">
+                                    <accessibilityTraits key="traits" button="YES" updatesFrequently="YES" adjustable="YES"/>
+                                </accessibility>
+                                <fontDescription key="fontDescription" name=".SFNSDisplay-Regular" family=".SF NS Display" pointSize="21"/>
+                                <state key="normal" title="Choose Device"/>
+                                <connections>
+                                    <action selector="connect_dev:" destination="BYZ-38-t0r" eventType="touchUpInside" id="g75-0i-bP0"/>
+                                    <segue destination="fhG-XN-NDz" kind="presentation" identifier="ShowScanner" modalTransitionStyle="coverVertical" id="MfB-tQ-SJt"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="gjz-hK-pQJ" appends="YES" id="bHl-5X-EEN"/>
+                        </connections>
                     </view>
-                    <navigationItem key="navigationItem" title="BluDaq Control" id="qBX-YE-xP2"/>
+                    <navigationItem key="navigationItem" title="Device Selection" id="qBX-YE-xP2"/>
                     <connections>
                         <outlet property="connect_button" destination="CFk-dh-X3E" id="Hnq-2V-gZS"/>
                         <outlet property="device_label" destination="b25-Wf-AUZ" id="znS-wR-i1G"/>
+                        <outlet property="gesure_rec" destination="gjz-hK-pQJ" id="0EG-qf-QFz"/>
                         <outlet property="num_picker" destination="RjL-Pd-ICe" id="0Vg-Nk-nDm"/>
+                        <outlet property="pageView" destination="QC7-8G-5X5" id="TND-6c-6Ls"/>
                         <outlet property="passcode_button" destination="sTP-Eb-MVp" id="Bfd-5H-prm"/>
                         <outlet property="passcode_label" destination="Ve7-go-ukT" id="IXv-oT-WnW"/>
                         <outlet property="uuid_label" destination="cDz-Pz-EXS" id="LOE-lN-xmj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <swipeGestureRecognizer direction="left" id="gjz-hK-pQJ">
+                    <connections>
+                        <segue destination="Idf-ly-83u" kind="show" id="sLR-Oy-Lo6"/>
+                    </connections>
+                </swipeGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="949.60000000000002" y="776.76161919040487"/>
+        </scene>
+        <!--Automation-->
+        <scene sceneID="1pT-sK-ywh">
+            <objects>
+                <viewController title="Automation" id="fyG-UO-lw7" customClass="AutoViewController" customModule="BlueDaq_Control" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="EMO-tm-EiE"/>
+                        <viewControllerLayoutGuide type="bottom" id="ekK-2q-wkS"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="i1L-fl-4Mp">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Automation" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uAW-DZ-FxG">
+                                <rect key="frame" x="113" y="0.0" width="149" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <pageControl opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" currentPage="2" translatesAutoresizingMaskIntoConstraints="NO" id="g8N-ci-LMJ">
+                                <rect key="frame" x="168" y="622" width="39" height="37"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="pageIndicatorTintColor" red="0.42329727560000002" green="0.42329727560000002" blue="0.42329727560000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="currentPageIndicatorTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </pageControl>
+                        </subviews>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="9ZY-yh-6RI" appends="YES" id="TXf-D7-kfC"/>
+                        </connections>
+                    </view>
+                </viewController>
+                <exit id="9Ze-Dr-lS0" userLabel="Exit" sceneMemberID="exit"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="M5J-bh-esY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <swipeGestureRecognizer direction="right" id="9ZY-yh-6RI">
+                    <connections>
+                        <segue destination="9Ze-Dr-lS0" kind="unwind" unwindAction="unwindToSensorWithSender:" id="B4c-6U-ka6"/>
+                    </connections>
+                </swipeGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="2722" y="777"/>
         </scene>
         <!--Scanning ...-->
         <scene sceneID="gox-uS-f45">
@@ -117,7 +173,7 @@
                                         <rect key="frame" x="0.0" y="22" width="343" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="8U9-Tp-6Y5" id="w7Q-Sc-06d">
-                                            <rect key="frame" x="0.0" y="0.0" width="343" height="43"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bluetooth Speaker" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lEs-GV-Ihi">
@@ -220,6 +276,55 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ph4-kH-UTP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="125.59999999999999" y="776.76161919040487"/>
+        </scene>
+        <!--Data-->
+        <scene sceneID="Vko-Ta-WUJ">
+            <objects>
+                <viewController title="Data" id="Idf-ly-83u" customClass="SensorViewController" customModule="BlueDaq_Control" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="fhP-5e-IJY"/>
+                        <viewControllerLayoutGuide type="bottom" id="Khq-uK-oZk"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="MNT-oz-Qas">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Sensor Data" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X7N-BO-crg">
+                                <rect key="frame" x="113" y="0.0" width="149" height="24"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <pageControl opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" currentPage="1" translatesAutoresizingMaskIntoConstraints="NO" id="zzx-WG-RxO">
+                                <rect key="frame" x="168" y="622" width="39" height="37"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="pageIndicatorTintColor" red="0.42329727560000002" green="0.42329727560000002" blue="0.42329727560000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="currentPageIndicatorTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </pageControl>
+                        </subviews>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="uSQ-ip-Xsr" appends="YES" id="kqQ-zu-Zg7"/>
+                            <outletCollection property="gestureRecognizers" destination="yUK-Gz-mEd" appends="YES" id="ota-NQ-yss"/>
+                        </connections>
+                    </view>
+                </viewController>
+                <exit id="fYZ-oM-ixi" userLabel="Exit" sceneMemberID="exit"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="66b-7d-CZ2" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <swipeGestureRecognizer direction="right" id="uSQ-ip-Xsr">
+                    <connections>
+                        <segue destination="fYZ-oM-ixi" kind="unwind" unwindAction="unwindToInitWithSender:" id="P0f-0M-FIK"/>
+                    </connections>
+                </swipeGestureRecognizer>
+                <swipeGestureRecognizer direction="left" id="yUK-Gz-mEd">
+                    <connections>
+                        <segue destination="fyG-UO-lw7" kind="show" id="3ee-AS-Xw6"/>
+                    </connections>
+                </swipeGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="1874" y="777"/>
         </scene>
     </scenes>
 </document>

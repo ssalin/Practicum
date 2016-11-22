@@ -1,5 +1,5 @@
 //
-//  BluDaq Sensor View Controller
+//  BluDaq Automation View Controller
 //
 //
 
@@ -9,13 +9,15 @@ import QuartzCore
 import Foundation
 
 
-final class SensorViewController: UIViewController, BluetoothSerialDelegate {
+
+final class AutoViewController: UIViewController, BluetoothSerialDelegate {
 
 //MARK: Variables
 
     let serial_core = bludaq_core_serial()
-    var navigationBarAppearace = UINavigationBar.appearance()
-    
+
+
+
 //MARK: IBOutlets
     
     
@@ -30,7 +32,6 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
         // Connect Serial
         serial.delegate = self
         
-
         if serial.centralManager.state != .poweredOn {
             title = "Bluetooth Disabled"
             return
@@ -70,9 +71,5 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
     
 //MARK: IBActions
 
-    // Return To This View (unwind)
-    @IBAction func unwindToSensor(sender: UIStoryboardSegue) {
-    
 
-    }
 }

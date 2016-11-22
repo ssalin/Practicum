@@ -4,11 +4,10 @@
  * Nov 2016
  * 
  */
+ 
+ // Required for Type Definitions:
+ #include <Arduino.h>
 
-//
-//  Libraries and Refrences:
-//
-#include <Arduino.h>  // Arduino Type Definitions
 
 
 
@@ -22,12 +21,14 @@
 
 
 //
-// Defined Constants:
+// Other Definitions:
 //
 
 #define NUM_RELAY 2           // Number of Relays
 //#define BAUD_RATE 115200      // Better Baud Rate for Serial
 #define BAUD_RATE 9600        // Typical Baud Rate for Serial
+#define MAX_MSG_SIZE 24       // 24 Chars + Terminator
+
 
 
 //
@@ -89,18 +90,19 @@ typedef struct {
 //
 
 #define EEPROM_SIZE 1024;     // Size of EEPROM in Bytes
-#define AUTH_ADDR 0            // Address of Authentication Structure
-#define AUTO_ADDR 12            // Address of Automation Structure(s)
-#define AUTO_SIZE 7            // Size of Automation Struct, 7 per struct, 14 for both structs
-#define AUTH_SIZE 11            // Size of Authentication Struct
+#define AUTH_ADDR 0           // Address of Authentication Structure
+#define AUTO_ADDR 12          // Address of Automation Structure(s)
+#define AUTO_SIZE 7           // Size of Automation Struct, 7 per struct, 14 for both structs
+#define AUTH_SIZE 11           // Size of Authentication Struct
 
 
 //
 // Serial Communication - Message Stack
 // Message Structure:  <Send Type> = <Body Type> or <Value>
+// Transmit Messages: From Device to Serial Host
+// Recieve Messages: From Serial Host to Device
+// Body Messages: Standard message types (not values) used by host and device
 //
-
-
 
 // Message Type Sizes:
 #define MESSAGE_LEN 5    // Size of all Message Types
@@ -124,7 +126,7 @@ typedef struct {
 #define M_RL1    "DRL1"    // Relay 1 State = <T/F> (on / off)
 
 // Array of TX Messages
-char * tx_msg[] {M_BADMSG, M_HELLO, M_AUTH, M_SLEEP, M_ERROR, M_TEMP, M_HUMID, M_PRESS, M_PHOTO, M_PIR, M_RL0, M_RL1};
+const char * tx_msg[] {M_BADMSG, M_HELLO, M_AUTH, M_SLEEP, M_ERROR, M_TEMP, M_HUMID, M_PRESS, M_PHOTO, M_PIR, M_RL0, M_RL1};
 
 // Recieve Message Types: <Recieve Type> = <Body Type> or <Value>
 #define RM_AUTOCHAN  "AUTN="   // Automation Channel Select = <Channel>
@@ -138,7 +140,7 @@ char * tx_msg[] {M_BADMSG, M_HELLO, M_AUTH, M_SLEEP, M_ERROR, M_TEMP, M_HUMID, M
 #define RM_AUTHKEY   "AUTK="   // Request Auth = <KEY>
 
 // Array of RX Messages
-char * rx_msg[] {RM_AUTOCHAN, RM_AUTOFLAG, RM_AUTOSET, RM_AUTODUR, RM_AUTOCONF, RM_CONFIGP, RM_DATA, RM_STATUS, RM_AUTHKEY};
+const char * rx_msg[] {RM_AUTOCHAN, RM_AUTOFLAG, RM_AUTOSET, RM_AUTODUR, RM_AUTOCONF, RM_CONFIGP, RM_DATA, RM_STATUS, RM_AUTHKEY};
 
 // Body Types:
 #define M_BAD    "BADC"    // Bad Message
@@ -153,4 +155,4 @@ char * rx_msg[] {RM_AUTOCHAN, RM_AUTOFLAG, RM_AUTOSET, RM_AUTODUR, RM_AUTOCONF, 
 #define M_AUTHS  "ATHS"     // Authentication Status
 
 // Array of Body Messages:
-char * body_msg[] = {M_BAD, M_FALSE, M_TRUE, M_ERROR, M_NOAUTH, M_START, M_END, M_AUTOS, M_DATAS };
+const char * body_msg[] = {M_BAD, M_FALSE, M_TRUE, M_ERROR, M_NOAUTH, M_START, M_END, M_AUTOS, M_DATAS };

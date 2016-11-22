@@ -24,6 +24,8 @@
 		1224D1001DE1431A0004F50F /* SensorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1224D0FE1DE1431A0004F50F /* SensorViewController.swift */; };
 		1224D1021DE1B19C0004F50F /* SerialCom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1224D1011DE1B19C0004F50F /* SerialCom.swift */; };
 		1224D1031DE1B19C0004F50F /* SerialCom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1224D1011DE1B19C0004F50F /* SerialCom.swift */; };
+		124DB9651DE4136500043E0B /* AccessoryClasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124DB9641DE4136500043E0B /* AccessoryClasses.swift */; };
+		12E090C31DE39FB500A9227C /* AutoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E090C21DE39FB500A9227C /* AutoViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +66,8 @@
 		1224D0F31DE1371E0004F50F /* ScannerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerViewController.swift; sourceTree = "<group>"; };
 		1224D0FE1DE1431A0004F50F /* SensorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorViewController.swift; sourceTree = "<group>"; };
 		1224D1011DE1B19C0004F50F /* SerialCom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerialCom.swift; sourceTree = "<group>"; };
+		124DB9641DE4136500043E0B /* AccessoryClasses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccessoryClasses.swift; sourceTree = "<group>"; };
+		12E090C21DE39FB500A9227C /* AutoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,11 +121,13 @@
 				1224D0C71DE135CC0004F50F /* Assets.xcassets */,
 				1224D0C91DE135CC0004F50F /* LaunchScreen.storyboard */,
 				1224D0C41DE135CC0004F50F /* Main.storyboard */,
-				1224D0FE1DE1431A0004F50F /* SensorViewController.swift */,
 				1224D0C01DE135CC0004F50F /* AppDelegate.swift */,
-				1224D0C21DE135CC0004F50F /* InitViewController.swift */,
-				1224D1011DE1B19C0004F50F /* SerialCom.swift */,
 				1224D0F31DE1371E0004F50F /* ScannerViewController.swift */,
+				1224D0C21DE135CC0004F50F /* InitViewController.swift */,
+				1224D0FE1DE1431A0004F50F /* SensorViewController.swift */,
+				12E090C21DE39FB500A9227C /* AutoViewController.swift */,
+				124DB9641DE4136500043E0B /* AccessoryClasses.swift */,
+				1224D1011DE1B19C0004F50F /* SerialCom.swift */,
 				1224D0F01DE1371E0004F50F /* BluetoothSerial.swift */,
 				1224D0EE1DE1371D0004F50F /* BlueDaq Control-Bridging-Header.h */,
 				1224D0F11DE1371E0004F50F /* MBProgressHUD.h */,
@@ -291,6 +297,8 @@
 				1224D0C31DE135CC0004F50F /* InitViewController.swift in Sources */,
 				1224D0C11DE135CC0004F50F /* AppDelegate.swift in Sources */,
 				1224D0FF1DE1431A0004F50F /* SensorViewController.swift in Sources */,
+				124DB9651DE4136500043E0B /* AccessoryClasses.swift in Sources */,
+				12E090C31DE39FB500A9227C /* AutoViewController.swift in Sources */,
 				1224D1021DE1B19C0004F50F /* SerialCom.swift in Sources */,
 				1224D0F61DE1371E0004F50F /* BluetoothSerial.swift in Sources */,
 				1224D0FA1DE1371E0004F50F /* ScannerViewController.swift in Sources */,
@@ -562,6 +570,7 @@
 				1224D0E71DE135CD0004F50F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1224D0E81DE135CD0004F50F /* Build configuration list for PBXNativeTarget "BlueDaq ControlTests" */ = {
 			isa = XCConfigurationList;
@@ -570,6 +579,7 @@
 				1224D0EA1DE135CD0004F50F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1224D0EB1DE135CD0004F50F /* Build configuration list for PBXNativeTarget "BlueDaq ControlUITests" */ = {
 			isa = XCConfigurationList;
@@ -578,6 +588,7 @@
 				1224D0ED1DE135CD0004F50F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

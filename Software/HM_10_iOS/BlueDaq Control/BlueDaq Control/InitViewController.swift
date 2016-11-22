@@ -14,10 +14,13 @@ import Foundation
 final class InitViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, BluetoothSerialDelegate {
 
 //MARK: Variables
-    var pickerData: [[String]] = [[String]]()
-    var message_buffer : String = ""
-    let serial_core = bludaq_core_serial()
-    var user_authd = false;
+    var pickerData: [[String]] = [[String]]()       // Picker Array
+    var message_buffer : String = ""                // Global Message Buffer
+    let serial_core = bludaq_core_serial()          // Serial Message Functions
+    let accesories = bluedaq_settings()             // App Settings Class
+    var current_settings = bluedaq_settings.prefs(auth : false, timestamp : "", last_UUID : "", passcode : "", last_device_name : "", automation_0 : false, automation_1 : false)
+    
+    
     
 //MARK: IBOutlets
     
@@ -28,8 +31,13 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
     @IBOutlet weak var num_picker: UIPickerView!        // Code Wheel
     @IBOutlet weak var passcode_label: UILabel!         // Code Label
     @IBOutlet weak var passcode_button: UIButton!       // Code Button
+    @IBOutlet weak var pageView: UIPageControl!         // Page View
+    @IBOutlet var gesure_rec: UISwipeGestureRecognizer! // Gesture Recognizer
+    
     
 //MARK: Functions
+    
+ 
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,8 +45,8 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
         // init serial
         serial = BluetoothSerial(delegate: self)
         serial.writeType = .withoutResponse
-
-        reloadView()
+    
+        reloadView() // Reload View Functions
     }
     
 
@@ -48,10 +56,10 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
 
     
-    // Change Status Label and Buttons:
+    // Update UI when activated:
     func reloadView() {
-        // in case we're the visible view again
         serial.delegate = self
+        current_settings = accesories.load_defaults()
 
         if serial.isReady {
             showPasscode(state: true)
@@ -69,6 +77,8 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
             connect_button.setTitle("Choose Device", for: .normal)
             connect_button.tintColor = view.tintColor
             connect_button.isEnabled = true
+            //user_authd = false
+            current_settings.auth = false
             
         } else {
             showPasscode(state: false)
@@ -77,7 +87,19 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
             connect_button.setTitle("Choose Device", for: .normal)
             connect_button.tintColor = UIColor.gray
             connect_button.isEnabled = true
+            //user_authd = false
+            current_settings.auth = false
         }
+        
+        // Page Views:
+        if(current_settings.auth){
+            enable_views()
+        }
+        else{
+            gesure_rec.isEnabled = false;
+            pageView.isHidden = true;
+        }
+        
     }
 
     
@@ -198,14 +220,16 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 // Check Passcode: (2 = TRUE)
                 if (serial_core.body_types[2] == t_resp.body){
                 
-                    user_authd = true; // User has authed
-                    passcode_label.text = "Device Connected"
+                    //user_authd = true;
+                    current_settings.auth = true // User has authed
                     enable_views()
                     return
                 }
                 else if(serial_core.body_types[1] == t_resp.body){
-                    user_authd = false;
+                    current_settings.auth = false
+                    //user_authd = false;
                     passcode_label.text = "Access Denied"
+
                     return
                 }
             }
@@ -230,7 +254,10 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
 //MARK: Enable Applicaton ViewControllers 
 
     func enable_views(){
-    
+        passcode_label.text = "Device Connected"
+        current_settings.passcode = getCode()    // Set Passcode
+        gesure_rec.isEnabled = true;
+        pageView.isHidden = false;
     
     }
 
@@ -241,8 +268,8 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
 
     // Passcode Button Pressed
     @IBAction func passcode_buttonp(_ sender: Any) {
-    
-        serial.sendMessageToDevice(serial_core.send_key(msg_body: getCode()))
+        
+        serial.sendMessageToDevice(serial_core.send_key(msg_body: getCode())) // Send Passcode
     
     }
     
@@ -259,17 +286,6 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
             if !serial.isReady {
                 device_label.text = "Please Select Device"
                 
-                // Display Popup:
-                /*
-                let alert = UIAlertController(title: "Please Select Device", message: "Please connect to a BlueDaq Device.", preferredStyle: .alert)
-                let OKAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: {
-                    (_)in
-                    self.performSegue(withIdentifier: "ShowScanner", sender: self)
-                })
-        
-                alert.addAction(OKAction)
-                self.present(alert, animated: true, completion: nil)
-                */
             }
          }
          

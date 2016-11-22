@@ -170,3 +170,4 @@ class bludaq_core_serial{
     
     
 }
+
