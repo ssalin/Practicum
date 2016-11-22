@@ -33,6 +33,7 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
     @IBOutlet weak var passcode_button: UIButton!       // Code Button
     @IBOutlet weak var pageView: UIPageControl!         // Page View
     @IBOutlet var gesure_rec: UISwipeGestureRecognizer! // Gesture Recognizer
+
     
     
 //MARK: Functions
@@ -60,7 +61,9 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
     func reloadView() {
         serial.delegate = self
         current_settings = accesories.load_defaults()
-
+   
+        
+        
         if serial.isReady {
             showPasscode(state: true)
             device_label.text = serial.connectedPeripheral!.name
@@ -255,12 +258,38 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
 
     func enable_views(){
         passcode_label.text = "Device Connected"
-        current_settings.passcode = getCode()    // Set Passcode
         gesure_rec.isEnabled = true;
         pageView.isHidden = false;
+        
+        // Update Settings:
+        current_settings.passcode = getCode()    // Set Passcode
+        current_settings.last_device_name = serial.connectedPeripheral!.name!
+        current_settings.last_UUID = String(serial.connectedPeripheral!.identifier.uuidString)
+        
+        // Save:
+        accesories.save_defaults(prefs: current_settings)
     
     }
 
+
+//MARK: Segue Prep
+
+
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    
+    // Info View
+    if segue.identifier == "ShowInfo" {
+        let controller = segue.destination as! InfoViewController
+        controller.current_settings = current_settings // Copy Settings
+    }
+
+    // Data View
+    if segue.identifier == "ShowData" {
+        let controller = segue.destination as! SensorViewController
+        controller.current_settings = current_settings // Copy Settings
+    }
+    
+}
     
     
 //MARK: IBActions

@@ -14,7 +14,10 @@ final class AutoViewController: UIViewController, BluetoothSerialDelegate {
 
 //MARK: Variables
 
-    let serial_core = bludaq_core_serial()
+    var message_buffer : String = ""                // Global Message Buffer
+    let serial_core = bludaq_core_serial()          // Serial Message Functions
+    let accesories = bluedaq_settings()             // App Settings Class
+    var current_settings = bluedaq_settings.prefs(auth : false, timestamp : "", last_UUID : "", passcode : "", last_device_name : "", automation_0 : false, automation_1 : false)
 
 
 

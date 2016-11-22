@@ -13,8 +13,10 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
 
 //MARK: Variables
 
-    let serial_core = bludaq_core_serial()
-    var navigationBarAppearace = UINavigationBar.appearance()
+    var message_buffer : String = ""                // Global Message Buffer
+    let serial_core = bludaq_core_serial()          // Serial Message Functions
+    let accesories = bluedaq_settings()             // App Settings Class
+    var current_settings = bluedaq_settings.prefs(auth : false, timestamp : "", last_UUID : "", passcode : "", last_device_name : "", automation_0 : false, automation_1 : false)
     
 //MARK: IBOutlets
     
@@ -65,6 +67,20 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
         }
     }
     
+    
+    
+    
+//MARK: Segue Prep
+
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+
+    // Automation View
+    if segue.identifier == "ShowAuto" {
+        let controller = segue.destination as! AutoViewController
+        controller.current_settings = current_settings // Copy Settings
+    }
+    
+}
     
     
     

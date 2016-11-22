@@ -25,6 +25,7 @@
 		1224D1021DE1B19C0004F50F /* SerialCom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1224D1011DE1B19C0004F50F /* SerialCom.swift */; };
 		1224D1031DE1B19C0004F50F /* SerialCom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1224D1011DE1B19C0004F50F /* SerialCom.swift */; };
 		124DB9651DE4136500043E0B /* AccessoryClasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124DB9641DE4136500043E0B /* AccessoryClasses.swift */; };
+		12D032131DE4D79C0088E886 /* InfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12D032121DE4D79C0088E886 /* InfoViewController.swift */; };
 		12E090C31DE39FB500A9227C /* AutoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E090C21DE39FB500A9227C /* AutoViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +68,7 @@
 		1224D0FE1DE1431A0004F50F /* SensorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorViewController.swift; sourceTree = "<group>"; };
 		1224D1011DE1B19C0004F50F /* SerialCom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerialCom.swift; sourceTree = "<group>"; };
 		124DB9641DE4136500043E0B /* AccessoryClasses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccessoryClasses.swift; sourceTree = "<group>"; };
+		12D032121DE4D79C0088E886 /* InfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoViewController.swift; sourceTree = "<group>"; };
 		12E090C21DE39FB500A9227C /* AutoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -121,6 +123,7 @@
 				1224D0C71DE135CC0004F50F /* Assets.xcassets */,
 				1224D0C91DE135CC0004F50F /* LaunchScreen.storyboard */,
 				1224D0C41DE135CC0004F50F /* Main.storyboard */,
+				12D032121DE4D79C0088E886 /* InfoViewController.swift */,
 				1224D0C01DE135CC0004F50F /* AppDelegate.swift */,
 				1224D0F31DE1371E0004F50F /* ScannerViewController.swift */,
 				1224D0C21DE135CC0004F50F /* InitViewController.swift */,
@@ -298,6 +301,7 @@
 				1224D0C11DE135CC0004F50F /* AppDelegate.swift in Sources */,
 				1224D0FF1DE1431A0004F50F /* SensorViewController.swift in Sources */,
 				124DB9651DE4136500043E0B /* AccessoryClasses.swift in Sources */,
+				12D032131DE4D79C0088E886 /* InfoViewController.swift in Sources */,
 				12E090C31DE39FB500A9227C /* AutoViewController.swift in Sources */,
 				1224D1021DE1B19C0004F50F /* SerialCom.swift in Sources */,
 				1224D0F61DE1371E0004F50F /* BluetoothSerial.swift in Sources */,

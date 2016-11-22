@@ -67,13 +67,20 @@ struct auto {
 
 // Timestamp:
 func timestamp() -> String {
-
+    
+    // Get Date
     let date = NSDate()
     let calendar = NSCalendar.current
-    let hour = calendar.component(.hour, from: date as Date)
-    let minutes = calendar.component(.minute, from: date as Date)
+    let components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date as Date)
+    let current_time = NSCalendar.current.date(from: components)!
     
-    return ("\(calendar) - \(hour) : \(minutes)")
+    // Format
+    let formatter = DateFormatter()
+    formatter.dateStyle = .short
+    formatter.timeStyle = .medium
+    
+    // Return:
+    return formatter.string(from: current_time)
 }
 
 // Save user settings

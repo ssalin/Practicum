@@ -89,7 +89,13 @@
                             <outletCollection property="gestureRecognizers" destination="gjz-hK-pQJ" appends="YES" id="bHl-5X-EEN"/>
                         </connections>
                     </view>
-                    <navigationItem key="navigationItem" title="Device Selection" id="qBX-YE-xP2"/>
+                    <navigationItem key="navigationItem" title="Device Selection" id="qBX-YE-xP2">
+                        <barButtonItem key="leftBarButtonItem" image="gears" id="cvH-Zj-E3G">
+                            <connections>
+                                <segue destination="11v-kI-xo9" kind="show" identifier="ShowInfo" id="Gaj-M6-Vyp"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="connect_button" destination="CFk-dh-X3E" id="Hnq-2V-gZS"/>
                         <outlet property="device_label" destination="b25-Wf-AUZ" id="znS-wR-i1G"/>
@@ -104,11 +110,91 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <swipeGestureRecognizer direction="left" id="gjz-hK-pQJ">
                     <connections>
-                        <segue destination="Idf-ly-83u" kind="show" id="sLR-Oy-Lo6"/>
+                        <segue destination="Idf-ly-83u" kind="show" identifier="ShowData" id="sLR-Oy-Lo6"/>
                     </connections>
                 </swipeGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="949.60000000000002" y="776.76161919040487"/>
+        </scene>
+        <!--Info-->
+        <scene sceneID="kRH-DY-T8x">
+            <objects>
+                <viewController title="Info" id="11v-kI-xo9" customClass="InfoViewController" customModule="BlueDaq_Control" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="YLs-8C-HqK"/>
+                        <viewControllerLayoutGuide type="bottom" id="8hf-2q-nLa"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="WMd-RV-W4a">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="BluDaq Control - V1.0b" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OFG-rC-4Ap">
+                                <rect key="frame" x="100" y="171" width="175" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="BlueDaq-Logo" translatesAutoresizingMaskIntoConstraints="NO" id="k4C-a3-JV9">
+                                <rect key="frame" x="67" y="72" width="240" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Last Device Connected:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TyC-WF-8WO">
+                                <rect key="frame" x="16" y="228" width="183" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="UUID:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Gb-jT-Hns">
+                                <rect key="frame" x="16" y="280" width="46" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Date / Time:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z6b-Tc-wzs">
+                                <rect key="frame" x="16" y="338" width="93" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Device" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Fl-se-ZCo">
+                                <rect key="frame" x="16" y="257" width="343" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.030457442939999999" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Time Stamp" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5eS-kO-bZd">
+                                <rect key="frame" x="16" y="367" width="343" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="UUID" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D24-7D-lZy">
+                                <rect key="frame" x="16" y="309" width="343" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <outlet property="UUID_Label" destination="D24-7D-lZy" id="jtx-Mz-5b4"/>
+                        <outlet property="device_label" destination="6Fl-se-ZCo" id="sc1-GU-evL"/>
+                        <outlet property="time_label" destination="5eS-kO-bZd" id="5O5-dB-Vgz"/>
+                        <segue destination="82p-ry-ZIz" kind="unwind" identifier="unwindToInit" unwindAction="unwindToInitWithSender:" id="qgN-xV-wVw"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="U6k-9t-ovE" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="82p-ry-ZIz" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="949.60000000000002" y="1548.5757121439281"/>
         </scene>
         <!--Automation-->
         <scene sceneID="1pT-sK-ywh">
@@ -165,7 +251,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="mVC-eE-TUI">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="mVC-eE-TUI">
                                 <rect key="frame" x="16" y="0.0" width="343" height="647"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
@@ -212,10 +298,10 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="mVC-eE-TUI" secondAttribute="trailing" constant="-20" id="cXq-pv-mu2"/>
-                            <constraint firstItem="iUC-6e-ZYE" firstAttribute="top" secondItem="mVC-eE-TUI" secondAttribute="bottom" constant="67" id="hK2-mK-Mkq"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="mVC-eE-TUI" secondAttribute="trailing" id="cXq-pv-mu2"/>
+                            <constraint firstItem="iUC-6e-ZYE" firstAttribute="top" secondItem="mVC-eE-TUI" secondAttribute="bottom" constant="20" id="hK2-mK-Mkq"/>
                             <constraint firstItem="mVC-eE-TUI" firstAttribute="top" secondItem="Rf7-2S-oFq" secondAttribute="top" id="ylv-hD-C7z"/>
-                            <constraint firstItem="mVC-eE-TUI" firstAttribute="leading" secondItem="Rf7-2S-oFq" secondAttribute="leadingMargin" constant="-20" id="z81-0x-pHY"/>
+                            <constraint firstItem="mVC-eE-TUI" firstAttribute="leading" secondItem="Rf7-2S-oFq" secondAttribute="leadingMargin" id="z81-0x-pHY"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Scanning ..." id="WUL-60-YsF">
@@ -315,16 +401,20 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="66b-7d-CZ2" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <swipeGestureRecognizer direction="right" id="uSQ-ip-Xsr">
                     <connections>
-                        <segue destination="fYZ-oM-ixi" kind="unwind" unwindAction="unwindToInitWithSender:" id="P0f-0M-FIK"/>
+                        <segue destination="fYZ-oM-ixi" kind="unwind" identifier="unwindToInit" unwindAction="unwindToInitWithSender:" id="P0f-0M-FIK"/>
                     </connections>
                 </swipeGestureRecognizer>
                 <swipeGestureRecognizer direction="left" id="yUK-Gz-mEd">
                     <connections>
-                        <segue destination="fyG-UO-lw7" kind="show" id="3ee-AS-Xw6"/>
+                        <segue destination="fyG-UO-lw7" kind="show" identifier="ShowAuto" id="3ee-AS-Xw6"/>
                     </connections>
                 </swipeGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1874" y="777"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="BlueDaq-Logo" width="2400" height="600"/>
+        <image name="gears" width="31" height="31"/>
+    </resources>
 </document>
