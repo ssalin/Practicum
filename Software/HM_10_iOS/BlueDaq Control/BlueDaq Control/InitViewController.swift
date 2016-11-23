@@ -18,7 +18,7 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
     var message_buffer : String = ""                // Global Message Buffer
     let serial_core = bludaq_core_serial()          // Serial Message Functions
     let accesories = bluedaq_settings()             // App Settings Class
-    var current_settings = bluedaq_settings.prefs(auth : false, timestamp : "", last_UUID : "", passcode : "", last_device_name : "", automation_0 : false, automation_1 : false)
+    var current_settings = bluedaq_settings.prefs(init_ : true, auth : false, timestamp : "", last_UUID : "", passcode : "", last_device_name : "", automation_0 : false, automation_1 : false)
     
     
     
@@ -59,11 +59,17 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     // Update UI when activated:
     func reloadView() {
-        serial.delegate = self
-        current_settings = accesories.load_defaults()
+		
+		// Control Serial Deligate (rx/tx)
+		serial.delegate = self
+		
+		// Load Settings from User Defaults
+		if(current_settings.init_){
+			current_settings = accesories.load_defaults()
+			current_settings.init_ = false;	// Mark Loaded (don't overwrite)
+		}
    
-        
-        
+		// Update UI
         if serial.isReady {
             showPasscode(state: true)
             device_label.text = serial.connectedPeripheral!.name
@@ -93,7 +99,12 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
             //user_authd = false
             current_settings.auth = false
         }
-        
+		
+		// Check Connectivity:
+		if !serial.isReady {
+			device_label.text = "Please Select Device"
+		}
+		
         // Page Views:
         if(current_settings.auth){
             enable_views()
@@ -205,55 +216,39 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     }
     
-    
-    
+	
 //MARK: Message Responder
-    
-    
-    // Assume validated
-    func messageResponder(message : String){
-        let this_message = bludaq_core_serial.transaction_req.Authenticate
-        
-        // Note: Value passed in callback function: t_resp is created by serial_core method instance
-        if(serial_core.parse_message(message: message, t_type: this_message, completion: {(t_resp: bludaq_core_serial.transaction_resp) -> Void in
+	
+	func messageResponder(message : String){
+		
+		let message_resp = serial_core.parse_message(message: message, t_type : bludaq_core_serial.transaction_req.Authenticate)
 
-            // Check "good" value:
-            if(t_resp.good_msg){
+		// Check "good" value:
+		if(message_resp.good_msg){
                 
-                // Check Passcode: (2 = TRUE)
-                if (serial_core.body_types[2] == t_resp.body){
-                
-                    //user_authd = true;
-                    current_settings.auth = true // User has authed
-                    enable_views()
-                    return
-                }
-                else if(serial_core.body_types[1] == t_resp.body){
-                    current_settings.auth = false
-                    //user_authd = false;
-                    passcode_label.text = "Access Denied"
+			// Check Passcode: (2 = TRUE)
+			if (serial_core.body_types[2] == message_resp.body){
+				
+				current_settings.auth = true // User has authed
+				enable_views()
 
-                    return
+			}
+			
+			else if(serial_core.body_types[1] == message_resp.body){
+				current_settings.auth = false
+				passcode_label.text = "Access Denied"
+				
                 }
-            }
-            
+		}
+		else{
         
-        })){ // Begin if(serial.core.parse_message()
-        
-        // Do nothing? (if callback worked we're authenticated...
-        
-        
-        }
-        else{
-        
-        // Message Not Recognized
-        passcode_label.text = "Device Error"
-        return
-        
+			// Message Not Recognized
+			passcode_label.text = "Device Error"
         }
     }
 
-
+	
+	
 //MARK: Enable Applicaton ViewControllers 
 
     func enable_views(){
@@ -299,29 +294,28 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     @IBAction func passcode_buttonp(_ sender: Any) {
         
         serial.sendMessageToDevice(serial_core.send_key(msg_body: getCode())) // Send Passcode
-    
+		
     }
     
-    // Return To This View (unwind)
-    @IBAction func unwindToInit(sender: UIStoryboardSegue) {
+	// Return To This View (unwind)
+	@IBAction func unwindToInit(sender: UIStoryboardSegue) {
+		
+		
+		// Refresh:
+		reloadView()
         
-        // Refresh:
-        reloadView()
-        
-        // Return from Scanner
-        if sender.source is ScannerViewController {
-        
-            // Check Connectivity:
-            if !serial.isReady {
-                device_label.text = "Please Select Device"
-                
-            }
-         }
-         
-        // Return from other view...
-        else {
+		// Return from Scanner
+		if sender.source is ScannerViewController {
+				if let sourceVC = sender.source as? SensorViewController {
+				current_settings = sourceVC.current_settings
+			}
+
+		}
+			
+		// Return from other view...
+		else {
             
-        }
+		}
         
     }
 
@@ -335,4 +329,51 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     }
 }
 
+/* 
+	// Old Callback Routine:
+    // Assume validated
+    func messageResponder(message : String){
+        let this_message = bludaq_core_serial.transaction_req.Authenticate
+		
+		
+        // Note: Value passed in callback function: t_resp is created by serial_core method instance
+        if(serial_core.parse_message(message: message, t_type: this_message, completion: {(t_resp: bludaq_core_serial.transaction_resp) -> Void in
+
+            // Check "good" value:
+            if(t_resp.good_msg){
+                
+                // Check Passcode: (2 = TRUE)
+                if (serial_core.body_types[2] == t_resp.body){
+                
+                    //user_authd = true;
+                    current_settings.auth = true // User has authed
+                    enable_views()
+                    return
+                }
+                else if(serial_core.body_types[1] == t_resp.body){
+                    current_settings.auth = false
+                    //user_authd = false;
+                    passcode_label.text = "Access Denied"
+
+                    return
+                }
+            }
+            
+        
+        })){ // Begin if(serial.core.parse_message()
+        
+        // Do nothing? (if callback worked we're authenticated...
+        
+        
+        }
+        else{
+        
+        // Message Not Recognized
+        passcode_label.text = "Device Error"
+        return
+        
+        }
+    }
+
+	*/
 

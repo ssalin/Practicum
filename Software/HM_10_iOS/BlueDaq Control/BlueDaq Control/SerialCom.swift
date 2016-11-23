@@ -82,9 +82,94 @@ class bludaq_core_serial{
         8 : "DATS",     // Data Status
         9 : "ATHS"      // Auth Status
     ]
+	
+	
+	// Non-Callback Parser:
+	func parse_message(message: String, t_type: bludaq_core_serial.transaction_req) -> bludaq_core_serial.transaction_resp{
+        
+        // Prase out Message Type:
+        let msg_keys = [String](rx_msg_types.keys)
+        
+        for (key) in msg_keys {
+            if message.uppercased().range(of: key) != nil {
+                
+                // Find "=" index for substring:
+                let chars = message.characters;
+                let index = chars.index(of: "=")!
+                var body = message.substring(from: index)
+                body.remove(at: message.startIndex)
+                body = body.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                
+                // Populate Struct:
+                let t_data = transaction_resp(
+                    good_msg: true,
+                    message: message,
+                    msg_type: rx_msg_types[key]!,
+                    t_type: t_type,
+                    body: body)
+                
+                // Execte Callback:
+                return t_data
+                
+            }
+        }
+        
+        // Populate Struct:
+        let t_data = transaction_resp(
+        good_msg: false,
+        message: message,
+        msg_type: rx_msg_types["UNKO"]!,
+        t_type: t_type,
+        body: message)
+		
+        return t_data
+		
+    } // END PARSER //
+
+
+
+    
+    // Special Parsers: Parse and cast to proper data type for display
+    // Do any nesssiary corrections or math here...
+    
+    // Temperature
+    func parse_temp(msg_body: String) -> Float{
+    
+        return 0
+    }
+    
+    // Humidity
+    func parse_humidity(msg_body: String) -> Float{
+    
+        return 0
+    }
+    
+    // Pressure
+    func parse_pressure(msg_body: String) -> Float{
+    
+        return 0
+    }
+    
+    // Photodiode
+    func parse_photo(msg_bod: String) -> Int {
+    
+        return 0
+    
+    }
+    
+    // TX Functions:
+    
+    func send_key(msg_body: String) -> String{
+        
+        return tx_msg_types[8]! + msg_body + "\n"
+    }
     
     
     
+}
+
+
+    /*
     
     // Split message string into key : value
     func parse_message(message: String, t_type: transaction_req, completion: (_ t_resp: transaction_resp) -> Void) -> Bool{
@@ -131,43 +216,4 @@ class bludaq_core_serial{
         
     } // END PARSER //
     
-    
-    // Special Parsers: Parse and cast to proper data type for display
-    // Do any nesssiary corrections or math here...
-    
-    // Temperature
-    func parse_temp(msg_body: String) -> Float{
-    
-        return 0
-    }
-    
-    // Humidity
-    func parse_humidity(msg_body: String) -> Float{
-    
-        return 0
-    }
-    
-    // Pressure
-    func parse_pressure(msg_body: String) -> Float{
-    
-        return 0
-    }
-    
-    // Photodiode
-    func parse_photo(msg_bod: String) -> Int {
-    
-        return 0
-    
-    }
-    
-    // TX Functions:
-    
-    func send_key(msg_body: String) -> String{
-        
-        return tx_msg_types[8]! + msg_body + "\n"
-    }
-    
-    
-    
-}
-
+	*/

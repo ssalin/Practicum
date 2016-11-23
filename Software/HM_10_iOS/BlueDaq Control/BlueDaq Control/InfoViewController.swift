@@ -15,7 +15,7 @@ final class InfoViewController: UIViewController, BluetoothSerialDelegate {
 
     let serial_core = bludaq_core_serial()
     var navigationBarAppearace = UINavigationBar.appearance()
-    var current_settings = bluedaq_settings.prefs(auth : false, timestamp : "", last_UUID : "", passcode : "", last_device_name : "", automation_0 : false, automation_1 : false)
+    var current_settings = bluedaq_settings.prefs(init_ : true, auth : false, timestamp : "", last_UUID : "", passcode : "", last_device_name : "", automation_0 : false, automation_1 : false)
     
 //MARK: IBOutlets
     
@@ -73,8 +73,19 @@ final class InfoViewController: UIViewController, BluetoothSerialDelegate {
             hud?.hide(true, afterDelay: 1.0)
         }
     }
+
+
+//MARK: Segue Ops
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     
+    // Info View
+    if segue.identifier == "unwindToInit" {
+        let controller = segue.destination as! InitViewController
+        controller.current_settings = current_settings // Copy Settings
+    }
+
     
+}
     
     
 //MARK: IBActions

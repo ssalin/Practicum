@@ -17,7 +17,7 @@ final class AutoViewController: UIViewController, BluetoothSerialDelegate {
     var message_buffer : String = ""                // Global Message Buffer
     let serial_core = bludaq_core_serial()          // Serial Message Functions
     let accesories = bluedaq_settings()             // App Settings Class
-    var current_settings = bluedaq_settings.prefs(auth : false, timestamp : "", last_UUID : "", passcode : "", last_device_name : "", automation_0 : false, automation_1 : false)
+    var current_settings = bluedaq_settings.prefs(init_ : true, auth : false, timestamp : "", last_UUID : "", passcode : "", last_device_name : "", automation_0 : false, automation_1 : false)
 
 
 
@@ -69,7 +69,17 @@ final class AutoViewController: UIViewController, BluetoothSerialDelegate {
         }
     }
     
+//MARK: Segue Prep
+
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+	
+	// Unwind to Sensor View
+    if segue.identifier == "unwindToSensor" {
+        let controller = segue.destination as! InitViewController
+        controller.current_settings = current_settings // Copy Settings
+    }
     
+}
     
     
 //MARK: IBActions

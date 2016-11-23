@@ -12,13 +12,14 @@ class bluedaq_settings {
 
 // Prefs:
 struct prefs {
-    var auth : Bool  = false               // Is Authenticated (Not Stored)
-    var timestamp : String  = ""        // Last time prefs were updated
-    var last_UUID : String  = ""    // Previous Device UUID
+	var init_ : Bool = true
+    var auth : Bool  = false            // Is Authenticated (Not Stored)
+    var timestamp : String  = ""		// Last time prefs were updated
+    var last_UUID : String  = ""		// Previous Device UUID
     var passcode : String   = ""        // Current Passcode (Not Stored)
     var last_device_name : String = ""  // Previous Device Name
-    var automation_0 : Bool = false          // Is automation enabled for this device
-    var automation_1 : Bool = false          // Is automation enabled for this device
+    var automation_0 : Bool = false     // Is automation enabled for this device
+    var automation_1 : Bool = false     // Is automation enabled for this device
     
     /*
     init(){
@@ -102,6 +103,7 @@ func load_defaults() -> bluedaq_settings.prefs {
     let defaults = UserDefaults.standard
     
     let l_prefs = bluedaq_settings.prefs(
+	init_ : true,	// Not Loaded
     auth: false,    // Not Loaded
     timestamp : defaults.string(forKey: "timestamp") ?? "",
     last_UUID : defaults.string(forKey: "last_UUID") ?? "",
