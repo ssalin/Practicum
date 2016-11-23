@@ -136,7 +136,7 @@ const char * tx_msg[] {M_BADMSG, M_HELLO, M_AUTH, M_SLEEP, M_ERROR, M_TEMP, M_HU
 #define RM_AUTOCONF  "AUTC="   // Automation Complete = <Channel> (for confirmation)
 #define RM_CONFIGP   "CPOL="   // Configure Polling Frequency = <byte>
 #define RM_DATA      "DATA="   // Perform Data Operation = <Start / Stop>
-#define RM_STATUS    "STAT="   // Request Status  =  <Operation Type>
+#define RM_STATUS    "STAT="   // Request Status  = <Operation Type>
 #define RM_AUTHKEY   "AUTK="   // Request Auth = <KEY>
 
 // Array of RX Messages
@@ -157,3 +157,4 @@ const char * rx_msg[] {RM_AUTOCHAN, RM_AUTOFLAG, RM_AUTOSET, RM_AUTODUR, RM_AUTO
 // Array of Body Messages:
 const char * body_msg[] = {M_BAD, M_FALSE, M_TRUE, M_ERROR, M_NOAUTH, M_START, M_END, M_AUTOS, M_DATAS };
 
+// Comments, have two authentication status, M_AUTHS and M_AUTH
