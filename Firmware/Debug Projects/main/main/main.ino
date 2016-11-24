@@ -33,19 +33,19 @@ volatile int wSetting;        //variable to store WDT setting, make it volatile 
 void setup() {
   
   auth_dat = {false,0,0};   // Init Auth Struct
-//  sensor_dat = {0,false,0,0,0};
-//  for (int i = 0; i < NUM_RELAY; i++){
-//    auto_data_constructor(auto_dat[i]);
-//  }
+  sensor_dat = {0,false,0,0,0};
+  for (int i = 0; i < NUM_RELAY; i++){
+    auto_data_constructor(auto_dat[i]);
+  }
 
   // Get Polling Frequency
-//  EEPROM.get(AUTH_ADDR, auth_dat);
-//  if (auth_data.poll_freq == 0){ 
-//      wSetting = 9;       // Set to default interrupt mode of 4s
-//  }
-//  else{
-//      wSetting = auth_data.poll_freq    // Load in the EEPROM polling frequency
-//  }
+  EEPROM.get(AUTH_ADDR, auth_dat);
+  if (auth_data.poll_freq == 0){ 
+      wSetting = 9;       // Set to default interrupt mode of 4s
+  }
+  else{
+      wSetting = auth_data.poll_freq    // Load in the EEPROM polling frequency
+  }
 
 //  // Disable interrupts globally
 //  cli(); 
@@ -193,29 +193,31 @@ byte parseMessage(char * msg, int len){
 
 
 
-  
-    
+
+  byte relay;
   // Respond to message : rx_msg[j]
   switch (sel) {
       
       case 0:    // Automation Channel Select <VALUE>
-        
+         relay = select_channel(buf) == 1);
+         return relay;
         break;
         
       case 1:    // Automation Flag Set       <VALUE>
-      
+        // Check which channel to feed in
+         return auto_flag_set(buf,relay);
         break;
       
       case 2:    // Automation Set Point      <VALUE>
-      
+         return auto_set_point(buf,relay);
         break;
       
       case 3:    // Automation Duration       <VALUE>
-      
+         return auto_duration(buf,relay);
         break;
       
       case 4:    // Automation Complete (conf) <VALUE>
-      
+         
         break;
       
       case 5:    // Configure Polling Freq.    <VALUE>
@@ -262,12 +264,95 @@ byte parseMessage(char * msg, int len){
        
       default:
           // Message parsed but not understood. 
+          Serial.println(ERRR);
           return 0;
           break;
   }
   
   return 0;
 }
+
+// set automation flag
+byte auto_flag_set(byte value ,byte rel){
+  // Select relay
+  if (rel == 1){
+    if (byte & (1<<n)){
+      // bit is set
+      
+    }
+    else{
+      
+    }
+    auto_dat[1].duration = value;
+    Serial.println();
+    return 1
+  }
+  else{
+    
+    Serial.println();
+    return 0
+  }
+}
+
+// set automation duration
+byte auto_duration(int value ,byte rel){
+  // Select relay
+  if (rel == 1){
+    auto_dat[1].duration = value;
+    Serial.println(RM_AUTODUR AUTS);
+    return 1
+  }
+  else{
+    auto_dat[0].duration = value;
+    Serial.println(RM_AUTODUR AUTS);
+    return 0
+  }
+}
+
+// Set automation flag
+byte auto_flag_set(float value ,byte rel){
+  // Select relay
+  if (rel == 1){
+    auto_dat[1].setpoint = value;
+    Serial.println(RM_AUTOSET AUTS);
+    return 1
+  }
+  else{
+    auto_dat[0].setpoint = value;
+    Serial.println(RM_AUTOSET AUTS);
+    return 0
+  }
+}
+
+
+
+// Automation struct Channel selection
+//byte select_channel(char channel){
+//    if (channel == 1){
+//        Serial.println(AUTN 1)
+//        return 1
+//    }
+//    else{
+//        Serial.println(AUTN 0)
+//        return 0
+//    }
+//}
+
+
+//// Set Polling Frequency 
+//byte config_poll_freq(byte value){
+//  if (value > 1 and value <11){
+//      auth_dat.poll_freq = value;
+//      // Serial.println(RM_CONFIGP M_TRUE);
+//      return 1;
+//  }
+//  else{
+//      // Serial.println(RM_CONFIGP M_FALS);
+//      return 0;
+//  }
+//}
+
+
 
 //// Perform Data Operation
 //byte data_operation(char value){
@@ -285,20 +370,8 @@ byte parseMessage(char * msg, int len){
 //    }
 //  }
 //}
-//
-//
-//// Set Polling Frequency 
-//byte config_poll_freq(byte value){
-//  if (value > 1 and value <11){
-//      auth_dat.poll_freq = value;
-//      // Serial.println(RM_CONFIGP M_TRUE);
-//      return 1;
-//  }
-//  else{
-//      // Serial.println(RM_CONFIGP M_FALS);
-//      return 0;
-//  }
-//}
+
+
   
 // Authenticate Device:
 // Checks auth_dat global structure
