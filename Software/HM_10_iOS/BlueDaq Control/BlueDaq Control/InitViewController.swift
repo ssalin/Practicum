@@ -48,6 +48,7 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
         serial.writeType = .withoutResponse
     
         reloadView() // Reload View Functions
+       
     }
     
 
@@ -60,6 +61,9 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
     // Update UI when activated:
     func reloadView() {
 		
+        // Debug:
+         debug_views()
+        
 		// Control Serial Deligate (rx/tx)
 		serial.delegate = self
 		
@@ -86,7 +90,6 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
             connect_button.setTitle("Choose Device", for: .normal)
             connect_button.tintColor = view.tintColor
             connect_button.isEnabled = true
-            //user_authd = false
             current_settings.auth = false
             
         } else {
@@ -96,7 +99,6 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
             connect_button.setTitle("Choose Device", for: .normal)
             connect_button.tintColor = UIColor.gray
             connect_button.isEnabled = true
-            //user_authd = false
             current_settings.auth = false
         }
 		
@@ -110,8 +112,8 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
             enable_views()
         }
         else{
-            gesure_rec.isEnabled = false;
-            pageView.isHidden = true;
+          //  gesure_rec.isEnabled = false;
+          //  pageView.isHidden = true;
         }
         
     }
@@ -250,6 +252,13 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
 	
 	
 //MARK: Enable Applicaton ViewControllers 
+
+    func debug_views(){
+        gesure_rec.isEnabled = true;
+        pageView.isHidden = false;
+    
+    
+    }
 
     func enable_views(){
         passcode_label.text = "Device Connected"
