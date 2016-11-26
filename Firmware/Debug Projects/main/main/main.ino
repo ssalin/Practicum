@@ -18,7 +18,7 @@ auth_data auth_dat;     // Auth Data Struct - Note that using pointers caused we
 bool device_authenticated = false;  // Device Host Auth Status
 sensor_data sensor_dat; // Sensor Data Struct
 auto_data auto_dat[NUM_RELAY];   // Automation Data
-bool EEPROM_LD = false;           // EEPROM Load Flag
+volatile bool EEPROM_LD = false;           // EEPROM Load Flag
 volatile bool Run = false;        // ISR Flag
 volatile int wSetting;        //variable to store WDT setting, make it volatile since it will be used in ISR
 
@@ -33,9 +33,18 @@ volatile int wSetting;        //variable to store WDT setting, make it volatile 
 void setup() {
   
   auth_dat = {false,0,0};   // Init Auth Struct
-  sensor_dat = {0,false,0,0,0};
-  for (int i = 0; i < NUM_RELAY; i++){
-    auto_data_constructor(auto_dat[i]);
+  sensor_dat = {0,false,0,0,0}; // Init sensor data struct
+  for (int i = 0; i < NUM_RELAY; i++){    //Init automation data struct
+      auto_dat[i].en = 0;   // Enable
+      auto_dat[i].dec = 0;  // Descending set point
+      auto_dat[i].tog = 0;   // Toggle Relay
+      auto_dat[i].tmp = 0;   // Temperature Sensor
+      auto_dat[i].pres = 0;   // Pressure Sensor
+      auto_dat[i].hum = 0;   // Humidity sensor
+      auto_dat[i].ls = 0;   // Light sensor
+      auto_dat[i].pir = 0;   // PIR Motion Sensor
+      auto_dat[i].setpoint = 0.0;   // Setpoint 
+      auto_dat[i].t_duration = 0;   // Toggle Duration
   }
 
   // Get Polling Frequency
@@ -100,22 +109,6 @@ void setup() {
 //  Run = true;
 //  Serial.println("INTERRUPT!!!");
 //}
-
-// constructor for automation data struct
-void auto_data_constructor(auto_data foo){
-  
-  foo.en = 0;   // Enable
-  foo.dec = 0;  // Descending set point
-  foo.tog = 0;   // Toggle Relay
-  foo.tmp = 0;   // Temperature Sensor
-  foo.pres = 0;   // Pressure Sensor
-  foo.hum = 0;   // Humidity sensor
-  foo.ls = 0;   // Light sensor
-  foo.pir = 0;   // PIR Motion Sensor
-
-  foo.setpoint = 0.0;   // Setpoint 
-  foo.t_duration = 0;   // Toggle Duration
-}
 
 // Main Loop:
 void loop() {
@@ -192,14 +185,12 @@ byte parseMessage(char * msg, int len){
   }
 
 
-
-
   byte relay;
   // Respond to message : rx_msg[j]
   switch (sel) {
       
       case 0:    // Automation Channel Select <VALUE>
-         relay = select_channel(buf) == 1);
+         relay = select_channel(buf);
          return relay;
         break;
         
@@ -217,7 +208,7 @@ byte parseMessage(char * msg, int len){
         break;
       
       case 4:    // Automation Complete (conf) <VALUE>
-         
+         return automation_done(buf,relay);
         break;
       
       case 5:    // Configure Polling Freq.    <VALUE>
@@ -272,25 +263,25 @@ byte parseMessage(char * msg, int len){
   return 0;
 }
 
+
 // set automation flag
 byte auto_flag_set(byte value ,byte rel){
   // Select relay
-  if (rel == 1){
-    if (byte & (1<<n)){
-      // bit is set
-      
-    }
-    else{
-      
-    }
-    auto_dat[1].duration = value;
-    Serial.println();
-    return 1
+  if (value != 0){
+    auto_dat[rel].en = bitRead(value,0);
+    auto_dat[rel].dec = bitRead(value,1);
+    auto_dat[rel].tog = bitRead(value,2);
+    auto_dat[rel].tmp = bitRead(value,3);
+    auto_dat[rel].pres = bitRead(value,4);
+    auto_dat[rel].hum = bitRead(value,5);
+    auto_dat[rel].ls = bitRead(value,6);
+    auto_dat[rel].pir = bitRead(value,7);
+    Serial.println(RM_AUTOFLAG M_TRUE);
+    return 1;
   }
   else{
-    
-    Serial.println();
-    return 0
+    Serial.println(RM_AUTOFLAG M_FALSE);
+    return 0;
   }
 }
 
@@ -328,7 +319,7 @@ byte auto_flag_set(float value ,byte rel){
 
 // Automation struct Channel selection
 //byte select_channel(char channel){
-//    if (channel == 1){
+//    if (channel == "Relay1"){
 //        Serial.println(AUTN 1)
 //        return 1
 //    }
@@ -351,7 +342,6 @@ byte auto_flag_set(float value ,byte rel){
 //      return 0;
 //  }
 //}
-
 
 
 //// Perform Data Operation
