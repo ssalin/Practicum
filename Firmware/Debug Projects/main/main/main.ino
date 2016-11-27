@@ -112,7 +112,54 @@ void setup() {
 
 // Main Loop:
 void loop() {
-  
+  /* Empty loop */
+  if (Run){
+      // cli();                //disable interrupt
+
+      // Test EEPROM Flag
+      if (EEPROM_LD == false){
+          // Load EEPROM data to auth and auto structs
+          // auth_data authen;              
+          // auto_data relay1,relay2;         
+          // EEPROM.get(0, authen);
+          // EEPROM.get(12, relay1);
+          // EEPROM.get(19, relay2);
+          EEPROM_LD = true;  
+          // call Store to Automation Struct
+      }
+      
+      // If (automation){
+            // read_store_sensordata()  //Read Sensor Data and store sensor to struct
+    
+      // }
+      
+      // If (Serial){
+              // if (Host is not Authenticated){
+                  // Return not authorized
+              // }
+
+              // else{
+                    // if (new automation){
+                        // call store to EEPROM 
+                        // Update automation struct 
+                    // }
+            
+            
+                 // upload sensor data to BT device
+              // }
+            
+         Serial.flush()
+      // }
+      
+      
+      // Check for automation, do automation if found
+      }
+      Run = false;
+      // sei();                  //re-enable interrupt
+}
+
+// Receiving message
+void incoming_message(){  
   char mbuffer[MAX_MSG_SIZE + 1];  // Incoming Message Buffer
   int i = 0;  // Index for Clearning Buffer
   
