@@ -127,11 +127,14 @@ void loop() {
           EEPROM_LD = true;  
           // call Store to Automation Struct
       }
-      
-      // If (automation){
-            // read_store_sensordata()  //Read Sensor Data and store sensor to struct
-    
-      // }
+
+      if(!strcmp(buf, M_AUTOS)){  // Report Automation Status     
+        sensor_dat.ls = ;             // Light Sensor Analog Value (0-1023)
+        sensor_dat.PIR = ;            // Motion Sensor State
+        sensor_dat.temp = ;           // Temperature
+        sensor_dat.pressure = ;       // Pressure
+        sensor_dat.humidity = ;       // Humidity
+      }
       
       // If (Serial){
               // if (Host is not Authenticated){
@@ -311,81 +314,72 @@ byte parseMessage(char * msg, int len){
 }
 
 
+// Read and store sensor data into global variable
+
+
+
+
 // set automation flag
 byte auto_flag_set(byte value ,byte rel){
   // Select relay
-  if (value != 0){
-    auto_dat[rel].en = bitRead(value,0);
-    auto_dat[rel].dec = bitRead(value,1);
-    auto_dat[rel].tog = bitRead(value,2);
-    auto_dat[rel].tmp = bitRead(value,3);
-    auto_dat[rel].pres = bitRead(value,4);
-    auto_dat[rel].hum = bitRead(value,5);
-    auto_dat[rel].ls = bitRead(value,6);
-    auto_dat[rel].pir = bitRead(value,7);
-    Serial.println(RM_AUTOFLAG M_TRUE);
-    return 1;
-  }
-  else{
-    Serial.println(RM_AUTOFLAG M_FALSE);
-    return 0;
-  }
+  auto_dat[rel].en = bitRead(value,0);
+  auto_dat[rel].dec = bitRead(value,1);
+  auto_dat[rel].tog = bitRead(value,2);
+  auto_dat[rel].tmp = bitRead(value,3);
+  auto_dat[rel].pres = bitRead(value,4);
+  auto_dat[rel].hum = bitRead(value,5);
+  auto_dat[rel].ls = bitRead(value,6);
+  auto_dat[rel].pir = bitRead(value,7);
+  Serial.println(RM_AUTOFLAG M_TRUE);
+  return 1;
 }
+
 
 // set automation duration
 byte auto_duration(int value ,byte rel){
   // Select relay
-  if (rel == 1){
-    auto_dat[1].duration = value;
-    Serial.println(RM_AUTODUR AUTS);
-    return 1
-  }
-  else{
-    auto_dat[0].duration = value;
-    Serial.println(RM_AUTODUR AUTS);
-    return 0
-  }
+  auto_dat[rel].duration = value;
+  Serial.println(RM_AUTODUR AUTS);
+  return 1;
 }
 
 // Set automation flag
 byte auto_flag_set(float value ,byte rel){
   // Select relay
-  if (rel == 1){
-    auto_dat[1].setpoint = value;
+//  if (rel == 1){
+    auto_dat[rel].setpoint = value;
     Serial.println(RM_AUTOSET AUTS);
     return 1
-  }
-  else{
-    auto_dat[0].setpoint = value;
-    Serial.println(RM_AUTOSET AUTS);
-    return 0
-  }
+//  }
+//  else{
+//    auto_dat[0].setpoint = value;
+//    Serial.println(RM_AUTOSET AUTS);
+//    return 0
+//  }
 }
 
 
 
 // Automation struct Channel selection
-//byte select_channel(char channel){
-//    if (channel == "Relay1"){
-//        Serial.println(AUTN 1)
-//        return 1
-//    }
-//    else{
-//        Serial.println(AUTN 0)
-//        return 0
-//    }
-//}
+byte select_channel(char channel){
+    if (channel == "Relay1"){
+        Serial.println(M_RL1 M_TRUE);
+        return 1;
+    }
+    else{
+        Serial.println(M_RL0 M_TRUE);
+        return 0;
+    }
+}
 
 
 //// Set Polling Frequency 
 //byte config_poll_freq(byte value){
 //  if (value > 1 and value <11){
 //      auth_dat.poll_freq = value;
-//      // Serial.println(RM_CONFIGP M_TRUE);
 //      return 1;
 //  }
 //  else{
-//      // Serial.println(RM_CONFIGP M_FALS);
 //      return 0;
 //  }
 //}
@@ -394,15 +388,16 @@ byte auto_flag_set(float value ,byte rel){
 //// Perform Data Operation
 //byte data_operation(char value){
 //  if (strcmp(value,M_TRUE){
-//    Serial.println(RM_DATA M_START);
+//    Serial.println(M_DATAS M_START);
 //    return 1;
 //  }
 //  else{
 //    if (strcmp(value,M_FALSE){
-//        Serial.println(RM_DATA M_END);
+//        Serial.println(M_DATAS M_END);
 //        return 1;
 //    }
 //    else{
+//      Serial.println(M_DATAS ERRR);
 //      return 0;
 //    }
 //  }
