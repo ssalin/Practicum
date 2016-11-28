@@ -15,9 +15,11 @@
 // Global Values use a lot of memory!
 
 auth_data auth_dat;     // Auth Data Struct - Note that using pointers caused weird problems...
-bool device_authenticated = false;  // Device Host Auth Status
 sensor_data sensor_dat; // Sensor Data Struct
 auto_data auto_dat[NUM_RELAY];   // Automation Data
+bool device_authenticated = false;  // Device Host Auth Status
+bool data_ready = false;  // Device Host Auth Status
+bool automation_ready = false;  // Device Host Auth Status
 volatile bool EEPROM_LD = false;           // EEPROM Load Flag
 volatile bool Run = false;        // ISR Flag
 volatile int wSetting;        //variable to store WDT setting, make it volatile since it will be used in ISR
@@ -48,13 +50,15 @@ void setup() {
   }
 
   // Get Polling Frequency
-  EEPROM.get(AUTH_ADDR, auth_dat);
-  if (auth_data.poll_freq == 0){ 
-      wSetting = 9;       // Set to default interrupt mode of 4s
-  }
-  else{
-      wSetting = auth_data.poll_freq    // Load in the EEPROM polling frequency
-  }
+//  EEPROM.get(AUTH_ADDR, auth_dat);
+//  if (auth_dat.poll_freq == 0){ 
+//      wSetting = 9;       // Set to default interrupt mode of 4s
+//  }
+//  else{
+//      wSetting = auth_dat.poll_freq;    // Load in the EEPROM polling frequency
+//      Serial.println(wSetting);
+//  }
+
 
 //  // Disable interrupts globally
 //  cli(); 
@@ -111,58 +115,62 @@ void setup() {
 //}
 
 // Main Loop:
-void loop() {
-  /* Empty loop */
-  if (Run){
-      // cli();                //disable interrupt
-
-      // Test EEPROM Flag
-      if (EEPROM_LD == false){
-          // Load EEPROM data to auth and auto structs
-          // auth_data authen;              
-          // auto_data relay1,relay2;         
-          // EEPROM.get(0, authen);
-          // EEPROM.get(12, relay1);
-          // EEPROM.get(19, relay2);
-          EEPROM_LD = true;  
-          // call Store to Automation Struct
-      }
-
-      if(!strcmp(buf, M_AUTOS)){  // Report Automation Status     
-        sensor_dat.ls = ;             // Light Sensor Analog Value (0-1023)
-        sensor_dat.PIR = ;            // Motion Sensor State
-        sensor_dat.temp = ;           // Temperature
-        sensor_dat.pressure = ;       // Pressure
-        sensor_dat.humidity = ;       // Humidity
-      }
-      
-      // If (Serial){
-              // if (Host is not Authenticated){
-                  // Return not authorized
-              // }
-
-              // else{
-                    // if (new automation){
-                        // call store to EEPROM 
-                        // Update automation struct 
-                    // }
-            
-            
-                 // upload sensor data to BT device
-              // }
-            
-         Serial.flush()
-      // }
-      
-      
-      // Check for automation, do automation if found
-      }
-      Run = false;
-      // sei();                  //re-enable interrupt
-}
+//void loop() {
+//  /* Empty loop */
+//  if (Run){
+//      // cli();                //disable interrupt
+//      // Test EEPROM Flag
+//      if (EEPROM_LD == false){
+//          // Load EEPROM data to auth and auto structs
+//          // auth_data authen;              
+//          // auto_data relay1,relay2;         
+//          // EEPROM.get(0, authen);
+//          // EEPROM.get(12, relay1);
+//          // EEPROM.get(19, relay2);
+//          EEPROM_LD = true;  
+//          // call Store to Automation Struct
+//             auth_dat = authen;
+//             auto_dat[0] = relay2;
+//             auto_dat[1] = relay1;
+//      }
+//
+//      if (automation){
+//        read_sensor(7,True,73.2,50.6,20.4);
+//      }
+//      
+//       If (Serial){
+//               if (device_authenticated == false){   //Host is not Authenticated
+//                  Serial.println(M_AUTHS M_FALSE)     // Return not authorized
+//               }
+//
+//               else{
+//                     if (new automation){
+//                        if (relay1){
+//                           EEPROM.put(12, auto_new);
+//                           auto_dat[1] = auto_new;
+//                        }    
+//                        else{     
+//                          EEPROM.put(19, auto_new);
+//                          auto_dat[0] = auto_new;
+//                        }
+//                     }
+//            
+//                 // upload sensor data to BT device
+//               }
+//            
+//         Serial.flush()
+//       }
+//      
+//      
+//      // If (automation), do automation if found
+//      }
+//      Run = false;
+//      // sei();                  //re-enable interrupt
+//}
 
 // Receiving message
-void incoming_message(){  
+//void incoming message(){
+void loop(){  
   char mbuffer[MAX_MSG_SIZE + 1];  // Incoming Message Buffer
   int i = 0;  // Index for Clearning Buffer
   
@@ -172,17 +180,14 @@ void incoming_message(){
     
     // Call Parser:
     char * pntr = &mbuffer[0];
-    if(parseMessage(pntr, MAX_MSG_SIZE)){
-     
-     // Confirm Understood 
-     
+    if(parseMessage(pntr, MAX_MSG_SIZE)){   
+     // Confirm Understood    
     }
     else{
     // Bad Message:
       Serial.println(M_BADMSG M_BAD);
     }
     
-
     // Clear Message Buffer
     for(i = 0; i < MAX_MSG_SIZE; i++){
       mbuffer[i]= '\0';
@@ -210,7 +215,8 @@ byte parseMessage(char * msg, int len){
    buf[MESSAGE_LEN] = '\0';
   
   // Debug:
-  //Serial.println(buf);
+  Serial.println(msg);
+  Serial.println(buf);
   
   // Compare to Message Types:
   for(j = 0; j < NUM_RX_MSG; j++){  // For each message type
@@ -240,55 +246,84 @@ byte parseMessage(char * msg, int len){
   switch (sel) {
       
       case 0:    // Automation Channel Select <VALUE>
-         relay = select_channel(buf);
+//          relay = select_channel(buf);
          return relay;
         break;
         
       case 1:    // Automation Flag Set       <VALUE>
         // Check which channel to feed in
-         return auto_flag_set(buf,relay);
+//         return auto_flag_set(buf,relay);
         break;
       
       case 2:    // Automation Set Point      <VALUE>
-         return auto_set_point(buf,relay);
+//         return auto_set_point(buf,relay);
         break;
       
       case 3:    // Automation Duration       <VALUE>
-         return auto_duration(buf,relay);
+//         return auto_duration(buf,relay);
         break;
       
       case 4:    // Automation Complete (conf) <VALUE>
-         return automation_done(buf,relay);
+//         return automation_done(buf,relay);
         break;
       
       case 5:    // Configure Polling Freq.    <VALUE>
-        return config_poll_freq(buf);
+//        return config_poll_freq(buf);
         break;
       
       case 6:    // Perform Data Operation (upload ready) <BODY>
-        
+        if(strcmp(buf,M_TRUE)){
+            Serial.println(M_PHOTO sensor_dat.ls);
+            Serial.println(M_PIR sensor_dat.PIR);
+            Serial.println(M_TEMP sensor_dat.temp);
+            Serial.println(M_PRESS sensor_dat.pressure);
+            Serial.println(M_HUMID sensor_dat.humidity);
+            Serial.println(RM_DATA M_TRUE);     
+        }
+        else{
+            Serial.println(RM_DATA M_FALS);
+        }
+        return 1;
         break;
       
       case 7:    // Perform Status <BODY>
+        Serial.println( "I am in here ");
+        Serial.println(buf);
+        char tmp[3];
+        for(byte t = 0; t < MESSAGE_LEN ; t++){
+          tmp[t] = buf[t];   // tmp holds message body:
+        }
+        Serial.println(tmp);
         
-        if(!strcmp(buf, M_AUTOS)){  // Report Automation Status
+        if(strcmp(tmp, M_AUTOS)){  // Report Automation Status
+           if(automation_ready){
+             Serial.println("AUTO" M_TRUE);
+           }
+           else{
+             Serial.println("AUTO" M_FALSE);
+           }
            
           return 1;  
         }
         
-        if(!strcmp(buf, M_DATAS)){  // Report Data Status
-         
+        if(strcmp(tmp, M_DATAS)){  // Report Data Status
+           if(data_ready){
+             Serial.println("DATA" M_TRUE);
+           }
+           else{
+             Serial.println("DATA" M_FALSE);
+           }
+           
           return 1; 
         }
         
-        if(!strcmp(buf, M_AUTHS)){  // Report Authentication Status
-         
-         if(device_authenticated){
-           Serial.println(M_AUTH M_TRUE);
-         }
-         else{
-           Serial.println(M_AUTH M_FALSE);
-         }
+        if(strcmp(tmp, M_AUTHS)){  // Report Authentication Status      
+           if(device_authenticated){
+             Serial.println(M_AUTH M_TRUE);
+           }
+           else{
+             Serial.println(M_AUTH M_FALSE);
+           }
          
          return 1; 
         }
@@ -305,7 +340,7 @@ byte parseMessage(char * msg, int len){
        
       default:
           // Message parsed but not understood. 
-          Serial.println(ERRR);
+          Serial.println(M_ERROR);
           return 0;
           break;
   }
@@ -314,9 +349,15 @@ byte parseMessage(char * msg, int len){
 }
 
 
-// Read and store sensor data into global variable
-
-
+// Sensor data upload
+void read_sensor(int ls, bool PIR, float temp, float pressure, float humidity){
+  sensor_dat.ls = ls;
+  sensor.dat.PIR = PIR;
+  sensor.dat.temp = temp;
+  sensor.dat.pressure = pressure;
+  sensor.dat.humidity = humidity;
+  Serial.println(RM_DATA M_TRUE);
+}
 
 
 // set automation flag
@@ -338,26 +379,10 @@ byte auto_flag_set(byte value ,byte rel){
 // set automation duration
 byte auto_duration(int value ,byte rel){
   // Select relay
-  auto_dat[rel].duration = value;
-  Serial.println(RM_AUTODUR AUTS);
+  auto_dat[rel].t_duration = value;
+  Serial.println(RM_AUTODUR M_TRUE);
   return 1;
 }
-
-// Set automation flag
-byte auto_flag_set(float value ,byte rel){
-  // Select relay
-//  if (rel == 1){
-    auto_dat[rel].setpoint = value;
-    Serial.println(RM_AUTOSET AUTS);
-    return 1
-//  }
-//  else{
-//    auto_dat[0].setpoint = value;
-//    Serial.println(RM_AUTOSET AUTS);
-//    return 0
-//  }
-}
-
 
 
 // Automation struct Channel selection
@@ -373,35 +398,35 @@ byte select_channel(char channel){
 }
 
 
-//// Set Polling Frequency 
-//byte config_poll_freq(byte value){
-//  if (value > 1 and value <11){
-//      auth_dat.poll_freq = value;
-//      return 1;
-//  }
-//  else{
-//      return 0;
-//  }
-//}
+// Set Polling Frequency 
+byte config_poll_freq(byte value){
+  if (value > 1 and value <11){
+      auth_dat.poll_freq = value;
+      return 1;
+  }
+  else{
+      return 0;
+  }
+}
 
 
-//// Perform Data Operation
-//byte data_operation(char value){
-//  if (strcmp(value,M_TRUE){
-//    Serial.println(M_DATAS M_START);
-//    return 1;
-//  }
-//  else{
-//    if (strcmp(value,M_FALSE){
-//        Serial.println(M_DATAS M_END);
-//        return 1;
-//    }
-//    else{
-//      Serial.println(M_DATAS ERRR);
-//      return 0;
-//    }
-//  }
-//}
+// Perform Data Operation
+byte data_operation(char value){
+  if (strcmp(value,M_TRUE){
+    Serial.println(M_DATAS M_START);
+    return 1;
+  }
+  else{
+    if (strcmp(value,M_FALSE){
+        Serial.println(M_DATAS M_END);
+        return 1;
+    }
+    else{
+      Serial.println(M_DATAS ERRR);
+      return 0;
+    }
+  }
+}
 
 
   

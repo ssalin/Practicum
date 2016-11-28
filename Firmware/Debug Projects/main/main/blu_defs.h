@@ -83,7 +83,7 @@ typedef struct {
   int t_duration;   // Toggle Duration
 } auto_data;
  
-const char * auto_bits[] {ENABLE, DESEND, TOGGLE, TEMPERATURE, PRESSURE, HUMIDITY, LIGHT, PIR};
+//const char * auto_bits[] {ENABLE, DESEND, TOGGLE, TEMPERATURE, PRESSURE, HUMIDITY, LIGHT, PIR};
 
 //
 // EEPROM Settings:
