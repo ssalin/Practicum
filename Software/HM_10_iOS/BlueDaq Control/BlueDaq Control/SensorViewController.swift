@@ -23,6 +23,14 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
     
 
 
+    @IBOutlet weak var light_txtbox: UITextField!
+    @IBOutlet weak var humi_txtbox: UITextField!
+    @IBOutlet weak var pres_txtbox: UITextField!
+    @IBOutlet weak var temp_txtbox: UITextField!
+    @IBOutlet weak var store_auto_button: UIButton!
+    @IBOutlet weak var motion_label: UILabel!       // Swap with image? Notifications?
+    @IBOutlet weak var timestamp_label: UILabel!
+    
 
 //MARK: Functions
     
@@ -84,6 +92,12 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     
     
 //MARK: IBActions
+
+// Store Automation
+@IBAction func store_automation(_ sender: Any) {
+
+
+    }
 
 // Return To This View (unwind)
 @IBAction func unwindToSensor(sender: UIStoryboardSegue) {

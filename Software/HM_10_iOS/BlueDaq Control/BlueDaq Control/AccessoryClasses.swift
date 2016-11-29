@@ -22,19 +22,21 @@ struct prefs {
     var automation_1 : Bool = false     // Is automation enabled for this device
 }
 
+// Sensor Enumeration:
+enum sensor_sel : Int {
+    case TEMP, PRES, HUMI, LIGHT, PIR
+}
+
+
 // Automation:
 struct auto {
 
     var enabled : Bool = false      // Enable
     var descending : Bool = false   // Descending Value
     var toggle : Bool = false       // Toggle Relay (shut off after duration)
-    var tmp_sel : Bool = false      // Select Temp Sensor
-    var pres_sel : Bool = false     // Select Presure Sensor
-    var hum_sel : Bool = false      // Select Humidity Sensor
-    var photo_sel : Bool = false    // Select Photocell
-    var pir_sel : Bool = false      // Select Motion Sensor
-    var setpoint : Float32 = 0      // Setpoint or threshold..
-    var duraton : Int16 = 0         // Durration (est..)
+    var sensor : sensor_sel = sensor_sel.TEMP
+    var setpoint : Float = 0      // Setpoint or threshold..
+    var duraton : Int = 0         // Duration (est..)
 }
 
 
@@ -75,14 +77,14 @@ func load_defaults() -> bluedaq_settings.prefs {
     let defaults = UserDefaults.standard
     
     let l_prefs = bluedaq_settings.prefs(
-	init_ : true,	// Not Loaded
-    auth: false,    // Not Loaded
-    timestamp : defaults.string(forKey: "timestamp") ?? "",
-    last_UUID : defaults.string(forKey: "last_UUID") ?? "",
-    passcode : "",   // Not Loaded
-    last_device_name : defaults.string(forKey: "last_dname") ?? "",
-    automation_0: defaults.bool(forKey: "automation_0"),
-    automation_1: defaults.bool(forKey: "automation_1")
+        init_ : true,	// Not Loaded
+        auth: false,    // Not Loaded
+        timestamp : defaults.string(forKey: "timestamp") ?? "",
+        last_UUID : defaults.string(forKey: "last_UUID") ?? "",
+        passcode : "",   // Not Loaded
+        last_device_name : defaults.string(forKey: "last_dname") ?? "",
+        automation_0: defaults.bool(forKey: "automation_0"),
+        automation_1: defaults.bool(forKey: "automation_1")
     )
     
     return l_prefs
@@ -93,25 +95,32 @@ func load_defaults() -> bluedaq_settings.prefs {
 func save_automation(index : Int, aut_data : bluedaq_settings.auto){
     
     let defaults = UserDefaults.standard
-    
-    let key = "automation_ \(index)"
-    defaults.set(aut_data, forKey: key)
 
+    defaults.set(aut_data.descending, forKey: "auto_\(index)_desc")
+    defaults.set(aut_data.duraton, forKey: "auto_\(index)_dur")
+    defaults.set(aut_data.enabled, forKey: "auto_\(index)_en")
+    defaults.set(aut_data.sensor.rawValue, forKey: "auto_\(index)_sen")
+    defaults.set(aut_data.setpoint, forKey: "auto_\(index)_set")
+    defaults.set(aut_data.toggle, forKey: "auto_\(index)_tog")
+    
 }
 
 // Save Automation
 // Select Value with Index
 func load_automation(index : Int) -> bluedaq_settings.auto{
-
+    
+        
         let defaults = UserDefaults.standard
     
-        let key = "automation_ \(index)"
-        if let auto_data = defaults.object(forKey: key){
+        let auto_data = bluedaq_settings.auto(
+            enabled: defaults.bool(forKey: "auto_\(index)_en"),
+            descending: defaults.bool(forKey: "auto_\(index)_desc"),
+            toggle: defaults.bool(forKey: "auto_\(index)_tog"),
+            sensor: bluedaq_settings.sensor_sel(rawValue: defaults.integer(forKey: "auto_\(index)_sen"))!,
+            setpoint: defaults.float(forKey: "auto_\(index)_set"),
+            duraton: defaults.integer(forKey: "auto_\(index)_dur")
+        )
 
-            return auto_data  as! bluedaq_settings.auto
-        }
-    
-        let auto_data = bluedaq_settings.auto(enabled : false, descending : false, toggle : false, tmp_sel : false, pres_sel : false, hum_sel : false, photo_sel : false, pir_sel : false, setpoint : 0, duraton : 0)
         return auto_data
 }
 

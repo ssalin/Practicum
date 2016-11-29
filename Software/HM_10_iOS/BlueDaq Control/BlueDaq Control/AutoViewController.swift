@@ -14,29 +14,32 @@ final class AutoViewController: UIViewController,  UIPickerViewDelegate, UIPicke
 
 //MARK: Variables
 
-    var pickerData = [["Temperature", "Pressure", "Humidity", "Light Level"]]
+    var pickerData = [["Temperature", "Pressure", "Humidity", "Light Level", "Motion Sensor"]]
     var message_buffer : String = ""                // Global Message Buffer
     let serial_core = bludaq_core_serial()          // Serial Message Functions
     let accesories = bluedaq_settings()             // App Settings Class
     var current_settings = bluedaq_settings.prefs()
-    var auto_0 = bluedaq_settings.auto()
-    var auto_1 = bluedaq_settings.auto()
     var loaded_auto = true
+    var selected_chan = 0
+    var automation_dat = [bluedaq_settings.auto(), bluedaq_settings.auto()]
 
+    
 
 //MARK: IBOutlets
     
     @IBOutlet weak var title_label: UILabel!
+    @IBOutlet weak var toggle_label: UILabel!
     @IBOutlet weak var thresh_label: UILabel!
     @IBOutlet weak var automation_label: UILabel!
-    @IBOutlet weak var motion_label: UILabel!
+    @IBOutlet weak var toggle_enabled_label: UILabel!
     @IBOutlet weak var sensor_selector: UIPickerView!
     @IBOutlet weak var threshold_txtbox: UITextField!
-    @IBOutlet weak var enable_channel: UISwitch!
+    @IBOutlet weak var duration_txtbox: UITextField!
     @IBOutlet weak var asc_switch: UISwitch!
-    @IBOutlet weak var motion_switch: UISwitch!
     @IBOutlet weak var asc_label: UILabel!
     @IBOutlet weak var chan_select: UISegmentedControl!
+    @IBOutlet weak var toggle_switch: UISwitch!
+    @IBOutlet weak var enable_button: UIButton!
     
 
     
@@ -53,124 +56,152 @@ final class AutoViewController: UIViewController,  UIPickerViewDelegate, UIPicke
             return
         }
         
-        // Picker
+        // Keyboard:
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(AutoViewController.dismissKeyboard))
+        view.addGestureRecognizer(tap)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        
+        // Setup Picker
         load_picker()
+        
+        // Load Automation
+        load_automation()
+
     }
     
     
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
+    
+    // Hide Keyboard
+    func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    // Move Screen for Keyboard
+     func keyboardWillShow(notification: NSNotification) {
 
-//MARK: Functions
+        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+            if self.view.frame.origin.y == 0{
+            self.view.frame.origin.y -= keyboardSize.height
+        }
+        }
+
+    }
+
+    func keyboardWillHide(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+            if self.view.frame.origin.y != 0{
+            self.view.frame.origin.y += keyboardSize.height
+        }
+        }
+    }
     
-    
-    // Update the view - Something has changed...
+    // Process changes and update view
     func update_view(){
+
+        // Channel State
+        if(automation_dat[selected_chan].enabled){
+            enable_button.setTitle("Enabled", for: .normal)
+            enable_button.setTitleColor(UIColor.blue, for: .normal)
+            sensor_selector.isUserInteractionEnabled = true
+             sensor_selector.alpha = 1
+            title_label.isEnabled = true
+            toggle_switch.isEnabled = true
+
+        }
+        else{
+            enable_button.setTitle("Disabled", for: .normal)
+            enable_button.setTitleColor(UIColor.red, for: .normal)
+            sensor_selector.isUserInteractionEnabled = false
+            sensor_selector.alpha = 0.25
+            title_label.isEnabled = false
+            toggle_switch.isEnabled = false
+        }
         
-        thresh_label.text = "When the \(getDevice()) is"
+        
+        // Select Label
+        thresh_label.text = "When the \(getDevice()) is at or"
+        
+        // Toggle Switch
+        if(toggle_switch.isOn && automation_dat[selected_chan].enabled){
+            toggle_enabled_label.text = "Toggle Enabled"
+            duration_txtbox.isEnabled = true
+            toggle_label.isEnabled = true
+        }
+        else{
+            toggle_enabled_label.text = "Toggle Disabled"
+            duration_txtbox.isEnabled = false
+            toggle_label.isEnabled = false
+        
+        }
+        
+        // Set Switches:
+
+        asc_switch.setOn(automation_dat[selected_chan].descending, animated: true)
+        toggle_switch.setOn(automation_dat[selected_chan].toggle, animated: true)
+        
+        
+        // Ascending Switch
+        if asc_switch.isOn == true{ // Above
+            asc_label.text = "above"
+        }
+        else{
+            asc_label.text = "below"
+        }
+        
+        // Motion Sensor Disables Options
+        if(getDevice() == "Motion Sensor" || !automation_dat[selected_chan].enabled){
+            thresh_label.isEnabled = false
+            asc_label.isEnabled = false
+            asc_switch.isOpaque = true
+            asc_switch.isEnabled = false
+            threshold_txtbox.isEnabled = false
+            threshold_txtbox.isOpaque = true
+        }
+        else{
+            thresh_label.isEnabled = true
+            asc_label.isEnabled = true
+            asc_switch.isOpaque = false
+            asc_switch.isEnabled = true
+            threshold_txtbox.isEnabled = true
+            threshold_txtbox.isOpaque = false
+        }
+        
+        
+        // Update Picker
+        sensor_selector.selectRow(automation_dat[selected_chan].sensor.rawValue , inComponent: 0, animated: true)  // Set Picker
+        
+        // Update TextBox
+        threshold_txtbox.text = String(automation_dat[selected_chan].setpoint)
+        duration_txtbox.text = String(automation_dat[selected_chan].duraton)
+        
+        
+        // Save Changes:
+        accesories.save_automation(index: selected_chan, aut_data: automation_dat[selected_chan])
+        
+        
+
     
     }
+    
     
     // Load Automation from User Prefs
-    func load_automation(index: Int){
-
-
-    
+    func load_automation(){
+        
         // Get Data:
         if(loaded_auto){
-            auto_0 = accesories.load_automation(index: 0)
-            auto_1 = accesories.load_automation(index: 1)
+            automation_dat[0] = accesories.load_automation(index: 0)
+            automation_dat[1] = accesories.load_automation(index: 1)
+            
+            loaded_auto = false
+            
+            update_view()
         }
-        
-        let autos = [auto_0, auto_1]
-        var selected = [0, 0]
-        
-        // Extrapolate Data:
-        
-        for i in selected{
-            
-            // Check Enabled
-            if(!autos[1].enabled){
-                selected[i] = 0;
-                break;
-            }
-            
-            // Selected Sensor
-            if(autos[i].tmp_sel){
-                selected[i] = 0
-            }
-            else if (autos[i].pres_sel){
-                selected[i] = 1
-                
-            }
-            else if (autos[i].hum_sel){
-                selected[i] = 2
-            }
-            else if (autos[i].photo_sel){
-                selected[i] = 3
-            }
-        
-        }
-        
-        // Update Fields:
-        if (chan_select.selectedSegmentIndex == 0){ // Channel A
-            
-            sensor_selector.selectRow(selected[0], inComponent: 0, animated: true)  // Set Picker
-            title_label.text = ""
-            
-            
-            
-        }
-        else { // Channel B
-        
-            sensor_selector.selectRow(selected[1], inComponent: 0, animated: true)
-        }
-        
-        update_view()
-        
     }
-    
-    
-    
-    // Save Automation to User Prefs
-    func save_automation(){
-        
-        
-        
-        
-        accesories.save_automation(index: 0, aut_data: auto_0)
-        accesories.save_automation(index: 1, aut_data: auto_1)
-        
-    }
-    
-    // Enable / Disable Channel:
-    func enable_ch(){
-        
-        if(enable_channel.isOn){ // Enable View
-        
-        sensor_selector.isOpaque = false
-        sensor_selector.isUserInteractionEnabled = true
-        
-        
-        
-        }
-        
-        else{
-        
-        
-        }
-        
-    
-    }
-
-
-
-
-
-//MARK: Keyboard Controller
-
-
 
 
 
@@ -212,6 +243,8 @@ final class AutoViewController: UIViewController,  UIPickerViewDelegate, UIPicke
     // Picker Changed
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         
+        // Update Data:
+        automation_dat[selected_chan].sensor = bluedaq_settings.sensor_sel(rawValue: sensor_selector.selectedRow(inComponent: 0))!
         update_view()
 
     }
@@ -239,31 +272,46 @@ final class AutoViewController: UIViewController,  UIPickerViewDelegate, UIPicke
     }
 
 //MARK: IBActions:
-
-
-    @IBAction func asc_button(_ sender: Any) {
     
-        if asc_switch.isOn == true{ // Above
-            asc_label.text = "above"
-        }
-        else{
-            asc_label.text = "below"
-        }
+    // Channel Enabled / Disabled
+    @IBAction func enable_button(_ sender: Any) {
     
+        automation_dat[selected_chan].enabled = !automation_dat[selected_chan].enabled
+        update_view()
     }
-
-
-    @IBAction func motion_button(_ sender: Any) {
-    }
-
-
+    
+    // Channel Selected
     @IBAction func chan_button(_ sender: Any) {
+        // Select Channel:
+        selected_chan = chan_select.selectedSegmentIndex
+        update_view()
     }
-
+    
+    // Ascending Direction Changed
+    @IBAction func asc_button(_ sender: Any) {
+        
+        automation_dat[selected_chan].descending = asc_switch.isOn ? true : false
+        update_view()
+    }
+    
+    // Threshold Value Changed
     @IBAction func txtbox_button(_ sender: Any) {
+        automation_dat[selected_chan].setpoint = Float(threshold_txtbox.text!)!
+        update_view()
     }
-
-
+    
+    // Toggle Setting Changed
+    @IBAction func toggle_switch(_ sender: Any) {
+        automation_dat[selected_chan].toggle = toggle_switch.isOn ? true : false
+        update_view()
+    }
+    
+    // Duration Value Changed
+    @IBAction func duration_txt_button(_ sender: Any) {
+        
+        automation_dat[selected_chan].duraton = Int(duration_txtbox.text!)!
+        update_view()
+    }
 
 //MARK: Segue Prep
 

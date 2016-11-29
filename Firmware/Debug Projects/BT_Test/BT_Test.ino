@@ -98,7 +98,7 @@ byte parseMessage(char * msg, int len){
   // Respond to message : rx_msg[j]
   switch (sel) {
       
-      case 0:    // Automation Channel Select <VALUE>
+      case 0:    // Automation Channel Select <Relay : Device>
      
         break;
         
