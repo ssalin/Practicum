@@ -21,18 +21,13 @@ class bludaq_core_serial{
     // Class Variables:
     
     var auth_set : Bool = false
-    
-    // Types of callback funtion reqeusts (for parser)
-    enum transaction_req{
-        case Hello, Authenticate, Automation, Data
-    }
+
     
     // Returned from parser:
     struct transaction_resp{
         var good_msg:   Bool            // Wass message parsed correctly?
         var message: String             // Complete Message
         var msg_type: Int               // Messag type (from Device)
-        var t_type: transaction_req     // Request type (from caller)
         var body: String                // Rest of Message
     }
     
@@ -85,7 +80,7 @@ class bludaq_core_serial{
 	
 	
 	// Non-Callback Parser:
-	func parse_message(message: String, t_type: bludaq_core_serial.transaction_req) -> bludaq_core_serial.transaction_resp{
+	func parse_message(message: String) -> bludaq_core_serial.transaction_resp{
         
         // Prase out Message Type:
         let msg_keys = [String](rx_msg_types.keys)
@@ -105,7 +100,6 @@ class bludaq_core_serial{
                     good_msg: true,
                     message: message,
                     msg_type: rx_msg_types[key]!,
-                    t_type: t_type,
                     body: body)
                 
                 // Execte Callback:
@@ -119,7 +113,6 @@ class bludaq_core_serial{
         good_msg: false,
         message: message,
         msg_type: rx_msg_types["UNKO"]!,
-        t_type: t_type,
         body: message)
 		
         return t_data
@@ -132,30 +125,31 @@ class bludaq_core_serial{
     // Special Parsers: Parse and cast to proper data type for display
     // Do any nesssiary corrections or math here...
     
-    // Temperature
-    func parse_temp(msg_body: String) -> Float{
+    // Parse Body for a Float
+    func parse_float(msg_body: String) -> Float{
     
-        return 0
+        return Float(msg_body)!
     }
     
-    // Humidity
-    func parse_humidity(msg_body: String) -> Float{
     
-        return 0
+    // Parse Body for an Int
+    func parse_int(msg_body : String) -> Int {
+    
+        return Int(msg_body)!
     }
     
-    // Pressure
-    func parse_pressure(msg_body: String) -> Float{
     
-        return 0
+    // Parse Body for Bool
+    func parse_bool(msg_body : String) -> Bool {
+        
+        if((msg_body.lowercased().range(of: body_types[2]!)) != nil){ // Check True
+            return true
+        }
+        
+        return false
+    
     }
     
-    // Photodiode
-    func parse_photo(msg_bod: String) -> Int {
-    
-        return 0
-    
-    }
     
     // TX Functions:
     

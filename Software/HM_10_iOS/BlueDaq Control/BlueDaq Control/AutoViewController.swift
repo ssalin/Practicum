@@ -182,11 +182,9 @@ final class AutoViewController: UIViewController,  UIPickerViewDelegate, UIPicke
         
         // Save Changes:
         accesories.save_automation(index: selected_chan, aut_data: automation_dat[selected_chan])
-        
-        
 
-    
     }
+    
     
     
     // Load Automation from User Prefs
@@ -313,20 +311,18 @@ final class AutoViewController: UIViewController,  UIPickerViewDelegate, UIPicke
         update_view()
     }
 
-//MARK: Segue Prep
 
-override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+
+//MARK: Segue Prep
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 	
-	// Unwind to Sensor View
-    if segue.identifier == "unwindToSensor" {
-        let controller = segue.destination as! InitViewController
-        controller.current_settings = current_settings // Copy Settings
+        // Unwind to Sensor View
+        if segue.identifier == "unwindToSensor" {
+            let controller = segue.destination as! InitViewController
+            controller.current_settings = current_settings // Copy Settings
+        }
+    
     }
-    
-}
-    
-    
-//MARK: IBActions
 
 
 }

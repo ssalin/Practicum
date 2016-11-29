@@ -223,7 +223,7 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
 	
 	func messageResponder(message : String){
 		
-		let message_resp = serial_core.parse_message(message: message, t_type : bludaq_core_serial.transaction_req.Authenticate)
+		let message_resp = serial_core.parse_message(message: message)
 
 		// Check "good" value:
 		if(message_resp.good_msg){

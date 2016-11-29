@@ -18,8 +18,8 @@ struct prefs {
     var last_UUID : String  = ""		// Previous Device UUID
     var passcode : String   = ""        // Current Passcode (Not Stored)
     var last_device_name : String = ""  // Previous Device Name
-    var automation_0 : Bool = false     // Is automation enabled for this device
-    var automation_1 : Bool = false     // Is automation enabled for this device
+    var automation_0 : Bool = false     // Is relay 0 (Turned On)
+    var automation_1 : Bool = false     // Is relay 1 (Turned On)
 }
 
 // Sensor Enumeration:
@@ -37,6 +37,20 @@ struct auto {
     var sensor : sensor_sel = sensor_sel.TEMP
     var setpoint : Float = 0      // Setpoint or threshold..
     var duraton : Int = 0         // Duration (est..)
+}
+
+// Sensor Data:
+struct sensor_dat {
+    
+    var timestamp : String = "" // Time Stamp
+    var temp : Float = 0        // Temperature
+    var humi : Float = 0        // Humidity
+    var pres : Float = 0        // Pressure
+    var altitude : Float = 0    // Altitude (Calculated)
+    var seaLevel : Float = 0    // Pressure at Sea Level (for calculations)
+    var light : Int = 0         // Light Level (10-bit)
+    var motion : Bool = false   // Curent PIR Status
+
 }
 
 
