@@ -152,7 +152,7 @@ const char * rx_msg[] {RM_AUTOCHAN, RM_AUTOFLAG, RM_AUTOSET, RM_AUTODUR, RM_AUTO
 #define M_END    "ENDD"    // End Operaton 
 #define M_AUTOS  "AUTS"    // Automation Status
 #define M_DATAS  "DATS"    // Data Status
-#define M_AUTHS  "ATHS"     // Authentication Status
+#define M_AUTHS  "ATHS"    // Authentication Status
 
 // Array of Body Messages:
 const char * body_msg[] = {M_BAD, M_FALSE, M_TRUE, M_ERROR, M_NOAUTH, M_START, M_END, M_AUTOS, M_DATAS };
