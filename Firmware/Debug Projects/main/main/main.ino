@@ -17,6 +17,7 @@
 auth_data auth_dat;     // Auth Data Struct - Note that using pointers caused weird problems...
 sensor_data sensor_dat; // Sensor Data Struct
 auto_data auto_dat[NUM_RELAY];   // Automation Data
+auto_data temp;         // Hold new automation data
 bool device_authenticated = false;  // Device Host Auth Status
 bool data_ready = false;  // Device Host Auth Status
 bool automation_ready = false;  // Device Host Auth Status
@@ -34,25 +35,25 @@ volatile int wSetting;        //variable to store WDT setting, make it volatile 
 // Setup Loop (Run Once at Boot)
 void setup() {
   
-  auth_dat = {false,0,0};   // Init Auth Struct
-  sensor_dat = {0,false,0,0,0}; // Init sensor data struct
+  auth_dat = {false,0,0};                 // Init Auth Struct
+  sensor_dat = {0,false,0,0,0};           // Init sensor data struct
   for (int i = 0; i < NUM_RELAY; i++){    //Init automation data struct
-      auto_dat[i].en = 0;   // Enable
-      auto_dat[i].dec = 0;  // Descending set point
-      auto_dat[i].tog = 0;   // Toggle Relay
-      auto_dat[i].tmp = 0;   // Temperature Sensor
-      auto_dat[i].pres = 0;   // Pressure Sensor
-      auto_dat[i].hum = 0;   // Humidity sensor
-      auto_dat[i].ls = 0;   // Light sensor
-      auto_dat[i].pir = 0;   // PIR Motion Sensor
-      auto_dat[i].setpoint = 0.0;   // Setpoint 
-      auto_dat[i].t_duration = 0;   // Toggle Duration
+      auto_dat[i].en = 0;                 // Enable
+      auto_dat[i].dec = 0;                // Descending set point
+      auto_dat[i].tog = 0;                // Toggle Relay
+      auto_dat[i].tmp = 0;                // Temperature Sensor
+      auto_dat[i].pres = 0;               // Pressure Sensor
+      auto_dat[i].hum = 0;                // Humidity sensor
+      auto_dat[i].ls = 0;                 // Light sensor
+      auto_dat[i].pir = 0;                // PIR Motion Sensor
+      auto_dat[i].setpoint = 0.0;         // Setpoint 
+      auto_dat[i].t_duration = 0;         // Toggle Duration
   }
 
   // Get Polling Frequency
 //  EEPROM.get(AUTH_ADDR, auth_dat);
 //  if (auth_dat.poll_freq == 0){ 
-//      wSetting = 9;       // Set to default interrupt mode of 4s
+//      wSetting = 9;                     // Set to default interrupt mode of 4s
 //  }
 //  else{
 //      wSetting = auth_dat.poll_freq;    // Load in the EEPROM polling frequency
@@ -118,44 +119,41 @@ void setup() {
 //void loop() {
 //  /* Empty loop */
 //  if (Run){
-//      // cli();                //disable interrupt
+//      // cli();                       //disable interrupt
 //      // Test EEPROM Flag
 //      if (EEPROM_LD == false){
-//          // Load EEPROM data to auth and auto structs
-//          // auth_data authen;              
-//          // auto_data relay1,relay2;         
-//          // EEPROM.get(0, authen);
-//          // EEPROM.get(12, relay1);
-//          // EEPROM.get(19, relay2);
-//          EEPROM_LD = true;  
-//          // call Store to Automation Struct
-//             auth_dat = authen;
-//             auto_dat[0] = relay2;
-//             auto_dat[1] = relay1;
+//          EEPROM_LD = true;
+//          // Load EEPROM data to auth and auto structs         
+//          // EEPROM.get(0, auth_dat);
+//          // EEPROM.get(12, auto_dat[1]);
+//          // EEPROM.get(19, auto_dat[0]);  
 //      }
 //
-//      if (automation){
+//      if (automation is true){        // pseudo if statement, unsure of what to compare
+//        // how to read in these values? through the parser?
 //        read_sensor(7,True,73.2,50.6,20.4);
 //      }
 //      
 //       If (Serial){
-//               if (device_authenticated == false){   //Host is not Authenticated
+//               if (device_authenticated == false){    //Host is not Authenticated
 //                  Serial.println(M_AUTHS M_FALSE)     // Return not authorized
 //               }
 //
 //               else{
-//                     if (new automation){
-//                        if (relay1){
+//                     if (new automation){       // How to detect new automation? through parser? show how
+//                        auto_data auto new      // holds new automation data
+//                        if (automation for relay 1?){
 //                           EEPROM.put(12, auto_new);
 //                           auto_dat[1] = auto_new;
 //                        }    
 //                        else{     
-//                          EEPROM.put(19, auto_new);
-//                          auto_dat[0] = auto_new;
+//                           EEPROM.put(19, auto_new);
+//                           auto_dat[0] = auto_new;
 //                        }
 //                     }
 //            
 //                 // upload sensor data to BT device
+//                 incoming_message();            // Call BT function to send serial data to app
 //               }
 //            
 //         Serial.flush()
@@ -195,8 +193,6 @@ void loop(){
   }
 
 } // END LOOP //
-
-
 
 
 // Incoming Message Parser
@@ -247,24 +243,38 @@ byte parseMessage(char * msg, int len){
       
       case 0:    // Automation Channel Select <VALUE>
 //          relay = select_channel(buf);
-         return relay;
+         return 1;
         break;
         
       case 1:    // Automation Flag Set       <VALUE>
-        // Check which channel to feed in
-//         return auto_flag_set(buf,relay);
+//         if (relay == 1){
+//             return auto_flag_set(buf,auto_dat[1]);
+//         }
+//         else{
+//             return auto_flag_set(buf,auto_dat[0]);
+//         }
         break;
       
       case 2:    // Automation Set Point      <VALUE>
-//         return auto_set_point(buf,relay);
+//         if (relay == 1){
+//             return auto_set_point(buf,auto_dat[1]);
+//         }
+//         else{
+//             return auto_set_point(buf,auto_dat[0]);
+//         }
         break;
       
       case 3:    // Automation Duration       <VALUE>
-//         return auto_duration(buf,relay);
+//         if (relay == 1){
+//             return auto_duration(buf,auto_dat[1]);
+//         }
+//         else{
+//             return auto_duration(buf,auto_dat[0]);
+//         }
         break;
       
       case 4:    // Automation Complete (conf) <VALUE>
-//         return automation_done(buf,relay);
+//         return automation_done(buf,relay);                     // Not really sure what to do with this option
         break;
       
       case 5:    // Configure Polling Freq.    <VALUE>
@@ -375,6 +385,14 @@ byte auto_flag_set(byte value ,byte rel){
   return 1;
 }
 
+// set automation set point
+byte auto_set_point(int value ,byte rel){
+  // Select relay
+  auto_dat[rel].setpoint = value;
+  Serial.println(RM_AUTOSET M_TRUE);
+  return 1;
+}
+
 
 // set automation duration
 byte auto_duration(int value ,byte rel){
@@ -386,8 +404,8 @@ byte auto_duration(int value ,byte rel){
 
 
 // Automation struct Channel selection
-byte select_channel(char channel){
-    if (channel == "Relay1"){
+byte select_channel(byte channel){
+    if (channel == "01"){
         Serial.println(M_RL1 M_TRUE);
         return 1;
     }
@@ -400,7 +418,7 @@ byte select_channel(char channel){
 
 // Set Polling Frequency 
 byte config_poll_freq(byte value){
-  if (value > 1 and value <11){
+  if (byte(value) > 1 and byte(value) <11){         
       auth_dat.poll_freq = value;
       return 1;
   }
