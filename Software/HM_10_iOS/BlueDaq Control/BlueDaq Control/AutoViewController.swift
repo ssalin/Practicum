@@ -18,8 +18,10 @@ final class AutoViewController: UIViewController,  UIPickerViewDelegate, UIPicke
     var message_buffer : String = ""                // Global Message Buffer
     let serial_core = bludaq_core_serial()          // Serial Message Functions
     let accesories = bluedaq_settings()             // App Settings Class
-    var current_settings = bluedaq_settings.prefs(init_ : true, auth : false, timestamp : "", last_UUID : "", passcode : "", last_device_name : "", automation_0 : false, automation_1 : false)
-    
+    var current_settings = bluedaq_settings.prefs()
+    var auto_0 = bluedaq_settings.auto()
+    var auto_1 = bluedaq_settings.auto()
+    var loaded_auto = true
 
 
 //MARK: IBOutlets
@@ -30,6 +32,7 @@ final class AutoViewController: UIViewController,  UIPickerViewDelegate, UIPicke
     @IBOutlet weak var motion_label: UILabel!
     @IBOutlet weak var sensor_selector: UIPickerView!
     @IBOutlet weak var threshold_txtbox: UITextField!
+    @IBOutlet weak var enable_channel: UISwitch!
     @IBOutlet weak var asc_switch: UISwitch!
     @IBOutlet weak var motion_switch: UISwitch!
     @IBOutlet weak var asc_label: UILabel!
@@ -58,7 +61,119 @@ final class AutoViewController: UIViewController,  UIPickerViewDelegate, UIPicke
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-  
+
+//MARK: Functions
+    
+    
+    // Update the view - Something has changed...
+    func update_view(){
+        
+        thresh_label.text = "When the \(getDevice()) is"
+    
+    }
+    
+    // Load Automation from User Prefs
+    func load_automation(index: Int){
+
+
+    
+        // Get Data:
+        if(loaded_auto){
+            auto_0 = accesories.load_automation(index: 0)
+            auto_1 = accesories.load_automation(index: 1)
+        }
+        
+        let autos = [auto_0, auto_1]
+        var selected = [0, 0]
+        
+        // Extrapolate Data:
+        
+        for i in selected{
+            
+            // Check Enabled
+            if(!autos[1].enabled){
+                selected[i] = 0;
+                break;
+            }
+            
+            // Selected Sensor
+            if(autos[i].tmp_sel){
+                selected[i] = 0
+            }
+            else if (autos[i].pres_sel){
+                selected[i] = 1
+                
+            }
+            else if (autos[i].hum_sel){
+                selected[i] = 2
+            }
+            else if (autos[i].photo_sel){
+                selected[i] = 3
+            }
+        
+        }
+        
+        // Update Fields:
+        if (chan_select.selectedSegmentIndex == 0){ // Channel A
+            
+            sensor_selector.selectRow(selected[0], inComponent: 0, animated: true)  // Set Picker
+            title_label.text = ""
+            
+            
+            
+        }
+        else { // Channel B
+        
+            sensor_selector.selectRow(selected[1], inComponent: 0, animated: true)
+        }
+        
+        update_view()
+        
+    }
+    
+    
+    
+    // Save Automation to User Prefs
+    func save_automation(){
+        
+        
+        
+        
+        accesories.save_automation(index: 0, aut_data: auto_0)
+        accesories.save_automation(index: 1, aut_data: auto_1)
+        
+    }
+    
+    // Enable / Disable Channel:
+    func enable_ch(){
+        
+        if(enable_channel.isOn){ // Enable View
+        
+        sensor_selector.isOpaque = false
+        sensor_selector.isUserInteractionEnabled = true
+        
+        
+        
+        }
+        
+        else{
+        
+        
+        }
+        
+    
+    }
+
+
+
+
+
+//MARK: Keyboard Controller
+
+
+
+
+
 //MARK: Picker
 
     // Setup Passcode Picker
@@ -91,6 +206,13 @@ final class AutoViewController: UIViewController,  UIPickerViewDelegate, UIPicke
     func getDevice() -> String{
        
         return pickerData[0][sensor_selector.selectedRow(inComponent: 0)]
+
+    }
+    
+    // Picker Changed
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        
+        update_view()
 
     }
 

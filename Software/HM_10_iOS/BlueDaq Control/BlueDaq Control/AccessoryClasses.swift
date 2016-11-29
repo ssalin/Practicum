@@ -20,49 +20,21 @@ struct prefs {
     var last_device_name : String = ""  // Previous Device Name
     var automation_0 : Bool = false     // Is automation enabled for this device
     var automation_1 : Bool = false     // Is automation enabled for this device
-    
-    /*
-    init(){
-        auth = false
-        timestamp = ""
-        last_UUID = ""
-        passcode = ""
-        last_device_name = ""
-        automation_0 = false
-        automation_1 = false
-    }
-    */
-    
 }
 
 // Automation:
 struct auto {
 
-    var enabled : Bool      // Enable
-    var descending : Bool   // Descending Value
-    var toggle : Bool       // Toggle Relay (shut off after duration)
-    var tmp_sel : Bool      // Select Temp Sensor
-    var pres_sel : Bool     // Select Presure Sensor
-    var hum_sel : Bool      // Select Humidity Sensor
-    var photo_sel : Bool    // Select Photocell
-    var pir_sel : Bool      // Select Motion Sensor
-    var setpoint : Float32  // Setpoint or threshold..
-    var duraton : Int16     // Durration (est..)
-    
-    /*
-    init(){
-        enabled = false
-        descending = false
-        toggle = false
-        tmp_sel = false
-        pres_sel = false
-        hum_sel = false
-        photo_sel = false
-        pir_sel = false
-        setpoint = 0
-        duraton = 0
-    }
-    */
+    var enabled : Bool = false      // Enable
+    var descending : Bool = false   // Descending Value
+    var toggle : Bool = false       // Toggle Relay (shut off after duration)
+    var tmp_sel : Bool = false      // Select Temp Sensor
+    var pres_sel : Bool = false     // Select Presure Sensor
+    var hum_sel : Bool = false      // Select Humidity Sensor
+    var photo_sel : Bool = false    // Select Photocell
+    var pir_sel : Bool = false      // Select Motion Sensor
+    var setpoint : Float32 = 0      // Setpoint or threshold..
+    var duraton : Int16 = 0         // Durration (est..)
 }
 
 
