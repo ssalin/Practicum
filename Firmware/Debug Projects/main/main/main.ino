@@ -479,3 +479,21 @@ byte authenticate(int key){
   }
   return 0;
 }
+
+
+
+void automation_switch(){
+  for (int x = 0, x < NUM_RELAY, x++){
+    switch (x.sensor){
+      case 0:
+        break;
+
+      case 1:
+        break;
+
+      case 2:
+        break;
+    }
+  }
+}
+
