@@ -357,7 +357,15 @@ float Adafruit_BME280::readHumidity(void) {
   return  h / 1024.0;
 }
 
-
+/**************************************************************************/
+/*!
+    Calculates the altitude (in meters) from the specified atmospheric
+    pressure (in hPa), and sea-level pressure (in hPa).
+
+    @param  seaLevel      Sea-level pressure in hPa
+    @param  atmospheric   Atmospheric pressure in hPa
+*/
+/**************************************************************************/
 float Adafruit_BME280::readAltitude(float seaLevel)
 {
   // Equation taken from BMP180 datasheet (page 16):

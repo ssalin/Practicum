@@ -66,8 +66,7 @@ typedef struct{
   float humidity;       // Humidity
 } sensor_data;
 
-
-
+// Automation - Settings for Relay automation
 typedef struct {
 
   // Relay 0 Automation Flags (1 byte):
@@ -129,11 +128,8 @@ typedef struct {
 // Array of TX Messages
 const char * tx_msg[] {M_BADMSG, M_HELLO, M_AUTH, M_SLEEP, M_ERROR, M_TEMP, M_HUMID, M_PRESS, M_PHOTO, M_PIR, M_RL0, M_RL1};
 
-// Sensor Values:
-enum sensor_sel {TEMP, PRES, HUMI, LIGHT, PIR};
-
 // Recieve Message Types: <Recieve Type> = <Body Type> or <Value>
-#define RM_AUTOCHAN  "AUTN="   // Automation Channel and Sensor Select = <Channel Value> "01"
+#define RM_AUTOCHAN  "AUTN="   // Automation Channel Select = <Channel>
 #define RM_AUTOFLAG  "AUTF="   // Automation Flag Set = <Byte>
 #define RM_AUTOSET   "AUTS="   // Automation Setpoint = <Float> (4-byte)
 #define RM_AUTODUR   "AUTD="   // Automation Duration = <Int> (2-byte)

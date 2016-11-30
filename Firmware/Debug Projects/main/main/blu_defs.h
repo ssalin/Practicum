@@ -66,8 +66,7 @@ typedef struct{
   float humidity;       // Humidity
 } sensor_data;
 
-
-
+// Automation - Settings for Relay automation
 typedef struct {
 
   // Relay 0 Automation Flags (1 byte):
@@ -84,7 +83,7 @@ typedef struct {
   int t_duration;   // Toggle Duration
 } auto_data;
  
-
+//const char * auto_bits[] {ENABLE, DESEND, TOGGLE, TEMPERATURE, PRESSURE, HUMIDITY, LIGHT, PIR};
 
 //
 // EEPROM Settings:
@@ -129,11 +128,8 @@ typedef struct {
 // Array of TX Messages
 const char * tx_msg[] {M_BADMSG, M_HELLO, M_AUTH, M_SLEEP, M_ERROR, M_TEMP, M_HUMID, M_PRESS, M_PHOTO, M_PIR, M_RL0, M_RL1};
 
-// Sensor Values:
-enum sensor_sel {TEMP, PRES, HUMI, LIGHT, PIR};
-
 // Recieve Message Types: <Recieve Type> = <Body Type> or <Value>
-#define RM_AUTOCHAN  "AUTN="   // Automation Channel and Sensor Select = <Channel Value> "01"
+#define RM_AUTOCHAN  "AUTN="   // Automation Channel Select = <Channel>
 #define RM_AUTOFLAG  "AUTF="   // Automation Flag Set = <Byte>
 #define RM_AUTOSET   "AUTS="   // Automation Setpoint = <Float> (4-byte)
 #define RM_AUTODUR   "AUTD="   // Automation Duration = <Int> (2-byte)
@@ -156,7 +152,7 @@ const char * rx_msg[] {RM_AUTOCHAN, RM_AUTOFLAG, RM_AUTOSET, RM_AUTODUR, RM_AUTO
 #define M_END    "ENDD"    // End Operaton 
 #define M_AUTOS  "AUTS"    // Automation Status
 #define M_DATAS  "DATS"    // Data Status
-#define M_AUTHS  "ATHS"     // Authentication Status
+#define M_AUTHS  "ATHS"    // Authentication Status
 
 // Array of Body Messages:
 const char * body_msg[] = {M_BAD, M_FALSE, M_TRUE, M_ERROR, M_NOAUTH, M_START, M_END, M_AUTOS, M_DATAS };
