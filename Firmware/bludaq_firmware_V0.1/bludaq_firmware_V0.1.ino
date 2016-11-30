@@ -5,129 +5,453 @@
  * 
  */
 
-#include "blu_defs.h"   // Macros & Prototypes
-#include <Arduino.h>  // Arduino Type Definitions
-#include <EEPROM.h>   // EEPROM Library
-#include <Wire.h>     // I2C Library
 
-// Global Vars:
-bool EEPROM_LD = false;           // EEPROM Load Flag
-auth_data *auth_dat;              // Auth Data
-sensor_data *sensors_dat;         // Sensor Data
-auto_data *auto_dat[NUM_RELAY];   // Automation Data
+#include "blu_defs.h"         // Macros & Prototypes
+#include <Arduino.h>          // Arduino Type Definitions
+#include <EEPROM.h>           // EEPROM Library
+#include <Wire.h>             // I2C Library
+#include <SPI.h>              // SPI Library (needed for class)
+#include <Adafruit_Sensor.h>  // BME280 
+#include <Adafruit_BME280.h>  // BME280
 
-// EEPROM Function Example:
-// EEPROM.put(address, *foo);
-// EEPROM.get(address, foo);
 
-// Setup *Run-Once
+// Globals:
+
+Adafruit_BME280 bme;           // I2C BME280 Instance
+bool run_once = false;         // Mark Reboot Status
+auth_data auth_dat;            // Authentication Token
+bool session_auth = false;     // Session Authenticated
+
+
+// Setup Loop:
 void setup() {
-  Serial.begin(9600);       // Enable Serial
   
-  // Constructor for all global structs
-  *auth_dat = {false,0,0.0,0.0};
-  *sensors_dat = {0,false,0.0,0.0,0.0};
-  for (int i = 0; i < NUM_RELAY; i++)
-  {
-    auto_data_constructor(auto_dat[i]);
-    Serial.print(F(" ======================== "));
-    Serial.print(sizeof(*auto_dat[i]));
+  // Init Serial
+  Serial.begin(BAUD_RATE);
+  
+  // Init BME280
+  if (!bme.begin()) {
+    // Send Error & Reboot
+
   }
   
-  Serial.print(F(" ======================== "));
-  Serial.print(auth_dat->touch);
-  Serial.print(F(" "));
-  Serial.print(sizeof(*sensors_dat));
-
-  auto_data automa;
-  auth_data auth
-  // Store information to EEPROM
-  put(AUTH_ADDR);
-  put(AUTO_ADDR);
-  put(AUTO_ADDR + AUTO_ADDR);
-}
-
-// This funciton will create new content for the struct object and then puts it in the specified memory location
-void put(int address, auto_data *foo)
-{
-  if (sizeof(*foo) == 11){
-      foo->auth_set = false;
-      foo->touch = 0;
-      foo->key = 0.0;
-      foo->poll_freq = 0.0;
-  }
-  else{
-      foo->en_R0 = 1;   // Enable
-      foo->dec_0 = 1;   // Descending set point
-      foo->tog_0 = 1;   // Toggle Relay
-      foo->temp_0 = 1;  // Temperature Sensor
-      foo->pres_0 = 1;  // Pressure Sensor
-      foo->humi_0 = 1;  // Humidity sensor
-      foo->ls_0 = 1;    // Light sensor
-      foo->pir_0 = 1;   // PIR Motion Sensor
-    
-      foo->setpoint_0 = 70.0;   // Setpoint 
-      foo->t_duration_0 = 600;   // Toggle Duration
-  }
-  EEPROM.put(address, *foo);
-}
-
-
-void get(int address)
-{
-  auto_data foo;
-  EEPROM.get(address, foo);
-  if (sizeof(foo) == 11){
-      Serial.print(F("==========================\n"));
-      Serial.println( foo.auth_set );
-      Serial.println( foo.touch );
-      Serial.println( foo.key );
-      Serial.println( foo.poll_freq );
-  }
-  else{
-      Serial.print(F("==========================\n"));
-      Serial.println( foo.en ); 
-      Serial.println( foo.dec );      
-      Serial.println( foo.tog );
-      Serial.println( foo.tmp );
-      Serial.println( foo.pres );
-      Serial.println( foo.hum );
-      Serial.println( foo.ls );
-      Serial.println( foo.pir );
-      Serial.println( foo.setpoint );
-      Serial.println( foo.t_duration );
-  }
+  // Config Auth Token
+  auth_dat = {false, 0, 0};
 }
 
 
 
-// constructor
-void auto_data_constructor(auto_data *foo)
-{
-  foo->en = 0;   // Enable
-  foo->dec = 0;  // Descending set point
-  foo->tog = 0;   // Toggle Relay
-  foo->tmp = 0;   // Temperature Sensor
-  foo->pres = 0;   // Pressure Sensor
-  foo->hum = 0;   // Humidity sensor
-  foo->ls = 0;   // Light sensor
-  foo->pir = 0;   // PIR Motion Sensor
-
-  foo->setpoint = 0.0;   // Setpoint 
-  foo->t_duration = 0;   // Toggle Duration
-}
-
-
-
-
-// Main Loop
+// Main Loop:
 void loop() {
-  /* Empty loop */
+  
+  // FIGURE OUT WATCHDOG STUFF HERE ? //
+  
+  // Local Variables:
+  sensor_data s_dat = {false, 0, 0, 0, 0};   // Sensor Data Struct
+  auto_data auto_dat[NUM_RELAY];             // Automation Structures 
+  
+  // Load EEPROM DATA (Auth and Automation)
+  if(!run_once){
+        
+    // DO EEPROM STUFF HERE //  
+    
+    run_once = true; 
+  }
+  
+  // Read Data:
+   checkSerial();    // Check for message, parse, and act.
+  
+  // Read Sensor Data and Update Struct:
+  readSensors(&s_dat);  // Updates struct
+  
+  // Perform Automation Tasks:
+  for( int i = 0; i < NUM_RELAY; i++){
+    auto_dat[i] = {false, false, false, TEMP, 0, 0};  // Init Struct
+    do_automation(i, &auto_dat[i], &s_dat);
+  }
+  
+  // Report data if authenticated
+  if(session_auth){
+    // Upload Sensor Data (if enabled)
+    uploadSensors(&s_dat);
+  }
+  
+
+}
+
+
+//
+// Functions
+//
+
+
+// Check for Incoming Serial Message
+// Checks Serial Buffer and Calles Parser
+void checkSerial(){
+  
+  char mbuffer[MAX_MSG_SIZE + 1];  // Incoming Message Buffer
+  int i = 0;  // Index for Clearning Buffer
   
   
+  if(Serial.available() > 0){
+    Serial.readBytesUntil('\n', mbuffer, MAX_MSG_SIZE);
+    
+    // Call Parser:
+    char * pntr = &mbuffer[0];
+    if(parseMessage(pntr, MAX_MSG_SIZE)){
+     
+     // Confirm Understood 
+     
+    }
+    else{
+    // Bad Message:
+      Serial.println(M_BADMSG M_BAD);
+    }
+    
+
+    // Clear Message Buffer
+    for(i = 0; i < MAX_MSG_SIZE; i++){
+      mbuffer[i]= '\0';
+    }
+  }
+  
+}
+
+
+// Incoming Message Parser
+// Parses message buffer for defined RX Messages
+// Respons using defined messages (blu_defs.h)
+byte parseMessage(char * msg, int len){
+ 
+  // array [i] = * (array + i)
+  byte i = 0, j = 0, sel = NUM_RX_MSG + 1;
+  char buf[MAX_MSG_SIZE + 1];
+ 
+  // Copy Message Type to Temp:
+  for(i = 0; i < MESSAGE_LEN; i++){ // Cycle Array
+      buf[i] = msg[i];
+   }
+   
+   buf[MESSAGE_LEN] = '\0';
+  
+  // Debug:
+  //Serial.println(buf);
+  
+  // Compare to Message Types:
+  for(j = 0; j < NUM_RX_MSG; j++){  // For each message type
+
+     if(!strcmp(buf, rx_msg[j])){
+       
+       sel = j; // Message Type
+       
+       // Clear Buffer:
+       for(i = 0; i < MAX_MSG_SIZE + 1; i++){
+         buf[i] = '\0';
+       }
+       
+       for(i = 0; i < MAX_MSG_SIZE + 1; i++){
+        buf[i] = msg[i + MESSAGE_LEN]; // BUF holds message body:
+       }
+       
+       buf[i]= '\0';
+       //continue;
+       break;
+     }
+  }
+    
+  // Respond to message : rx_msg[j]
+  switch (sel) {
+      
+      case 0:    // Automation Channel Select <Relay : Device>
+     
+        break;
+        
+      case 1:    // Automation Flag Set       <VALUE>
+      
+        break;
+      
+      case 2:    // Automation Set Point      <VALUE>
+      
+        break;
+      
+      case 3:    // Automation Duration       <VALUE>
+      
+        break;
+      
+      case 4:    // Automation Complete (conf) <VALUE>
+      
+        break;
+      
+      case 5:    // Configure Polling Freq.    <VALUE>
+      
+        break;
+      
+      case 6:    // Perform Data Operation (upload ready) <BODY>
+      
+        break;
+      
+      case 7:    // Perform Status <BODY>
+        
+        if(!strcmp(buf, M_AUTOS)){  // Report Automation Status
+           
+          return 1;  
+        }
+        
+        if(!strcmp(buf, M_DATAS)){  // Report Data Status
+         
+          return 1; 
+        }
+        
+        if(!strcmp(buf, M_AUTHS)){  // Report Authentication Status
+         
+         if(session_auth){
+           Serial.println(M_AUTH M_TRUE);
+         }
+         else{
+           Serial.println(M_AUTH M_FALSE);
+         }
+         
+         return 1; 
+        }
+        
+        Serial.println(M_HELLO M_TRUE);  // General Status Report
+        return 1;
+      
+      break;
+      
+      case 8:    // Perform Auth <KEY> 
+          return authenticate(atoi(buf));  
+          break;
+       
+      default:
+          // Message parsed but not understood. 
+          return 0;
+          break;
+  }
+  
+  return 0;
+}
+
+
+
+// Read Data from Sensors:
+void readSensors(sensor_data * data){
+
+   data->temp = bme.readTemperature();                // Temp in Celcius
+   data->pressure = (bme.readPressure() / 100.0F);    // Pressure in hPa
+   data->humidity = bme.readHumidity();               // Percent Realitive Humidity
+   data->ls = analogRead(LIGHT_SENSOR);               // Light Level (10-bit)
+   data->PIR = !digitalRead(PIR0);                    // Active LOW (indicates motion)
+}
+
+
+
+// Authenticate Device:
+// Checks auth_dat global structure
+// Updates global "authenticated" bool
+byte authenticate(int key){
+
+  // No Key Set: Update
+  if (auth_dat.auth_set == false){
+    auth_dat.key = key;
+    auth_dat.auth_set = true;
+    session_auth = true;
+    // Store AUTH STRUCT TO EEPROM //
+    Serial.println(M_AUTH M_TRUE);  // Auth + True
+    return 1;
+  }
+  
+  // Key Set - Validate:
+  else{
+     
+   if(auth_dat.key == key){
+      session_auth = true;
+      Serial.println(M_AUTH M_TRUE);  // Auth + True 
+      return 1;
+    }
+    else{
+      Serial.println(M_AUTH M_FALSE); // Auth + False
+      return 1;
+    }
+  
+  }
+  return 0;
 }
 
 
 
 
+// Do Automation:
+// Requires the Use of a timer function using IRQ for Toggle
+// Do not use delay - will cause sensor readings to not update!
+// Will also require that automation structure is up-to-date
+void do_automation(int relay, auto_data * auto_dat, sensor_data * sensor_dat ){
+  
+  if(auto_dat->en){  // Enable automation
+    
+    switch(auto_dat->device){
+     case TEMP:  // Temperature
+       if(auto_dat->desc){ // Equal or Lower
+         if(sensor_dat->temp <= auto_dat->setpoint){
+            enable_relay(relay, auto_dat->t_duration);
+         }
+         else{
+            disable_relay(relay); 
+         }
+       }
+       else{  // Equal or Greater
+         if(sensor_dat->temp >= auto_dat->setpoint){
+            enable_relay(relay, auto_dat->t_duration);
+         }
+         else{
+            disable_relay(relay); 
+         }
+       }
+     break;
+     
+     case PRES:  // Pressure
+       if(auto_dat->desc){ // Equal or Lower
+         if(sensor_dat->pressure <= auto_dat->setpoint){
+            enable_relay(relay, auto_dat->t_duration);
+         }
+         else{
+            disable_relay(relay); 
+         }
+       }
+       else{  // Equal or Greater
+         if(sensor_dat->pressure >= auto_dat->setpoint){
+            enable_relay(relay, auto_dat->t_duration);
+         }
+         else{
+            disable_relay(relay); 
+         }
+       }
+     break;
+     
+     case HUMI:  // Humidity
+       if(auto_dat->desc){ // Equal or Lower
+         if(sensor_dat->humidity <= auto_dat->setpoint){
+            enable_relay(relay, auto_dat->t_duration);
+         }
+         else{
+            disable_relay(relay); 
+         }
+       }
+       else{  // Equal or Greater
+         if(sensor_dat->humidity >= auto_dat->setpoint){
+            enable_relay(relay, auto_dat->t_duration);
+         }
+         else{
+            disable_relay(relay); 
+         }
+       }
+     break;
+     
+     case LIGHT:  // Light Sensor
+       if(auto_dat->desc){ // Equal or Lower
+         if(sensor_dat->ls <= auto_dat->setpoint){
+            enable_relay(relay, auto_dat->t_duration);
+         }
+         else{
+            disable_relay(relay); 
+         }
+       }
+       else{  // Equal or Greater
+         if(sensor_dat->ls >= auto_dat->setpoint){
+            enable_relay(relay, auto_dat->t_duration);
+         }
+         else{
+            disable_relay(relay); 
+         }
+       }
+     break;
+     
+     case PIR: // Motion Sensor (May Require Some Debugging like a counter)
+       if(sensor_dat->PIR){
+           enable_relay(relay, auto_dat->t_duration);
+       }
+       else{
+           disable_relay(relay);
+       }
+    }
+  }
+  
+  else{    // Automation Disabled
+   
+     disable_relay(relay); 
+  }
+}
 
+
+
+// Called to shut a specified relay off (Pulse Reset)
+void enable_relay(int relay, int toggle){
+  
+  // Turn ON Relay 
+  switch (relay){
+    case 0: // Relay 0
+      digitalWrite(R0_SET, HIGH);
+      delay(RELAY_PW_DELAY);
+      digitalWrite(R0_SET, LOW);
+      break;
+      
+    case 1: // Relay 1
+      digitalWrite(R1_SET, HIGH);
+      delay(RELAY_PW_DELAY);
+      digitalWrite(R1_SET, LOW);
+      break;
+      
+    default: // Both Relays
+      digitalWrite(R0_SET, HIGH);
+      digitalWrite(R1_SET, HIGH);
+      delay(RELAY_PW_DELAY);
+      digitalWrite(R0_SET, LOW);
+      digitalWrite(R1_SET, LOW);
+      break;
+  } 
+ 
+ // Toggle Off after Duration
+ if(toggle > 0){
+  
+    // Delay
+    delay(toggle);  // This is going to cause problems!
+    disable_relay(relay); // Turn Off
+ 
+  } 
+  
+}
+
+void disable_relay(int relay){
+   // Turn Off This Relay
+  switch (relay){
+    case 0:  // Relay 0
+      digitalWrite(R0_RSET, HIGH);
+      delay(RELAY_PW_DELAY);
+      digitalWrite(R0_RSET, LOW);
+      break;
+      
+    case 1:  // Relay 1
+      digitalWrite(R1_RSET, HIGH);
+      delay(RELAY_PW_DELAY);
+      digitalWrite(R1_RSET, LOW);
+      break;
+       
+    default:  // Both Relays
+      digitalWrite(R0_RSET, HIGH);
+      digitalWrite(R1_RSET, HIGH);
+      delay(RELAY_PW_DELAY);
+      digitalWrite(R0_RSET, LOW);
+      digitalWrite(R1_RSET, LOW);
+      break;
+  }
+}
+
+
+
+// Upload Sensor Data:
+// Prints Values using defined serial messages
+void uploadSensors(sensor_data * s_dat){
+  
+  // SEND SENSOR DATA HERE //
+  
+}
