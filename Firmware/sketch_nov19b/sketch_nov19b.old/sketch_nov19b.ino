@@ -21,10 +21,7 @@ Adafruit_BME280 bme;           // I2C BME280 Instance
 bool run_once = false;         // Mark Reboot Status
 auth_data auth_dat;            // Authentication Token
 bool session_auth = false;     // Session Authenticated
-volatile bool Run = false;        // ISR Flag
-//volatile int wSetting;        //variable to store WDT setting, make it volatile since it will be used in ISR
-volatile int count = 0;
-auto_data auto_dat[NUM_RELAY];             // Automation Structures 
+
 
 // Setup Loop:
 void setup() {
@@ -40,133 +37,52 @@ void setup() {
   
   // Config Auth Token
   auth_dat = {false, 0, 0};
-
-  // WatchDog Timer Interrupt
-  // Disable interrupts globally
-  cli();
-  
-  // Reset Watchdog Timer
-  MCUSR &= ~(1<<WDRF);  
-  
-  // Prepare watchdog for config change.
-  WDTCSR |= (1<<WDCE) | (1<<WDE);  
-  
-  // Now choose timer mode and prescaler
-  WDTCSR = (1<<WDIE) | (1<<WDP3) | (1<<WDP0);  // 8sec, Interrupt Mode
- 
-  // Enable interrupts globally
-  sei();
-
 }
 
-ISR(WDT_vect)
-{
-  Run = true;
-  Serial.println("INTERRUPT!!!");
-}
+
 
 // Main Loop:
-void loop(){
-  if (Run){
-    
-    cli();      // Turn off global interrupts
-    
-    // Local Variables:
-    sensor_data s_dat = {false, 0, 0, 0, 0};   // Sensor Data Struct
-//    auto_data auto_dat[NUM_RELAY];             // Automation Structures 
-//    auto_data temp;
-//  
-//    Serial.println(sizeof(temp));
-//    Serial.println(sizeof(auto_dat));
-    
-    // Load EEPROM DATA (Auth and Automation)
-    if(!run_once){
-          
-      // DO EEPROM STUFF HERE //  
-      EEPROM.put(0, auth_dat);
-      EEPROM.put(sizeof(auth_data), auto_dat[0]);
-      EEPROM.put(sizeof(auth_data) + sizeof(auto_data), auto_dat[1]);
+void loop() {
   
-      run_once = true; 
-    }
-
-    // Debug code
-    if ( count % 3 == 0){
-      put(sizeof(auth_data),0);
-      put(sizeof(auth_data) + sizeof(auto_data),1);
-    }
-    else{
-      get(sizeof(auth_data));
-      get(sizeof(auth_data) + sizeof(auto_data));
-    }
+  // FIGURE OUT WATCHDOG STUFF HERE ? //
+  
+  // Local Variables:
+  sensor_data s_dat = {false, 0, 0, 0, 0};   // Sensor Data Struct
+  auto_data auto_dat[NUM_RELAY];             // Automation Structures 
+  
+  // Load EEPROM DATA (Auth and Automation)
+  if(!run_once){
+        
+    // DO EEPROM STUFF HERE //  
     
-//    // Read Data:
-//     checkSerial();    // Check for message, parse, and act.
-//    
-//    // Read Sensor Data and Update Struct:
-//    readSensors(&s_dat);  // Updates struct
-//    
-//    // Perform Automation Tasks:
-//    for( int i = 0; i < NUM_RELAY; i++){
-//      auto_dat[i] = {false, false, false, TEMP, 0, 0};  // Init Struct
-//      do_automation(i, &auto_dat[i], &s_dat);
-//    }
-//    
-//    // Report data if authenticated
-//    if(session_auth){
-//      // Upload Sensor Data (if enabled)
-//      uploadSensors(&s_dat);
-//    }
-    count += 1;
-    Serial.println(count);
-    Run = false;
-    sei();      // Turn interrupt back on
+    run_once = true; 
   }
+  
+  // Read Data:
+   checkSerial();    // Check for message, parse, and act.
+  
+  // Read Sensor Data and Update Struct:
+  readSensors(&s_dat);  // Updates struct
+  
+  // Perform Automation Tasks:
+  for( int i = 0; i < NUM_RELAY; i++){
+    auto_dat[i] = {false, false, false, TEMP, 0, 0};  // Init Struct
+    do_automation(i, &auto_dat[i], &s_dat);
+  }
+  
+  // Report data if authenticated
+  if(session_auth){
+    // Upload Sensor Data (if enabled)
+    uploadSensors(&s_dat);
+  }
+  
+
 }
 
 
 //
 // Functions
 //
-// This funciton will create new content for the struct object and then puts it in the specified memory location
-void put(int address, int index)
-{
-//  byte num = random(63);
-  auto_dat[index].en = false;   // Enable
-  auto_dat[index].desc = true;   // Descending set point
-  auto_dat[index].toggle = false;   // Toggle Relay
-//  auto_dat[index].tmp = bitRead(num,3);  // Temperature Sensor
-//  auto_dat[index].pres = bitRead(num,4);  // Pressure Sensor
-//  auto_dat[index].hum = bitRead(num,5);  // Humidity sensor
-//  auto_dat[index].ls = bitRead(num,6);    // Light sensor
-//  auto_dat[index].pir = bitRead(num,7);   // PIR Motion Sensor
-//    
-  auto_dat[index].setpoint = random(100);   // Setpoint 
-  auto_dat[index].t_duration = random(100);   // Toggle Duration
-
-  EEPROM.put(address, auto_dat[index]);
-}
-
-// This funciton will create a new object and get the information from the specified memory address 
-void get(int address)
-{
-  auto_data foo;
-  EEPROM.get(address, foo);
-  Serial.print(F("==========================\n"));
-  Serial.println( foo.en ); 
-  Serial.println( foo.desc );      
-  Serial.println( foo.toggle );
-//  Serial.println( foo.tmp );
-//  Serial.println( foo.pres );
-//  Serial.println( foo.hum );
-//  Serial.println( foo.ls );
-//  Serial.println( foo.pir );
-  Serial.println( foo.setpoint );
-  Serial.println( foo.t_duration );
-  
-}
-
-
 
 
 // Check for Incoming Serial Message

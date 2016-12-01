@@ -28,7 +28,7 @@
 //#define BAUD_RATE 115200      // Better Baud Rate for Serial
 #define BAUD_RATE 9600        // Typical Baud Rate for Serial
 #define MAX_MSG_SIZE 24       // 24 Chars + Terminator
-#define RELAY_PW_DELAY  20
+
 
 
 //
@@ -58,29 +58,32 @@ typedef struct{
 
 // Sensor Data - Stores "current" values
 typedef struct{
-  bool PIR;             // Motion Sensor State
+
   int ls;               // Light Sensor Analog Value (0-1023)
+  bool PIR;             // Motion Sensor State
   float temp;           // Temperature
   float pressure;       // Pressure
   float humidity;       // Humidity
 } sensor_data;
 
-
-// Sensor Values:
-enum sensor_sel {TEMP, PRES, HUMI, LIGHT, PIR};
-
+// Automation - Settings for Relay automation
 typedef struct {
 
   // Relay 0 Automation Flags (1 byte):
-  bool en;             // Enable
-  bool desc;            // Descending set point
-  bool toggle;         // Toggle Relay (for duration
-  enum sensor_sel device;   // Device Selection
-  float setpoint;      // Setpoint 
-  int t_duration;      // Toggle Duration
+  byte en   : 1;   // Enable
+  byte dec  : 1;   // Descending set point
+  byte tog  : 1;   // Toggle Relay
+  byte tmp  : 1;   // Temperature Sensor
+  byte pres : 1;   // Pressure Sensor
+  byte hum  : 1;   // Humidity sensor
+  byte ls   : 1;   // Light sensor
+  byte pir  : 1;   // PIR Motion Sensor
+
+  float setpoint;   // Setpoint 
+  int t_duration;   // Toggle Duration
 } auto_data;
  
-
+//const char * auto_bits[] {ENABLE, DESEND, TOGGLE, TEMPERATURE, PRESSURE, HUMIDITY, LIGHT, PIR};
 
 //
 // EEPROM Settings:
@@ -126,7 +129,7 @@ typedef struct {
 const char * tx_msg[] {M_BADMSG, M_HELLO, M_AUTH, M_SLEEP, M_ERROR, M_TEMP, M_HUMID, M_PRESS, M_PHOTO, M_PIR, M_RL0, M_RL1};
 
 // Recieve Message Types: <Recieve Type> = <Body Type> or <Value>
-#define RM_AUTOCHAN  "AUTN="   // Automation Channel and Sensor Select = <Channel Value> "01"
+#define RM_AUTOCHAN  "AUTN="   // Automation Channel Select = <Channel>
 #define RM_AUTOFLAG  "AUTF="   // Automation Flag Set = <Byte>
 #define RM_AUTOSET   "AUTS="   // Automation Setpoint = <Float> (4-byte)
 #define RM_AUTODUR   "AUTD="   // Automation Duration = <Int> (2-byte)
@@ -149,7 +152,8 @@ const char * rx_msg[] {RM_AUTOCHAN, RM_AUTOFLAG, RM_AUTOSET, RM_AUTODUR, RM_AUTO
 #define M_END    "ENDD"    // End Operaton 
 #define M_AUTOS  "AUTS"    // Automation Status
 #define M_DATAS  "DATS"    // Data Status
-#define M_AUTHS  "ATHS"     // Authentication Status
+#define M_AUTHS  "ATHS"    // Authentication Status
 
 // Array of Body Messages:
 const char * body_msg[] = {M_BAD, M_FALSE, M_TRUE, M_ERROR, M_NOAUTH, M_START, M_END, M_AUTOS, M_DATAS };
+
