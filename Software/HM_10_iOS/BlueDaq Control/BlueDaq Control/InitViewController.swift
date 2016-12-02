@@ -328,6 +328,7 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
     }
 
+	// Connect Device
     @IBAction func connect_dev(_ sender: AnyObject) {
         if serial.connectedPeripheral == nil {
             performSegue(withIdentifier: "ShowScanner", sender: self)

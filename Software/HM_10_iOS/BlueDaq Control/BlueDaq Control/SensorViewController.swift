@@ -15,6 +15,7 @@ import CoreBluetooth
 //import QuartzCore
 import Foundation
 
+self.NUM_RELAYS = 2
 
 final class SensorViewController: UIViewController, BluetoothSerialDelegate {
 
@@ -27,6 +28,7 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
     var automation_dat = [bluedaq_settings.auto(), bluedaq_settings.auto()]     // Current Automation Settings
     var loaded_auto = true                                                      // Automation Load State
     var sensor_dat = bluedaq_settings.sensor_dat()                              // Sensor Data Struct
+	var connection_err : Bool = false
     
     
     
@@ -50,7 +52,8 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
         super.viewDidLoad()
         
         // Connect Serial
-        serial.delegate = self
+		serial = BluetoothSerial(delegate: self)
+        serial.writeType = .withoutResponse
         
 
         if serial.centralManager.state != .poweredOn {
@@ -98,7 +101,12 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
         
     
     }
-    
+	
+	// Serial Message Recieved
+    func serialDidReceiveString(_ msg: String) {
+        messageResponder(message: msg)
+        
+    }
     
     
     // Parse Incoming Message
@@ -120,13 +128,27 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
                     break
                 
                 case 1:     // Authentication State
-                    
-                        // No Longer Authenticated - Return to Init Screen
-                        if(message_resp.body == serial_core.body_types[1]){
-                            current_settings.auth = false
-                            self.performSegue(withIdentifier: "unwindToInit", sender: self)
-                        }
-                        
+					
+						// Check Passcode: (2 = TRUE)
+						if (serial_core.body_types[2] == message_resp.body){
+								current_settings.auth = true // User has authed
+								connection_err = false
+						}
+			
+						else if(serial_core.body_types[1] == message_resp.body){
+							
+							if(connection_err){
+								// Problem Connecting
+								self.performSegue(withIdentifier: "unwindToInit", sender: self)
+							}
+							
+							else{
+								current_settings.auth = false
+								serial.sendMessageToDevice(current_settings.passcode) // Send Passcode
+								connection_err = true // Mark in case of return
+							}
+						}
+							
                     break
                 
                 case 2:     // Device Sleeping
@@ -184,6 +206,12 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
     
     // Send Automation Settings to Device
     func store_automation(){
+	
+		for i in 0...self.NUM_RELAYS{
+			//automation_dat[i].
+		
+		}
+
      
      
     }
