@@ -41,6 +41,7 @@ void setup() {
   // Config Auth Token
   auth_dat = {false, 0, 0};
 
+#ifdef DEBUG_EN
   // WatchDog Timer Interrupt
   // Disable interrupts globally
   cli();
@@ -63,14 +64,17 @@ ISR(WDT_vect)
 {
   Run = true;
   Serial.println("INTERRUPT!!!");
+#endif
 }
+
 
 // Main Loop:
 void loop(){
   if (Run){
     
     cli();      // Turn off global interrupts
-    
+    Serial.println( "Interrupt disabled" );
+
     // Local Variables:
     sensor_data s_dat = {false, 0, 0, 0, 0};   // Sensor Data Struct
 //    auto_data auto_dat[NUM_RELAY];             // Automation Structures 
@@ -89,7 +93,8 @@ void loop(){
   
       run_once = true; 
     }
-
+    
+#ifdef DEBUG_EN
     // Debug code
     if ( count % 3 == 0){
       put(sizeof(auth_data),0);
@@ -99,28 +104,32 @@ void loop(){
       get(sizeof(auth_data));
       get(sizeof(auth_data) + sizeof(auto_data));
     }
+#endif    
+    // Read Data:
+     checkSerial();    // Check for message, parse, and act.
     
-//    // Read Data:
-//     checkSerial();    // Check for message, parse, and act.
-//    
-//    // Read Sensor Data and Update Struct:
-//    readSensors(&s_dat);  // Updates struct
-//    
-//    // Perform Automation Tasks:
-//    for( int i = 0; i < NUM_RELAY; i++){
-//      auto_dat[i] = {false, false, false, TEMP, 0, 0};  // Init Struct
-//      do_automation(i, &auto_dat[i], &s_dat);
-//    }
-//    
-//    // Report data if authenticated
-//    if(session_auth){
-//      // Upload Sensor Data (if enabled)
-//      uploadSensors(&s_dat);
-//    }
+    // Read Sensor Data and Update Struct:
+    readSensors(&s_dat);  // Updates struct
+    
+    // Perform Automation Tasks:
+    for( int i = 0; i < NUM_RELAY; i++){
+      auto_dat[i] = {false, false, false, TEMP, 0, 0};  // Init Struct
+      do_automation(i, &auto_dat[i], &s_dat);
+    }
+    
+    // Report data if authenticated
+    if(session_auth){
+      // Upload Sensor Data (if enabled)
+      uploadSensors(&s_dat);
+    }
+    
     count += 1;
     Serial.println(count);
     Run = false;
+    Serial.println( "Interrupt re-enabled" );
+    
     sei();      // Turn interrupt back on
+
   }
 }
 
@@ -242,12 +251,24 @@ byte parseMessage(char * msg, int len){
        break;
      }
   }
-    
+  Serial.println(buf);
+  Serial.println(buf[0]);
   // Respond to message : rx_msg[j]
   switch (sel) {
       
       case 0:    // Automation Channel Select <Relay : Device>
-     
+       #ifdef DEBUG_EN
+          if (strcmp(buf,"Realy : 1")){
+              Serial.println(M_RL1 M_TRUE);
+              relay = 1;
+              return 1;
+          }
+          else{
+              Serial.println(M_RL0 M_TRUE);
+              relay = 0;
+              return 1;
+          }
+      #endif
         break;
         
       case 1:    // Automation Flag Set       <VALUE>
@@ -259,7 +280,18 @@ byte parseMessage(char * msg, int len){
         break;
       
       case 3:    // Automation Duration       <VALUE>
-      
+        #ifdef DEBUG_EN
+            Serial.println(buf);
+            Serial.println(buf[0]);
+            int rel = buf[0];
+            char buff[MESSAGE_LEN];
+            for(i = 1; i < MAX_MSG_SIZE; i++){
+                buff[i-1] = buf[i]; // BUFF holds message body:
+            }
+            buff[i]= '\0';
+            Serial.println(buff);
+        return auto_duration(rel, buff);
+        #endif
         break;
       
       case 4:    // Automation Complete (conf) <VALUE>
@@ -267,7 +299,7 @@ byte parseMessage(char * msg, int len){
         break;
       
       case 5:    // Configure Polling Freq.    <VALUE>
-      
+        return config_poll_freq(atoi(buf));
         break;
       
       case 6:    // Perform Data Operation (upload ready) <BODY>
@@ -317,6 +349,41 @@ byte parseMessage(char * msg, int len){
 }
 
 
+// Automation struct Channel selection
+#ifdef DEBUG_EN
+byte select_channel(byte channel){
+    if (channel == "01"){
+        Serial.println(M_RL1 M_TRUE);
+        return 1;
+    }
+    else{
+        Serial.println(M_RL0 M_TRUE);
+        return 0;
+    }
+}
+
+
+
+// set automation duration
+byte auto_duration(int value ,byte rel){
+  // Select relay
+  auto_dat[rel].t_duration = value;
+  Serial.println(RM_AUTODUR M_TRUE);
+  return 1;
+}
+
+#endif
+
+// Set Polling Frequency 
+byte config_poll_freq(byte value){
+  if (byte(value) > 1 and byte(value) <11){         
+      auth_dat.poll_freq = value;
+      return 1;
+  }
+  else{
+      return 0;
+  }
+}
 
 // Read Data from Sensors:
 void readSensors(sensor_data * data){
@@ -537,5 +604,11 @@ void disable_relay(int relay){
 void uploadSensors(sensor_data * s_dat){
   
   // SEND SENSOR DATA HERE //
-  
+  #ifdef DEBUG_EN
+//  Serial.println(M_PHOTO s_dat->ls);
+//  Serial.println(M_PIR s_dat->PIR);
+//  Serial.println(M_TEMP s_dat->temp);
+//  Serial.println(M_PRESS s_dat->pressure);
+//  Serial.println(M_HUMID s_dat->humidity);
+  #endif
 }
