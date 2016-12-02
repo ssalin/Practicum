@@ -258,25 +258,45 @@ byte parseMessage(char * msg, int len){
       
       case 0:    // Automation Channel Select <Relay : Device>
        #ifdef DEBUG_EN
-          if (strcmp(buf,"Realy : 1")){
+          if (atoi(buf) == 1){
               Serial.println(M_RL1 M_TRUE);
-              relay = 1;
               return 1;
           }
           else{
               Serial.println(M_RL0 M_TRUE);
-              relay = 0;
               return 1;
           }
       #endif
         break;
         
       case 1:    // Automation Flag Set       <VALUE>
-      
+        #ifdef DEBUG_EN
+              Serial.println(buf);
+              Serial.println(buf[0]);
+              int rel = buf[0];
+              char buff[MESSAGE_LEN];
+              for(i = 1; i < MAX_MSG_SIZE; i++){
+                  buff[i-1] = buf[i]; // BUFF holds message body:
+              }
+              buff[i]= '\0';
+              Serial.println(buff);
+          return auto_flag_set(atoi(rel), atoi(buff)); // or strtof() for string to float
+        #endif
         break;
       
       case 2:    // Automation Set Point      <VALUE>
-      
+          #ifdef DEBUG_EN
+              Serial.println(buf);
+              Serial.println(buf[0]);
+              int rel = buf[0];
+              char buff[MESSAGE_LEN];
+              for(i = 1; i < MAX_MSG_SIZE; i++){
+                  buff[i-1] = buf[i]; // BUFF holds message body:
+              }
+              buff[i]= '\0';
+              Serial.println(buff);
+          return auto_duration(atoi(rel), atof(buff)); // or strtof() for string to float
+          #endif
         break;
       
       case 3:    // Automation Duration       <VALUE>
@@ -290,7 +310,7 @@ byte parseMessage(char * msg, int len){
             }
             buff[i]= '\0';
             Serial.println(buff);
-        return auto_duration(rel, buff);
+        return auto_duration(atoi(rel), atoi(buff));
         #endif
         break;
       
@@ -348,6 +368,32 @@ byte parseMessage(char * msg, int len){
   return 0;
 }
 
+#ifdef DEBUG_EN
+// set automation flag, 
+byte auto_flag_set(int rel, byte value){
+  // Select relay
+  auto_dat[rel].en = bitRead(value,0);
+  auto_dat[rel].dec = bitRead(value,1);
+  auto_dat[rel].tog = bitRead(value,2);
+  auto_dat[rel].tmp = bitRead(value,3);         // Reading these might be tricky
+  auto_dat[rel].pres = bitRead(value,4);
+  auto_dat[rel].hum = bitRead(value,5);
+  auto_dat[rel].ls = bitRead(value,6);
+  auto_dat[rel].pir = bitRead(value,7);
+  Serial.println(RM_AUTOFLAG M_TRUE);
+  return 1;
+}
+#endif
+
+
+#ifdef DEBUG_EN
+// set automation set point
+byte auto_set_point(int rel,float value){
+  auto_dat[rel].setpoint = value;
+  Serial.println(RM_AUTOSET M_TRUE);
+  return 1;
+}
+#endif
 
 // Automation struct Channel selection
 #ifdef DEBUG_EN
@@ -365,7 +411,7 @@ byte select_channel(byte channel){
 
 
 // set automation duration
-byte auto_duration(int value ,byte rel){
+byte auto_duration(int rel, int value){
   // Select relay
   auto_dat[rel].t_duration = value;
   Serial.println(RM_AUTODUR M_TRUE);
