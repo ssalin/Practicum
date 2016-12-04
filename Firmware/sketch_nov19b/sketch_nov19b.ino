@@ -37,11 +37,11 @@ void setup() {
     // Send Error & Reboot
 
   }
+
   
   // Config Auth Token
   auth_dat = {false, 0, 0};
 
-#ifdef DEBUG_EN
   // WatchDog Timer Interrupt
   // Disable interrupts globally
   cli();
@@ -64,7 +64,6 @@ ISR(WDT_vect)
 {
   Run = true;
   Serial.println("INTERRUPT!!!");
-#endif
 }
 
 
@@ -72,8 +71,8 @@ ISR(WDT_vect)
 void loop(){
   if (Run){
     
-    cli();      // Turn off global interrupts
-    Serial.println( "Interrupt disabled" );
+    //cli();      // Turn off global interrupts
+    //Serial.println( "Interrupt disabled" );
 
     // Local Variables:
     sensor_data s_dat = {false, 0, 0, 0, 0};   // Sensor Data Struct
@@ -84,15 +83,15 @@ void loop(){
 //    Serial.println(sizeof(auto_dat));
     
     // Load EEPROM DATA (Auth and Automation)
-    if(!run_once){
-          
-      // DO EEPROM STUFF HERE //  
-      EEPROM.put(0, auth_dat);
-      EEPROM.put(sizeof(auth_data), auto_dat[0]);
-      EEPROM.put(sizeof(auth_data) + sizeof(auto_data), auto_dat[1]);
-  
-      run_once = true; 
-    }
+//    if(!run_once){
+//          
+//      // DO EEPROM STUFF HERE //  
+//      EEPROM.put(0, auth_dat);
+//      EEPROM.put(sizeof(auth_data), auto_dat[0]);
+//      EEPROM.put(sizeof(auth_data) + sizeof(auto_data), auto_dat[1]);
+//  
+//      run_once = true; 
+//    }
     
 #ifdef DEBUG_EN
     // Debug code
@@ -123,12 +122,12 @@ void loop(){
       uploadSensors(&s_dat);
     }
     
-    count += 1;
-    Serial.println(count);
+//    count += 1;
+//    Serial.println(count);
     Run = false;
-    Serial.println( "Interrupt re-enabled" );
+//    Serial.println( "Interrupt re-enabled" );
     
-    sei();      // Turn interrupt back on
+    //sei();      // Turn interrupt back on
 
   }
 }
@@ -137,6 +136,8 @@ void loop(){
 //
 // Functions
 //
+
+#ifdef DEBUG_EN
 // This funciton will create new content for the struct object and then puts it in the specified memory location
 void put(int address, int index)
 {
@@ -175,7 +176,7 @@ void get(int address)
   
 }
 
-
+#endif
 
 
 // Check for Incoming Serial Message
@@ -251,67 +252,37 @@ byte parseMessage(char * msg, int len){
        break;
      }
   }
-  Serial.println(buf);
-  Serial.println(buf[0]);
+  
+  char buff[MAX_MSG_SIZE];
+  char str = buf[0];
+  //Serial.println(str);
   // Respond to message : rx_msg[j]
   switch (sel) {
       
       case 0:    // Automation Channel Select <Relay : Device>
-       #ifdef DEBUG_EN
-          if (atoi(buf) == 1){
-              Serial.println(M_RL1 M_TRUE);
-              return 1;
-          }
-          else{
-              Serial.println(M_RL0 M_TRUE);
-              return 1;
-          }
-      #endif
+          return select_channel(str);
         break;
         
       case 1:    // Automation Flag Set       <VALUE>
-        #ifdef DEBUG_EN
-              Serial.println(buf);
-              Serial.println(buf[0]);
-              int rel = buf[0];
-              char buff[MESSAGE_LEN];
-              for(i = 1; i < MAX_MSG_SIZE; i++){
-                  buff[i-1] = buf[i]; // BUFF holds message body:
-              }
-              buff[i]= '\0';
-              Serial.println(buff);
-          return auto_flag_set(atoi(rel), atoi(buff)); // or strtof() for string to float
-        #endif
+      
         break;
       
       case 2:    // Automation Set Point      <VALUE>
-          #ifdef DEBUG_EN
-              Serial.println(buf);
-              Serial.println(buf[0]);
-              int rel = buf[0];
-              char buff[MESSAGE_LEN];
-              for(i = 1; i < MAX_MSG_SIZE; i++){
-                  buff[i-1] = buf[i]; // BUFF holds message body:
-              }
-              buff[i]= '\0';
-              Serial.println(buff);
-          return auto_duration(atoi(rel), atof(buff)); // or strtof() for string to float
-          #endif
+          for(i = 1; i < MAX_MSG_SIZE; i++){
+              buff[i-1] = buf[i]; // BUFF holds message body:
+          }
+          buff[i-1]= '\0';
+          Serial.println(buff);
+          return auto_setpoint(str, atof(buff)); // or strtof() for string to float
         break;
       
       case 3:    // Automation Duration       <VALUE>
-        #ifdef DEBUG_EN
-            Serial.println(buf);
-            Serial.println(buf[0]);
-            int rel = buf[0];
-            char buff[MESSAGE_LEN];
-            for(i = 1; i < MAX_MSG_SIZE; i++){
-                buff[i-1] = buf[i]; // BUFF holds message body:
-            }
-            buff[i]= '\0';
-            Serial.println(buff);
-        return auto_duration(atoi(rel), atoi(buff));
-        #endif
+          for(i = 1; i < MAX_MSG_SIZE; i++){
+              buff[i-1] = buf[i]; // BUFF holds message body:
+          }
+          buff[i-1]= '\0';
+          Serial.println(buff);
+          return auto_duration(str, atoi(buff)); 
         break;
       
       case 4:    // Automation Complete (conf) <VALUE>
@@ -319,7 +290,7 @@ byte parseMessage(char * msg, int len){
         break;
       
       case 5:    // Configure Polling Freq.    <VALUE>
-        return config_poll_freq(atoi(buf));
+          return config_poll_freq(atoi(buf));
         break;
       
       case 6:    // Perform Data Operation (upload ready) <BODY>
@@ -368,61 +339,14 @@ byte parseMessage(char * msg, int len){
   return 0;
 }
 
-#ifdef DEBUG_EN
-// set automation flag, 
-byte auto_flag_set(int rel, byte value){
-  // Select relay
-  auto_dat[rel].en = bitRead(value,0);
-  auto_dat[rel].dec = bitRead(value,1);
-  auto_dat[rel].tog = bitRead(value,2);
-  auto_dat[rel].tmp = bitRead(value,3);         // Reading these might be tricky
-  auto_dat[rel].pres = bitRead(value,4);
-  auto_dat[rel].hum = bitRead(value,5);
-  auto_dat[rel].ls = bitRead(value,6);
-  auto_dat[rel].pir = bitRead(value,7);
-  Serial.println(RM_AUTOFLAG M_TRUE);
-  return 1;
-}
-#endif
 
 
 #ifdef DEBUG_EN
-// set automation set point
-byte auto_set_point(int rel,float value){
-  auto_dat[rel].setpoint = value;
-  Serial.println(RM_AUTOSET M_TRUE);
-  return 1;
-}
-#endif
-
-// Automation struct Channel selection
-#ifdef DEBUG_EN
-byte select_channel(byte channel){
-    if (channel == "01"){
-        Serial.println(M_RL1 M_TRUE);
-        return 1;
-    }
-    else{
-        Serial.println(M_RL0 M_TRUE);
-        return 0;
-    }
-}
-
-
-
-// set automation duration
-byte auto_duration(int rel, int value){
-  // Select relay
-  auto_dat[rel].t_duration = value;
-  Serial.println(RM_AUTODUR M_TRUE);
-  return 1;
-}
-
-#endif
-
 // Set Polling Frequency 
-byte config_poll_freq(byte value){
-  if (byte(value) > 1 and byte(value) <11){         
+byte config_poll_freq( int value){
+  //byte(value);
+  Serial.println(value);
+  if (value > B1 and value < B1011){         
       auth_dat.poll_freq = value;
       return 1;
   }
@@ -430,6 +354,79 @@ byte config_poll_freq(byte value){
       return 0;
   }
 }
+#endif
+
+// set automation set point
+byte auto_setpoint(int rel,float value){
+  // Select relay
+  Serial.println(value);            // Value contains the duration and garbage, not sure how to eliminate garbage and store only relevant data
+  if ( rel == 49){
+    Serial.println("Relay one was selected.");
+    auto_dat[1].setpoint = value;
+  }
+  else{
+    Serial.println("Relay zero was selected.");
+    auto_dat[0].setpoint = value;
+  }
+  Serial.println(RM_AUTOSET M_TRUE);
+  return 1;
+}
+
+
+// Select Automation channel and sensor select
+byte select_channel(int rel){
+  Serial.println(rel);
+  if ( rel == 49 ){             // Compare to ASCII Decimal Value
+      Serial.println(M_RL1 M_TRUE);
+      Serial.println("Relay one was selected.");
+      return 1;
+  }
+  else{
+      Serial.println(M_RL0 M_TRUE);
+      Serial.println("Relay zero was selected.");
+      return 1;
+  }
+}
+
+
+// set automation duration            Results are not consistent
+byte auto_duration(char rel, int value){
+  // Select relay
+  Serial.println(value);            // Value contains the duration and garbage, not sure how to eliminate garbage and store only relevant data
+  if ( rel == 49){
+    auto_dat[1].t_duration = value;
+    Serial.println("Relay one was selected.");
+  }
+  else{
+    auto_dat[0].t_duration = value;
+    Serial.println("Relay zero was selected.");
+  }
+  Serial.println(RM_AUTODUR M_TRUE);
+  return 1;
+}
+
+
+
+
+#ifdef DEBUG_EN
+// set automation flag, 
+byte auto_flag_set(int rel, byte value){
+  // Select relay
+  auto_dat[rel].en = bitRead(value,0);
+  auto_dat[rel].desc = bitRead(value,1);
+  auto_dat[rel].toggle = bitRead(value,2);
+//  auto_dat[rel].tmp = bitRead(value,3);         // Reading these might be tricky
+//  auto_dat[rel].pres = bitRead(value,4);
+//  auto_dat[rel].hum = bitRead(value,5);
+//  auto_dat[rel].ls = bitRead(value,6);
+//  auto_dat[rel].pir = bitRead(value,7);
+  Serial.println(RM_AUTOFLAG M_TRUE);
+  return 1;
+}
+#endif
+
+
+
 
 // Read Data from Sensors:
 void readSensors(sensor_data * data){
