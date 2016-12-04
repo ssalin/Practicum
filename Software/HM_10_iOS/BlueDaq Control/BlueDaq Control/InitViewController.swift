@@ -62,7 +62,7 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
     func reloadView() {
 		
         // Debug:
-         debug_views()
+        // debug_views()
         
 		// Control Serial Deligate (rx/tx)
 		serial.delegate = self
@@ -112,8 +112,8 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
             enable_views()
         }
         else{
-          //  gesure_rec.isEnabled = false;
-          //  pageView.isHidden = true;
+           gesure_rec.isEnabled = false;
+            pageView.isHidden = true;
         }
         
     }

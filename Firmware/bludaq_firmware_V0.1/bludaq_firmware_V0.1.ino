@@ -338,7 +338,32 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
       case 8:    // Perform Auth <KEY> 
           return authenticate(atoi(buf));  
           break;
-       
+      case 9:   // Toggle Enable <Relay><T/>
+        if(session_auth){ 
+    
+          buf[BODYSIZE] = '\0';
+          if(!strcmp(buf, M_TRUE)){
+             auth_dat.disp_data = true;
+             return 1;
+          }
+          
+          if(!strcmp(buf, M_FALSE)){
+            auth_dat.disp_data = false;
+            return 1;
+          }
+
+           // Didn't Understand
+          Serial.println(M_ERROR M_BAD);
+          return 0;
+
+        }      
+        else{
+          Serial.println(M_AUTH M_NOAUTH); // Not Authenticated
+          return 1;
+        }              
+        break;
+        
+        
       default:
           // Message parsed but not understood. 
           return 0;
@@ -582,16 +607,23 @@ void disable_relay(int relay){
 void uploadSensors(sensor_data * s_dat){
   
   // SEND SENSOR DATA HERE //
-  Serial.println(M_TEMP + String(s_dat->temp, PRECISION));        // Temperature
-  Serial.println(M_PRESS + String(s_dat->pressure, PRECISION));   // Pressure
-  Serial.println(M_HUMID + String(s_dat->humidity, PRECISION));   // Humidity
-  Serial.println(M_PHOTO + String(s_dat->ls));                    // Photo Sensor
+  Serial.print(M_TEMP + String(s_dat->temp, PRECISION) + "\n");        // Temperature
+  delay(20);
+  
+  Serial.print(M_PRESS + String(s_dat->pressure, PRECISION) + "\n");   // Pressure
+  delay(20);
+  
+  Serial.print(M_HUMID + String(s_dat->humidity, PRECISION) + "\n");   // Humidity
+  delay(20);
+  
+  Serial.print(M_PHOTO + String(s_dat->ls) + "\n");                    // Photo Sensor
+  delay(20);
   
   if(s_dat->PIR){    // Motion Sensor State
-   Serial.println(M_PIR M_TRUE);
+   Serial.print(M_PIR M_TRUE "\n");
   }
   else {
-    Serial.println(M_PIR M_FALSE);
+    Serial.print(M_PIR M_FALSE "\n");
   }
   
   delay(1000); // FOR DEBUGGING? Might use polling delay here somehow...

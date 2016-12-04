@@ -15,7 +15,7 @@ import CoreBluetooth
 //import QuartzCore
 import Foundation
 
-self.NUM_RELAYS = 2
+
 
 final class SensorViewController: UIViewController, BluetoothSerialDelegate {
 
@@ -29,7 +29,7 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
     var loaded_auto = true                                                      // Automation Load State
     var sensor_dat = bluedaq_settings.sensor_dat()                              // Sensor Data Struct
 	var connection_err : Bool = false
-    
+
     
     
 //MARK: IBOutlets
@@ -52,9 +52,9 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
         super.viewDidLoad()
         
         // Connect Serial
-		serial = BluetoothSerial(delegate: self)
-        serial.writeType = .withoutResponse
-        
+		//serial = BluetoothSerial(delegate: self)
+        //serial.writeType = .withoutResponse
+        serial.delegate = self
 
         if serial.centralManager.state != .poweredOn {
             title = "Bluetooth Disabled"
@@ -90,6 +90,9 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
     
     // Update View : Loads all views from memory
     func update_view(){
+        
+        // Get Data:
+        data_read(state: true)
         
         // Sensor Data
         light_txtbox.text = String(sensor_dat.light)
@@ -201,31 +204,76 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
 			
 			timestamp_label.text = "Device Error"
         }
+        
+        // Display Results
+         update_view()
     }
 
     
     // Send Automation Settings to Device
+    
+    /*
     func store_automation(){
-	
-		for i in 0...self.NUM_RELAYS{
-			//automation_dat[i].
-		
+        
+        var index = 0
+        
+		for i in automation_dat{
+            
+            // Decending Flag
+            if(i.descending){
+            
+                serial.sendMessageToDevice(serial_core.tx_msg_types[6]! + String(index) + serial_core.body_types[2]!)
+            }
+            else{
+                serial.sendMessageToDevice(serial_core.tx_msg_types[6]! + String(index) + serial_core.body_types[1]!)
+            }
+            
+            // Enable
+            if(i.enabled){
+                serial.sendMessageToDevice(serial_core.tx_msg_types[1]! + String(index) + serial_core.body_types[2]!)
+            }
+            else{
+                serial.sendMessageToDevice(serial_core.tx_msg_types[1]! + String(index) + serial_core.body_types[1]!)
+            }
+            
+            // Toggle
+            if(i.toggle){
+                serial.sendMessageToDevice(String(serial_core.tx_msg_types[9]!) + String(index) + serial_core.body_types[2]!)
+            }
+            else{
+                serial.sendMessageToDevice(String(serial_core.tx_msg_types[9]!) + String(index) + serial_core.body_types[1]!)
+            }
+            
+            // Duration
+            serial.sendMessageToDevice(String(serial_core.tx_msg_types[3]!) +  String(index) + String(i.duraton))
+            
+            // Setpoint
+            serial.sendMessageToDevice(String(serial_core.tx_msg_types[2]!) + String(index) + String(i.setpoint))
+            
+            
+            
+            // Sensor
+            let val = serial_core.tx_msg_types[0]! + String(index) + String(i.sensor)
+            serial.sendMessageToDevice(val)
+            
+            
+            index += 1
 		}
 
      
      
     }
-    
+    */
     
     // Start or Stop Data Upload Process
     func data_read(state : Bool){
         
         if(state){      // Start
-        
+            serial.sendMessageToDevice(String(serial_core.tx_msg_types[6]! + serial_core.body_types[5]!)) // Start
         
         }
         else {          // Stop
-        
+            serial.sendMessageToDevice(String(serial_core.tx_msg_types[6]! + serial_core.body_types[6]!)) // Start
         }
     }
     
@@ -259,7 +307,10 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
 //MARK: Segue Prep
 
 override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-
+    
+    // Get Data:
+    data_read(state: false)
+    
     // Automation View
     if segue.identifier == "ShowAuto" {
         let controller = segue.destination as! AutoViewController
@@ -274,13 +325,15 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 // Store Automation
 @IBAction func store_automation(_ sender: Any) {
     
-        store_automation()
+        // store_automation()
+         serial.sendMessageToDevice(String(serial_core.tx_msg_types[6]! + serial_core.body_types[5]!)) // Start
 
     }
 
 // Return To This View (unwind)
 @IBAction func unwindToSensor(sender: UIStoryboardSegue) {
 	// Get data from AutomationVC
+    
 	if let sourceViewController = sender.source as? AutoViewController {
 		current_settings = sourceViewController.current_settings
 	}

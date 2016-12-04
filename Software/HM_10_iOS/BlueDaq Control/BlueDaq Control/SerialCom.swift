@@ -59,7 +59,8 @@ class bludaq_core_serial{
         5: "CPOL=",    // Configure Polling Frequency = <byte>
         6: "DATA=",    // Perform Data Operations (Read Sensors)
         7: "STAT=",    // Ask for status
-        8: "AUTK="     // Send Auth Key = <KEY>
+        8: "AUTK=",    // Send Auth Key = <KEY>
+        9: "AUTG="     // Enable Toggle <T/F>
     ]
     
     
@@ -80,12 +81,15 @@ class bludaq_core_serial{
 	
 	
 	// Non-Callback Parser:
+    
+    // Need to fix ugly strings like "34.08/nDATA=20" Somehow this makes it in the body...
 	func parse_message(message: String) -> bludaq_core_serial.transaction_resp{
         
         // Prase out Message Type:
         let msg_keys = [String](rx_msg_types.keys)
         
         for (key) in msg_keys {
+            
             if message.uppercased().range(of: key) != nil {
                 
                 // Find "=" index for substring:
@@ -94,6 +98,11 @@ class bludaq_core_serial{
                 var body = message.substring(from: index)
                 body.remove(at: message.startIndex)
                 body = body.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                
+                // Remove Overflow
+                if let new_line = body.characters.index(of: " "){
+                    body = String(body.characters.prefix(upTo: new_line))
+                }
                 
                 // Populate Struct:
                 let t_data = transaction_resp(

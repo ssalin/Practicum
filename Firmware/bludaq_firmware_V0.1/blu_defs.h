@@ -107,7 +107,7 @@ typedef struct {
 #define MESSAGE_LEN 5    // Size of all Message Types
 #define BODYMSG_LEN 11   // Size of all Messages using a <Body> format (not data)
 #define BODYSIZE 4       // Size of all Bodies
-#define NUM_RX_MSG 9     // Number of RX Message Types
+#define NUM_RX_MSG 10     // Number of RX Message Types
 #define NUM_TX_MSG 12    // Number of TX Message Types
 #define NUM_BODY_MSG 10  // Number of body message types
 
@@ -138,9 +138,10 @@ const char * tx_msg[] {M_BADMSG, M_HELLO, M_AUTH, M_SLEEP, M_ERROR, M_TEMP, M_HU
 #define RM_DATA      "DATA="   // Perform Data Operation = <Start / Stop>
 #define RM_STATUS    "STAT="   // Request Status  = <Operation Type>
 #define RM_AUTHKEY   "AUTK="   // Request Auth = <KEY>
+#define RM_AUTOTOG   "AUTG="    // Enable / Disalbe Toggle
 
 // Array of RX Messages
-const char * rx_msg[] {RM_AUTOCHAN, RM_AUTOFLAG, RM_AUTOSET, RM_AUTODUR, RM_AUTOCONF, RM_CONFIGP, RM_DATA, RM_STATUS, RM_AUTHKEY};
+const char * rx_msg[] {RM_AUTOCHAN, RM_AUTOFLAG, RM_AUTOSET, RM_AUTODUR, RM_AUTOCONF, RM_CONFIGP, RM_DATA, RM_STATUS, RM_AUTHKEY, RM_AUTOTOG};
 
 // Body Types:
 #define M_BAD    "BADC"    // Bad Message
