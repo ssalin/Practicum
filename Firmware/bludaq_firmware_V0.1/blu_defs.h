@@ -10,12 +10,11 @@
 
 
 
-
 //
 // Debug and Option Flags:
 //
 
-//#define DEBUG_EN   // Disable Auth
+//#define DEBUG_EN   // Debug print statements
 #define SERIAL_EN  // Enable Serial Debug Statements
 
 
@@ -24,8 +23,9 @@
 // Other Definitions:
 //
 
+#define PRECISION 2           // Float to String Precision 
 #define NUM_RELAY 2           // Number of Relays
-//#define BAUD_RATE 115200      // Better Baud Rate for Serial
+//#define BAUD_RATE 115200    // Better Baud Rate for Serial
 #define BAUD_RATE 9600        // Typical Baud Rate for Serial
 #define MAX_MSG_SIZE 24       // 24 Chars + Terminator
 #define RELAY_PW_DELAY  20
@@ -52,6 +52,7 @@
 // Auth Data - For validating the host
 typedef struct{
   bool auth_set;    // Authentication Paired
+  bool disp_data;   // Sensor Upload Toggle
   int key;          // Auth-key
   byte poll_freq;   // Polling Frequency (power management)
 } auth_data;
@@ -67,6 +68,7 @@ typedef struct{
 
 
 // Sensor Values:
+#define NUM_SENSORS 5
 enum sensor_sel {TEMP, PRES, HUMI, LIGHT, PIR};
 
 typedef struct {
@@ -103,10 +105,11 @@ typedef struct {
 
 // Message Type Sizes:
 #define MESSAGE_LEN 5    // Size of all Message Types
-#define BODYMSG_LEN 9    // Size of all Messages using a <Body> format (not data)
+#define BODYMSG_LEN 11   // Size of all Messages using a <Body> format (not data)
+#define BODYSIZE 4       // Size of all Bodies
 #define NUM_RX_MSG 9     // Number of RX Message Types
 #define NUM_TX_MSG 12    // Number of TX Message Types
-#define NUM_BODY_MSG 10    // Number of body message types
+#define NUM_BODY_MSG 10  // Number of body message types
 
 // Transmit Message Types: 
 #define M_BADMSG "UNKO="   // Bad Message = <Incoming Message>
@@ -114,19 +117,19 @@ typedef struct {
 #define M_AUTH   "AUTH="   // Authentication Status = <T/F>
 #define M_SLEEP  "SLEP="   // Device will sleep = <Duration>
 #define M_ERROR  "EROR="   // Device Error = <Error Message or ID>
-#define M_TEMP   "DTMP"    // Temperature = <Value>
-#define M_HUMID  "DHUM"    // Humidity = <Value>
-#define M_PRESS  "DPRS"    // Pressure = <Value>
-#define M_PHOTO  "DRLS"    // Photoresistor = <Value>
-#define M_PIR    "DPIR"    // Motion Sensor = <T/F>
-#define M_RL0    "DRL0"    // Relay 0 State = <T/F> (on / off)
-#define M_RL1    "DRL1"    // Relay 1 State = <T/F> (on / off)
+#define M_TEMP   "DTMP="    // Temperature = <Value>
+#define M_HUMID  "DHUM="    // Humidity = <Value>
+#define M_PRESS  "DPRS="    // Pressure = <Value>
+#define M_PHOTO  "DRLS="    // Photoresistor = <Value>
+#define M_PIR    "DPIR="    // Motion Sensor = <T/F>
+#define M_RL0    "DRL0="    // Relay 0 State = <T/F> (on / off)
+#define M_RL1    "DRL1="    // Relay 1 State = <T/F> (on / off)
 
 // Array of TX Messages
 const char * tx_msg[] {M_BADMSG, M_HELLO, M_AUTH, M_SLEEP, M_ERROR, M_TEMP, M_HUMID, M_PRESS, M_PHOTO, M_PIR, M_RL0, M_RL1};
 
 // Recieve Message Types: <Recieve Type> = <Body Type> or <Value>
-#define RM_AUTOCHAN  "AUTN="   // Automation Channel and Sensor Select = <Channel Value> "01"
+#define RM_AUTOCHAN  "AUTN="   // Sensor Select = <Channel Value> "01"
 #define RM_AUTOFLAG  "AUTF="   // Automation Flag Set = <Byte>
 #define RM_AUTOSET   "AUTS="   // Automation Setpoint = <Float> (4-byte)
 #define RM_AUTODUR   "AUTD="   // Automation Duration = <Int> (2-byte)
@@ -143,13 +146,14 @@ const char * rx_msg[] {RM_AUTOCHAN, RM_AUTOFLAG, RM_AUTOSET, RM_AUTODUR, RM_AUTO
 #define M_BAD    "BADC"    // Bad Message
 #define M_FALSE  "FALS"    // Logical False
 #define M_TRUE   "TRUE"    // Logical True
-#define M_ERROR  "ERRR"    // Unknown Error (not caught)
+#define M_ERR    "ERRR"    // Unknown Error (not caught)
 #define M_NOAUTH "NOAU"    // Not Authenticated (timeout)
 #define M_START  "STRT"    // Start Operaton
 #define M_END    "ENDD"    // End Operaton 
 #define M_AUTOS  "AUTS"    // Automation Status
 #define M_DATAS  "DATS"    // Data Status
 #define M_AUTHS  "ATHS"     // Authentication Status
+#define M_BME280  "BMES"    // BME280 Status
 
 // Array of Body Messages:
-const char * body_msg[] = {M_BAD, M_FALSE, M_TRUE, M_ERROR, M_NOAUTH, M_START, M_END, M_AUTOS, M_DATAS };
+const char * body_msg[] = {M_BAD, M_FALSE, M_TRUE, M_ERROR, M_NOAUTH, M_START, M_END, M_AUTOS, M_DATAS, M_AUTHS, M_BME280 };
