@@ -37,14 +37,36 @@ void setup() {
   
   // Config Auth Token
   auth_dat = {false, false, 0, 0};
+
+
+  
 }
 
-
+ISR(WDT_vect)
+{
+  //Run = true;
+  Serial.println("INTERRUPT!!!");
+}
 
 // Main Loop:
 void loop() {
   
   // FIGURE OUT WATCHDOG STUFF HERE ? //
+  // WatchDog Timer Interrupt
+  // Disable interrupts globally
+  cli();
+  
+  // Reset Watchdog Timer
+  MCUSR &= ~(1<<WDRF);  
+  
+  // Prepare watchdog for config change.
+  WDTCSR |= (1<<WDCE) | (1<<WDE);  
+  
+  // Now choose timer mode and prescaler
+  WDTCSR = (1<<WDIE) | (1<<WDP3) | (1<<WDP0);  // 8sec, Interrupt Mode
+ 
+  // Enable interrupts globally
+  sei();
   
   // Local Variables:
   sensor_data s_dat = {false, 0, 0, 0, 0};   // Sensor Data Struct
@@ -60,7 +82,9 @@ void loop() {
   if(!run_once){
         
     // DO EEPROM STUFF HERE //  
-    
+    EEPROM.get(0, auth_dat);
+    EEPROM.get(sizeof(auth_data), auto_dat[0]);
+    EEPROM.get(sizeof(auth_data) + sizeof(auto_data), auto_dat[1]);  
     run_once = true; 
   }
   
@@ -183,7 +207,10 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
        break;
      }
   }
-    
+
+  Serial.println(buf);
+  Serial.println(buf[0]);
+  Serial.println(buf[1]);
   // Respond to message : rx_msg[j]
   switch (sel) {
       
@@ -467,6 +494,14 @@ void do_automation(int relay, auto_data * auto_dat, sensor_data * sensor_dat ){
             disable_relay(relay); 
          }
        }
+
+      // Write new automation to EEPROM
+      if (relay == 0){
+        EEPROM.put(sizeof(auth_data), &auto_dat);
+      }
+      else{
+        EEPROM.put(sizeof(auth_data) + sizeof(auto_data), &auto_dat);
+      }       
      break;
      
      case PRES:  // Pressure
@@ -486,6 +521,13 @@ void do_automation(int relay, auto_data * auto_dat, sensor_data * sensor_dat ){
             disable_relay(relay); 
          }
        }
+      // Write new automation to EEPROM
+      if (relay == 0){
+        EEPROM.put(sizeof(auth_data), &auto_dat);
+      }
+      else{
+        EEPROM.put(sizeof(auth_data) + sizeof(auto_data), &auto_dat);
+      }
      break;
      
      case HUMI:  // Humidity
@@ -505,6 +547,13 @@ void do_automation(int relay, auto_data * auto_dat, sensor_data * sensor_dat ){
             disable_relay(relay); 
          }
        }
+      // Write new automation to EEPROM
+      if (relay == 0){
+        EEPROM.put(sizeof(auth_data), &auto_dat);
+      }
+      else{
+        EEPROM.put(sizeof(auth_data) + sizeof(auto_data), &auto_dat);
+      }
      break;
      
      case LIGHT:  // Light Sensor
@@ -525,6 +574,13 @@ void do_automation(int relay, auto_data * auto_dat, sensor_data * sensor_dat ){
          }
        }
      break;
+      // Write new automation to EEPROM
+      if (relay == 0){
+        EEPROM.put(sizeof(auth_data), &auto_dat);
+      }
+      else{
+        EEPROM.put(sizeof(auth_data) + sizeof(auto_data), &auto_dat);
+      }
      
      case PIR: // Motion Sensor (May Require Some Debugging like a counter)
        if(sensor_dat->PIR){
@@ -533,6 +589,13 @@ void do_automation(int relay, auto_data * auto_dat, sensor_data * sensor_dat ){
        else{
            disable_relay(relay);
        }
+      // Write new automation to EEPROM
+      if (relay == 0){
+        EEPROM.put(sizeof(auth_data), &auto_dat);
+      }
+      else{
+        EEPROM.put(sizeof(auth_data) + sizeof(auto_data), &auto_dat);
+      }
     }
     
   }
