@@ -14,8 +14,8 @@
 // Debug and Option Flags:
 //
 
-//#define DEBUG_EN   // Debug print statements
-#define SERIAL_EN  // Enable Serial Debug Statements
+#define DEBUG_EN   // Debug print statements
+//#define SERIAL_EN  // Enable Serial Debug Statements
 
 
 

@@ -51,6 +51,9 @@ final class AutoViewController: UIViewController,  UIPickerViewDelegate, UIPicke
         // Connect Serial
         serial.delegate = self
         
+        // Disable Data:
+        serial.sendMessageToDevice(serial_core.data_read(state: false))
+        
         if serial.centralManager.state != .poweredOn {
             title = "Bluetooth Disabled"
             return
@@ -154,7 +157,7 @@ final class AutoViewController: UIViewController,  UIPickerViewDelegate, UIPicke
         }
         
         // Motion Sensor Disables Options
-        if(getDevice() == "Motion Sensor" || !automation_dat[selected_chan].enabled){
+        if(getDevice() == "Motion Sensor" || !automation_dat[selected_chan].enabled || automation_dat[selected_chan].sensor == bluedaq_settings.sensor_sel.PIR){
             thresh_label.isEnabled = false
             asc_label.isEnabled = false
             asc_switch.isOpaque = true

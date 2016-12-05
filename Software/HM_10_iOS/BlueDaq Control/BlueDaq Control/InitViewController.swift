@@ -66,6 +66,9 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
         
 		// Control Serial Deligate (rx/tx)
 		serial.delegate = self
+        
+        // Disable Data:
+        serial.sendMessageToDevice(serial_core.data_read(state: false))
 		
 		// Load Settings from User Defaults
 		if(current_settings.init_){

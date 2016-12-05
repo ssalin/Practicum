@@ -29,6 +29,7 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
     var loaded_auto = true                                                      // Automation Load State
     var sensor_dat = bluedaq_settings.sensor_dat()                              // Sensor Data Struct
 	var connection_err : Bool = false
+    var celsius = true;                                                         // celsius or fahrenheit
 
     
     
@@ -42,6 +43,7 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
     @IBOutlet weak var timestamp_label: UILabel!
     @IBOutlet weak var store_auto_button: UIButton!
 
+    @IBOutlet weak var temp_button_label: UIButton!
 
 
 //MARK: Functions
@@ -92,23 +94,33 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
     func update_view(){
         
         // Get Data:
-        data_read(state: true)
+        serial.sendMessageToDevice(serial_core.data_read(state: true))
         
         // Sensor Data
         light_txtbox.text = String(sensor_dat.light)
-        humi_txtbox.text = String(sensor_dat.humi)
-        pres_txtbox.text = String(sensor_dat.pres)
-        temp_txtbox.text = String(sensor_dat.temp)
+        humi_txtbox.text = ("\(sensor_dat.humi) %")
+        pres_txtbox.text = ("\(sensor_dat.pres) hPa")
+        temp_txtbox.text = celsius ? "\(sensor_dat.temp) \u{2103}" : "\(fahrenheit(celsius: sensor_dat.temp)) \u{2109}"
         motion_label.text = sensor_dat.motion ? "Motion Detected" : "No Motion"
         timestamp_label.text = sensor_dat.timestamp
         
+        // Other Elements:
+        temp_button_label.setTitle(celsius ? "Temperature \u{2109}" : "Temperature \u{2103}", for: .normal)
     
     }
 	
 	// Serial Message Recieved
     func serialDidReceiveString(_ msg: String) {
-        messageResponder(message: msg)
         
+        let charset = CharacterSet.init(charactersIn: "\r\n")
+        
+        let msg_array = msg.components(separatedBy: charset)
+            
+        for lines in msg_array{
+            if(lines.characters.count > 7){
+                messageResponder(message: lines)
+            }
+        }
     }
     
     
@@ -202,7 +214,8 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
         }
 		else{   // Message Not Recognized
 			
-			timestamp_label.text = "Device Error"
+            // Ignore for now...
+			//timestamp_label.text = "Device Error"
         }
         
         // Display Results
@@ -212,7 +225,7 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
     
     // Send Automation Settings to Device
     
-    /*
+    
     func store_automation(){
         
         var index = 0
@@ -222,39 +235,38 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
             // Decending Flag
             if(i.descending){
             
-                serial.sendMessageToDevice(serial_core.tx_msg_types[6]! + String(index) + serial_core.body_types[2]!)
+                serial.sendMessageToDevice("\(serial_core.tx_msg_types[6]!)\(String(index))\(serial_core.body_types[2]!)")
             }
             else{
-                serial.sendMessageToDevice(serial_core.tx_msg_types[6]! + String(index) + serial_core.body_types[1]!)
+                serial.sendMessageToDevice("\(serial_core.tx_msg_types[6]!)\(String(index))\(serial_core.body_types[1]!)")
             }
             
             // Enable
             if(i.enabled){
-                serial.sendMessageToDevice(serial_core.tx_msg_types[1]! + String(index) + serial_core.body_types[2]!)
+                serial.sendMessageToDevice("\(serial_core.tx_msg_types[1]!)\(String(index))\(serial_core.body_types[2]!)")
             }
             else{
-                serial.sendMessageToDevice(serial_core.tx_msg_types[1]! + String(index) + serial_core.body_types[1]!)
+                serial.sendMessageToDevice("\(serial_core.tx_msg_types[1]!)\(String(index))\(serial_core.body_types[1]!)")
             }
             
             // Toggle
             if(i.toggle){
-                serial.sendMessageToDevice(String(serial_core.tx_msg_types[9]!) + String(index) + serial_core.body_types[2]!)
+                serial.sendMessageToDevice("\(serial_core.tx_msg_types[9]!)\(String(index))\(serial_core.body_types[2]!)")
             }
             else{
-                serial.sendMessageToDevice(String(serial_core.tx_msg_types[9]!) + String(index) + serial_core.body_types[1]!)
+                serial.sendMessageToDevice("\(serial_core.tx_msg_types[9]!)\(String(index))\(serial_core.body_types[1]!)")
             }
             
             // Duration
-            serial.sendMessageToDevice(String(serial_core.tx_msg_types[3]!) +  String(index) + String(i.duraton))
+            serial.sendMessageToDevice("\(serial_core.tx_msg_types[3]!)\(String(index))\(String(i.duraton))")
             
             // Setpoint
-            serial.sendMessageToDevice(String(serial_core.tx_msg_types[2]!) + String(index) + String(i.setpoint))
+            serial.sendMessageToDevice("\(serial_core.tx_msg_types[2]!)\(String(index))\(String(i.setpoint))")
             
             
             
             // Sensor
-            let val = serial_core.tx_msg_types[0]! + String(index) + String(i.sensor)
-            serial.sendMessageToDevice(val)
+            serial.sendMessageToDevice("\(serial_core.tx_msg_types[0]!)\(String(index))\(String(i.sensor.rawValue))")
             
             
             index += 1
@@ -263,19 +275,9 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
      
      
     }
-    */
+ 
     
-    // Start or Stop Data Upload Process
-    func data_read(state : Bool){
-        
-        if(state){      // Start
-            serial.sendMessageToDevice(String(serial_core.tx_msg_types[6]! + serial_core.body_types[5]!)) // Start
-        
-        }
-        else {          // Stop
-            serial.sendMessageToDevice(String(serial_core.tx_msg_types[6]! + serial_core.body_types[6]!)) // Start
-        }
-    }
+
     
 
     
@@ -308,8 +310,8 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
 
 override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     
-    // Get Data:
-    data_read(state: false)
+    // Disable Data:
+    serial.sendMessageToDevice(serial_core.data_read(state: false))
     
     // Automation View
     if segue.identifier == "ShowAuto" {
@@ -322,22 +324,29 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     
 //MARK: IBActions
 
-// Store Automation
-@IBAction func store_automation(_ sender: Any) {
+    // Trigger Unit Change on Temp
+    @IBAction func temp_button(_ sender: Any) {
+        celsius = !celsius
+        update_view()
+    }
     
-        // store_automation()
-         serial.sendMessageToDevice(String(serial_core.tx_msg_types[6]! + serial_core.body_types[5]!)) // Start
+    // Store Automation
+    @IBAction func store_automation(_ sender: Any) {
+    
+        store_automation()
 
     }
 
-// Return To This View (unwind)
-@IBAction func unwindToSensor(sender: UIStoryboardSegue) {
-	// Get data from AutomationVC
-    
-	if let sourceViewController = sender.source as? AutoViewController {
-		current_settings = sourceViewController.current_settings
-	}
-}
+    // Return To This View (unwind)
+    @IBAction func unwindToSensor(sender: UIStoryboardSegue) {
+	
+        // Get data from AutomationVC
+        if let sourceViewController = sender.source as? AutoViewController {
+            current_settings = sourceViewController.current_settings
+        }
+    }
+
+// Unit conversions and things:
 
 /**************************************************************************/
 /*
@@ -384,5 +393,8 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         return atmospheric / pow(1.0 - (altitude/44330.0), 5.255)
     }
 
+    func fahrenheit(celsius : Float) -> Float{
+        return celsius * (9/5) + 32
+    }
 
 }

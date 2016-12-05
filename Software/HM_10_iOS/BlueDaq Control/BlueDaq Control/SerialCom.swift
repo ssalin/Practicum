@@ -87,16 +87,17 @@ class bludaq_core_serial{
         
         // Prase out Message Type:
         let msg_keys = [String](rx_msg_types.keys)
-        
+        let msg = message.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+    
         for (key) in msg_keys {
             
-            if message.uppercased().range(of: key) != nil {
+            if msg.uppercased().range(of: key) != nil {
                 
                 // Find "=" index for substring:
-                let chars = message.characters;
+                let chars = msg.characters;
                 let index = chars.index(of: "=")!
-                var body = message.substring(from: index)
-                body.remove(at: message.startIndex)
+                var body = msg.substring(from: index)
+                body.remove(at: msg.startIndex)
                 body = body.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
                 
                 // Remove Overflow
@@ -107,7 +108,7 @@ class bludaq_core_serial{
                 // Populate Struct:
                 let t_data = transaction_resp(
                     good_msg: true,
-                    message: message,
+                    message: msg,
                     msg_type: rx_msg_types[key]!,
                     body: body)
                 
@@ -120,9 +121,9 @@ class bludaq_core_serial{
         // Populate Struct:
         let t_data = transaction_resp(
         good_msg: false,
-        message: message,
-        msg_type: rx_msg_types["UNKO"]!,
-        body: message)
+        message: msg,
+        msg_type: rx_msg_types["UNKO="]!,
+        body: "ERRR")
 		
         return t_data
 		
@@ -151,7 +152,7 @@ class bludaq_core_serial{
     // Parse Body for Bool
     func parse_bool(msg_body : String) -> Bool {
         
-        if((msg_body.lowercased().range(of: body_types[2]!)) != nil){ // Check True
+        if((msg_body.uppercased().range(of: body_types[2]!)) != nil){ // Check True
             return true
         }
         
@@ -165,6 +166,18 @@ class bludaq_core_serial{
     func send_key(msg_body: String) -> String{
         
         return tx_msg_types[8]! + msg_body + "\n"
+    }
+    
+    // Start or Stop Data Upload Process
+    func data_read(state : Bool) -> String{
+        
+        if(state){      // Start
+            return (String(tx_msg_types[6]! + body_types[5]!)) // Start
+        
+        }
+        // Stop
+        return (String(tx_msg_types[6]! + body_types[6]!)) // Start
+
     }
     
     

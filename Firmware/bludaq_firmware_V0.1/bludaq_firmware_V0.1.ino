@@ -170,13 +170,16 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
          buf[i] = '\0';
        }
        
+       
        for(i = 0; i < MAX_MSG_SIZE + 1; i++){
+        // Trim the string manually: 
+        if(msg[i + MESSAGE_LEN] == '\n' || msg[i + MESSAGE_LEN] == '\r' || msg[i + MESSAGE_LEN] == '\0' || msg[i + MESSAGE_LEN] == ' '){
+          buf[i]= '\0';
+          break;
+        } 
         buf[i] = msg[i + MESSAGE_LEN]; // BUF holds message body:
        }
-       
-       buf[i]= '\0';
-       //buf.trim();
-       //continue;
+
        break;
      }
   }
@@ -199,10 +202,11 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
         
       case 1:    // Automation Flag Set       <Relay><TRUE/FALSE>
           // Check True = Enabled, False = Disabled
-          buf[BODYSIZE] = '\0';
+  
           if(session_auth){
             channel[0] = buf[0];
             strncpy(body, buf + 1, 4);  // Extract only 4 Chars
+            body[BODYSIZE] = '\0';
             if(!strcmp(body, M_FALSE)){
                (auto_dat + atoi(channel))->en = false;
                return 1;
@@ -245,6 +249,7 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
             channel[0] = buf[0];
             strncpy(body, buf + 1, MAX_MSG_SIZE - 1);
             (auto_dat + atoi(channel))->t_duration = atoi(body);
+            Serial.println((auto_dat + atoi(channel))->t_duration);
           }
           else{
             Serial.println(M_AUTH M_NOAUTH); // Not Authenticated
@@ -304,7 +309,20 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
           if(session_auth){  
   
             if(!strcmp(buf, M_AUTOS)){  // Report Automation Status
-               
+              
+              #ifdef DEBUG_EN
+              if(auto_dat->en){
+                Serial.println("Channel 0 Enabled");
+                Serial.println((int)auto_dat->device);
+                
+              }
+              if((auto_dat + 1)->en){
+                Serial.println("Channel 1 Enabled");
+                Serial.println((int)(auto_dat + 1)->device);
+                
+              }
+              #endif
+              
               return 1;  
             }
             
@@ -376,25 +394,14 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
 
 
 // Read Data from Sensors:
+// Updates struct via pointer
 void readSensors(sensor_data * data){
 
    data->temp = bme.readTemperature();                // Temp in Celcius
    data->pressure = (bme.readPressure() / 100.0F);    // Pressure in hPa
    data->humidity = bme.readHumidity();               // Percent Realitive Humidity
    data->ls = analogRead(LIGHT_SENSOR);               // Light Level (10-bit)
-   data->PIR = digitalRead(PIR0);                    // Active LOW (indicates motion)?
-   
-   #ifdef DEBUG_EN
-     Serial.println("DATA BEGIN:");
-     Serial.println(data->temp);
-     Serial.println(data->pressure);
-     Serial.println(data->humidity);
-     Serial.println(data->ls);
-     Serial.println(data->PIR);
-     delay(1000);
-   #endif
-   
-   
+   data->PIR = digitalRead(PIR0);                     // Active HIGH (indicates motion)   
 }
 
 
@@ -543,6 +550,21 @@ void enable_relay(int relay, int toggle){
   
   // Turn ON Relay 
   switch (relay){
+    
+    #ifdef DEBUG_EN
+      case 0:
+        digitalWrite(R0_SET, HIGH);
+        break;
+      case 1:
+        digitalWrite(R1_SET, HIGH);
+        break;
+      default:
+        digitalWrite(R0_SET, HIGH);
+        digitalWrite(R1_SET, HIGH);
+        break;
+    
+    #else
+    
     case 0: // Relay 0
       digitalWrite(R0_SET, HIGH);
       delay(RELAY_PW_DELAY);
@@ -562,7 +584,10 @@ void enable_relay(int relay, int toggle){
       digitalWrite(R0_SET, LOW);
       digitalWrite(R1_SET, LOW);
       break;
+  #endif
   } 
+  
+  
  
  // Toggle Off after Duration
  if(toggle > 0){
@@ -578,6 +603,21 @@ void enable_relay(int relay, int toggle){
 void disable_relay(int relay){
    // Turn Off This Relay
   switch (relay){
+    
+    #ifdef DEBUG_EN
+      case 0:
+        digitalWrite(R0_SET, LOW);
+        break;
+      case 1:
+        digitalWrite(R1_SET, LOW);
+        break;
+      default:
+        digitalWrite(R0_SET, LOW);
+        digitalWrite(R1_SET, LOW);
+        break;
+    
+    #else
+    
     case 0:  // Relay 0
       digitalWrite(R0_RSET, HIGH);
       delay(RELAY_PW_DELAY);
@@ -597,6 +637,7 @@ void disable_relay(int relay){
       digitalWrite(R0_RSET, LOW);
       digitalWrite(R1_RSET, LOW);
       break;
+   #endif
   }
 }
 
