@@ -1,3 +1,4 @@
+
 /*
  * 
  * BluDaq Firmware V0.1
@@ -5,7 +6,7 @@
  * 
  */
 
-
+#include <MsTimer2.h>
 #include "blu_defs.h"         // Macros & Prototypes
 #include <Arduino.h>          // Arduino Type Definitions
 #include <EEPROM.h>           // EEPROM Library
@@ -21,6 +22,8 @@ Adafruit_BME280 bme;           // I2C BME280 Instance
 bool run_once = false;         // Mark Reboot Status
 auth_data auth_dat;            // Authentication Token
 bool session_auth = false;     // Session Authenticated
+bool Run = false;
+int relay_tog;
 
 // Setup Loop:
 void setup() {
@@ -37,37 +40,11 @@ void setup() {
   
   // Config Auth Token
   auth_dat = {false, false, 0, 0};
-
-
-  
-}
-
-ISR(WDT_vect)
-{
-  //Run = true;
-  Serial.println("INTERRUPT!!!");
 }
 
 // Main Loop:
 void loop() {
-  
-  // FIGURE OUT WATCHDOG STUFF HERE ? //
-  // WatchDog Timer Interrupt
-  // Disable interrupts globally
-  cli();
-  
-  // Reset Watchdog Timer
-  MCUSR &= ~(1<<WDRF);  
-  
-  // Prepare watchdog for config change.
-  WDTCSR |= (1<<WDCE) | (1<<WDE);  
-  
-  // Now choose timer mode and prescaler
-  WDTCSR = (1<<WDIE) | (1<<WDP3) | (1<<WDP0);  // 8sec, Interrupt Mode
- 
-  // Enable interrupts globally
-  sei();
-  
+
   // Local Variables:
   sensor_data s_dat = {false, 0, 0, 0, 0};   // Sensor Data Struct
   auto_data auto_dat[NUM_RELAY];             // Automation Structures 
@@ -97,7 +74,8 @@ void loop() {
     
     // Read Sensor Data and Update Struct:
     readSensors(&s_dat);  // Updates struct
-    
+
+
     // Perform Automation Tasks:
     for( int i = 0; i < NUM_RELAY; i++){
       do_automation(i, &auto_dat[i], &s_dat);
@@ -116,13 +94,25 @@ void loop() {
     // }
   
   }
-
 }
 
 
 //
 // Functions
 //
+
+// Store automation struct back to EEPROM
+byte storeEEPROM(int rel, auto_data auto_dat){
+  if (rel == 0){
+    EEPROM.put(sizeof(auth_data), auto_dat);
+    return 1;
+  }
+  else
+  {
+    EEPROM.put(sizeof(auth_data) + sizeof(auto_data), auto_dat);
+    return 1;
+  }
+}
 
 
 // Check for Incoming Serial Message
@@ -208,9 +198,12 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
      }
   }
 
+  #ifdef DEBUG_EN
   Serial.println(buf);
   Serial.println(buf[0]);
   Serial.println(buf[1]);
+  #endif
+  
   // Respond to message : rx_msg[j]
   switch (sel) {
       
@@ -288,6 +281,7 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
       case 4:    // Automation Complete (conf) <VALUE> 
           if(session_auth){  
               // NOT USED //
+              
           }
           else{
             Serial.println(M_AUTH M_NOAUTH); // Not Authenticated
@@ -444,6 +438,7 @@ byte authenticate(int key){
     auth_dat.auth_set = true;
     session_auth = true;
     // Store AUTH STRUCT TO EEPROM //
+    EEPROM.put(0, auth_dat);
     Serial.println(M_AUTH M_TRUE);  // Auth + True
     return 1;
   }
@@ -473,7 +468,6 @@ byte authenticate(int key){
 // Do not use delay - will cause sensor readings to not update!
 // Will also require that automation structure is up-to-date
 void do_automation(int relay, auto_data * auto_dat, sensor_data * sensor_dat ){
-  
   if(auto_dat->en){  // Enable automation
     
     switch(auto_dat->device){
@@ -494,14 +488,6 @@ void do_automation(int relay, auto_data * auto_dat, sensor_data * sensor_dat ){
             disable_relay(relay); 
          }
        }
-
-      // Write new automation to EEPROM
-      if (relay == 0){
-        EEPROM.put(sizeof(auth_data), &auto_dat);
-      }
-      else{
-        EEPROM.put(sizeof(auth_data) + sizeof(auto_data), &auto_dat);
-      }       
      break;
      
      case PRES:  // Pressure
@@ -521,13 +507,6 @@ void do_automation(int relay, auto_data * auto_dat, sensor_data * sensor_dat ){
             disable_relay(relay); 
          }
        }
-      // Write new automation to EEPROM
-      if (relay == 0){
-        EEPROM.put(sizeof(auth_data), &auto_dat);
-      }
-      else{
-        EEPROM.put(sizeof(auth_data) + sizeof(auto_data), &auto_dat);
-      }
      break;
      
      case HUMI:  // Humidity
@@ -547,13 +526,6 @@ void do_automation(int relay, auto_data * auto_dat, sensor_data * sensor_dat ){
             disable_relay(relay); 
          }
        }
-      // Write new automation to EEPROM
-      if (relay == 0){
-        EEPROM.put(sizeof(auth_data), &auto_dat);
-      }
-      else{
-        EEPROM.put(sizeof(auth_data) + sizeof(auto_data), &auto_dat);
-      }
      break;
      
      case LIGHT:  // Light Sensor
@@ -574,13 +546,6 @@ void do_automation(int relay, auto_data * auto_dat, sensor_data * sensor_dat ){
          }
        }
      break;
-      // Write new automation to EEPROM
-      if (relay == 0){
-        EEPROM.put(sizeof(auth_data), &auto_dat);
-      }
-      else{
-        EEPROM.put(sizeof(auth_data) + sizeof(auto_data), &auto_dat);
-      }
      
      case PIR: // Motion Sensor (May Require Some Debugging like a counter)
        if(sensor_dat->PIR){
@@ -589,13 +554,6 @@ void do_automation(int relay, auto_data * auto_dat, sensor_data * sensor_dat ){
        else{
            disable_relay(relay);
        }
-      // Write new automation to EEPROM
-      if (relay == 0){
-        EEPROM.put(sizeof(auth_data), &auto_dat);
-      }
-      else{
-        EEPROM.put(sizeof(auth_data) + sizeof(auto_data), &auto_dat);
-      }
     }
     
   }
@@ -610,7 +568,7 @@ void do_automation(int relay, auto_data * auto_dat, sensor_data * sensor_dat ){
 
 // Called to shut a specified relay off (Pulse Reset)
 void enable_relay(int relay, int toggle){
-  
+  relay_tog = relay;
   // Turn ON Relay 
   switch (relay){
     
@@ -656,12 +614,31 @@ void enable_relay(int relay, int toggle){
  if(toggle > 0){
   
     // Delay
-    delay(toggle);  // This is going to cause problems!
-    disable_relay(relay); // Turn Off
+    relaytimer(toggle);
+    //delay(toggle);  // This is going to cause problems!
+    //disable_relay(relay); // Turn Off
  
   } 
   
 }
+
+// Toggle relay function
+// Creates timer for interrupt
+void relaytimer(int Time){
+  int period = Time * 500;    // Time * 500ms period
+  MsTimer2::set(period, timerstop); 
+  Serial.println("Starting timer");
+  MsTimer2::start();
+}
+
+// Function call when timer interrupt occurs
+// Turn off timer/relay toggle off.
+void timerstop(){
+  Serial.println("Timer stopped. Interrupt");
+  MsTimer2::stop();
+  disable_relay(relay_tog);  
+}
+
 
 void disable_relay(int relay){
    // Turn Off This Relay
@@ -703,7 +680,6 @@ void disable_relay(int relay){
    #endif
   }
 }
-
 
 
 // Upload Sensor Data:
