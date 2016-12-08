@@ -133,6 +133,9 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
         hud?.mode = MBProgressHUDMode.text
         hud?.labelText = "Disconnected"
         hud?.hide(true, afterDelay: 1.0)
+		current_settings.auth = false
+		reloadView()
+		
     }
     
     // Device Changed State
@@ -144,7 +147,9 @@ final class InitViewController: UIViewController, UIPickerViewDelegate, UIPicker
             hud?.mode = MBProgressHUDMode.text
             hud?.labelText = "Bluetooth turned off"
             hud?.hide(true, afterDelay: 1.0)
+			
         }
+		reloadView()
     }
     
     // Message Recieved
