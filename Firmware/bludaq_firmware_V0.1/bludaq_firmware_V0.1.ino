@@ -6,7 +6,7 @@
  * 
  */
 
-#include <MsTimer2.h>
+//#include <MsTimer2.h>
 #include "blu_defs.h"         // Macros & Prototypes
 #include <Arduino.h>          // Arduino Type Definitions
 #include <EEPROM.h>           // EEPROM Library
@@ -59,9 +59,9 @@ void loop() {
   if(!run_once){
         
     // DO EEPROM STUFF HERE //  
-    EEPROM.get(0, auth_dat);
-    EEPROM.get(sizeof(auth_data), auto_dat[0]);
-    EEPROM.get(sizeof(auth_data) + sizeof(auto_data), auto_dat[1]);  
+//    EEPROM.get(0, auth_dat);
+//    EEPROM.get(sizeof(auth_data), auto_dat[0]);
+//    EEPROM.get(sizeof(auth_data) + sizeof(auto_data), auto_dat[1]);  
     run_once = true; 
   }
   
@@ -102,17 +102,17 @@ void loop() {
 //
 
 // Store automation struct back to EEPROM
-byte storeEEPROM(int rel, auto_data auto_dat){
-  if (rel == 0){
-    EEPROM.put(sizeof(auth_data), auto_dat);
-    return 1;
-  }
-  else
-  {
-    EEPROM.put(sizeof(auth_data) + sizeof(auto_data), auto_dat);
-    return 1;
-  }
-}
+//byte storeEEPROM(int rel, auto_data auto_dat){
+//  if (rel == 0){
+//    EEPROM.put(sizeof(auth_data), auto_dat);
+//    return 1;
+//  }
+//  else
+//  {
+//    EEPROM.put(sizeof(auth_data) + sizeof(auto_data), auto_dat);
+//    return 1;
+//  }
+//}
 
 
 // Check for Incoming Serial Message
@@ -614,30 +614,30 @@ void enable_relay(int relay, int toggle){
  if(toggle > 0){
   
     // Delay
-    relaytimer(toggle);
-    //delay(toggle);  // This is going to cause problems!
-    //disable_relay(relay); // Turn Off
+    //relaytimer(toggle);
+    delay(toggle);  // This is going to cause problems!
+    disable_relay(relay); // Turn Off
  
   } 
   
 }
 
-// Toggle relay function
-// Creates timer for interrupt
-void relaytimer(int Time){
-  int period = Time * 500;    // Time * 500ms period
-  MsTimer2::set(period, timerstop); 
-  Serial.println("Starting timer");
-  MsTimer2::start();
-}
-
-// Function call when timer interrupt occurs
-// Turn off timer/relay toggle off.
-void timerstop(){
-  Serial.println("Timer stopped. Interrupt");
-  MsTimer2::stop();
-  disable_relay(relay_tog);  
-}
+//// Toggle relay function
+//// Creates timer for interrupt
+//void relaytimer(int Time){
+//  int period = Time * 500;    // Time * 500ms period
+//  MsTimer2::set(period, timerstop); 
+//  Serial.println("Starting timer");
+//  MsTimer2::start();
+//}
+//
+//// Function call when timer interrupt occurs
+//// Turn off timer/relay toggle off.
+//void timerstop(){
+//  Serial.println("Timer stopped. Interrupt");
+//  MsTimer2::stop();
+//  disable_relay(relay_tog);  
+//}
 
 
 void disable_relay(int relay){
