@@ -67,6 +67,9 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
         load_automation()
         update_view()
         
+        // Get Data:
+        serial.sendMessageToDevice(serial_core.data_read(state: true))
+        
     }
     
     
@@ -93,8 +96,6 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
     // Update View : Loads all views from memory
     func update_view(){
         
-        // Get Data:
-        serial.sendMessageToDevice(serial_core.data_read(state: true))
         
         // Sensor Data
         light_txtbox.text = String(sensor_dat.light)
@@ -105,7 +106,7 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
         timestamp_label.text = sensor_dat.timestamp
         
         // Other Elements:
-        temp_button_label.setTitle(celsius ? "Temperature \u{2109}" : "Temperature \u{2103}", for: .normal)
+        temp_button_label.setTitle(celsius ? "Temperature (\u{2109})" : "Temperature (\u{2103})", for: .normal)
     
     }
 	
@@ -235,45 +236,47 @@ final class SensorViewController: UIViewController, BluetoothSerialDelegate {
             // Decending Flag
             if(i.descending){
             
-                serial.sendMessageToDevice("\(serial_core.tx_msg_types[6]!)\(String(index))\(serial_core.body_types[2]!)")
+                serial.sendMessageToDevice("\(serial_core.tx_msg_types[10]!)\(String(index))\(serial_core.body_types[2]!)\n")
             }
             else{
-                serial.sendMessageToDevice("\(serial_core.tx_msg_types[6]!)\(String(index))\(serial_core.body_types[1]!)")
+                serial.sendMessageToDevice("\(serial_core.tx_msg_types[10]!)\(String(index))\(serial_core.body_types[1]!)\n")
             }
             
-            // Enable
+            // Enable !
             if(i.enabled){
-                serial.sendMessageToDevice("\(serial_core.tx_msg_types[1]!)\(String(index))\(serial_core.body_types[2]!)")
+                serial.sendMessageToDevice("\(serial_core.tx_msg_types[1]!)\(String(index))\(serial_core.body_types[2]!)\n")
             }
             else{
-                serial.sendMessageToDevice("\(serial_core.tx_msg_types[1]!)\(String(index))\(serial_core.body_types[1]!)")
+                serial.sendMessageToDevice("\(serial_core.tx_msg_types[1]!)\(String(index))\(serial_core.body_types[1]!)\n")
             }
             
             // Toggle
             if(i.toggle){
-                serial.sendMessageToDevice("\(serial_core.tx_msg_types[9]!)\(String(index))\(serial_core.body_types[2]!)")
+                serial.sendMessageToDevice("\(serial_core.tx_msg_types[9]!)\(String(index))\(serial_core.body_types[2]!)\n")
             }
             else{
-                serial.sendMessageToDevice("\(serial_core.tx_msg_types[9]!)\(String(index))\(serial_core.body_types[1]!)")
+                serial.sendMessageToDevice("\(serial_core.tx_msg_types[9]!)\(String(index))\(serial_core.body_types[1]!)\n")
             }
             
-            // Duration
-            serial.sendMessageToDevice("\(serial_core.tx_msg_types[3]!)\(String(index))\(String(i.duraton))")
+            // Duration !
+            serial.sendMessageToDevice("\(serial_core.tx_msg_types[3]!)\(String(index))\(String(i.duraton))\n")
             
-            // Setpoint
-            serial.sendMessageToDevice("\(serial_core.tx_msg_types[2]!)\(String(index))\(String(i.setpoint))")
+            // Setpoint !
+            serial.sendMessageToDevice("\(serial_core.tx_msg_types[2]!)\(String(index))\(String(i.setpoint))\n")
             
             
             
-            // Sensor
-            serial.sendMessageToDevice("\(serial_core.tx_msg_types[0]!)\(String(index))\(String(i.sensor.rawValue))")
+            // Sensor !
+            serial.sendMessageToDevice("\(serial_core.tx_msg_types[0]!)\(String(index))\(String(i.sensor.rawValue))\n")
             
+
             
             index += 1
 		}
 
-     
-     
+            // ADD A COMMAND //
+            // Need to tell device to store values to EEPROM when the write has completed...
+            serial.sendMessageToDevice("\(serial_core.tx_msg_types[11]!)\(serial_core.body_types[2]!)\n")
     }
  
     

@@ -19,7 +19,6 @@
 // Globals:
 
 Adafruit_BME280 bme;           // I2C BME280 Instance
-bool run_once = false;         // Mark Reboot Status
 auth_data auth_dat;            // Authentication Token
 bool session_auth = false;     // Session Authenticated
 bool Run = false;
@@ -39,7 +38,7 @@ void setup() {
   }
   
   // Config Auth Token
-  auth_dat = {false, false, 0, 0};
+  auth_dat = {0, 0, 0, 0, 0, 0};
 }
 
 // Main Loop:
@@ -48,7 +47,9 @@ void loop() {
   // Local Variables:
   sensor_data s_dat = {false, 0, 0, 0, 0};   // Sensor Data Struct
   auto_data auto_dat[NUM_RELAY];             // Automation Structures 
-
+  byte ee_test;
+  byte unique = UNIQUE;
+  
   // Initialize Automation Tasks:
     for( int i = 0; i < NUM_RELAY; i++){
       auto_dat[i] = {false, false, false, TEMP, 0, 0};  // Init Struct
@@ -56,14 +57,15 @@ void loop() {
 
   
   // Load EEPROM DATA (Auth and Automation)
-  if(!run_once){
-        
-    // DO EEPROM STUFF HERE //  
-//    EEPROM.get(0, auth_dat);
-//    EEPROM.get(sizeof(auth_data), auto_dat[0]);
-//    EEPROM.get(sizeof(auth_data) + sizeof(auto_data), auto_dat[1]);  
-    run_once = true; 
-  }
+  auth_data auth_test;
+      
+  EEPROM.get(0, ee_test);
+      
+  if(ee_test == UNIQUE){
+    EEPROM.get(sizeof(byte), auth_dat);  // Auth
+    EEPROM.get(sizeof(byte) + sizeof(auth_data), auto_dat[0]);  // automation 1
+    EEPROM.get(sizeof(byte) + sizeof(auth_data) + sizeof(auto_data), auto_dat[1]);  // automation 2 
+  } 
   
   // Retain Variables
   while(1){  // Will need to exit this loop when power saving...
@@ -88,6 +90,24 @@ void loop() {
     }
     
     
+    // Update EEPROM
+    if(auth_dat.eeprom_update){
+      
+      // Update Status Bits:
+      auth_dat.eeprom_update = 0;
+      
+      // Clear EEPROM:
+      for (int i = 0 ; i < EEPROM.length() ; i++) {
+        EEPROM.write(i, 0);
+      }
+    
+      // Store Auth and Automation Structs
+      EEPROM.put(0, unique);
+      EEPROM.put(sizeof(byte), auth_dat);  // Auth
+      EEPROM.put(sizeof(byte) + sizeof(auth_data), auto_dat[0]);  // automation 1
+      EEPROM.put(sizeof(byte) + sizeof(auth_data) + sizeof(auto_data), auto_dat[1]);  // automation 2 
+    }
+    
     // Call Break or Continue to leave this loop...
     // if(<expression>){
     //    break;
@@ -100,19 +120,6 @@ void loop() {
 //
 // Functions
 //
-
-// Store automation struct back to EEPROM
-//byte storeEEPROM(int rel, auto_data auto_dat){
-//  if (rel == 0){
-//    EEPROM.put(sizeof(auth_data), auto_dat);
-//    return 1;
-//  }
-//  else
-//  {
-//    EEPROM.put(sizeof(auth_data) + sizeof(auto_data), auto_dat);
-//    return 1;
-//  }
-//}
 
 
 // Check for Incoming Serial Message
@@ -135,7 +142,8 @@ void checkSerial(auto_data *auto_dat){
     }
     else{
     // Bad Message:
-        
+        //Serial.print("Bad Message: ");
+        //Serial.println(mbuffer);
         // Confirmation handeled by callee      
     }
     
@@ -154,6 +162,8 @@ void checkSerial(auto_data *auto_dat){
 // Respons using defined messages (blu_defs.h)
 byte parseMessage(char * msg, int len, auto_data *auto_dat){
  
+  
+  // Serial.println(msg);
   // Vars:
   char channel[] = {'0', '\0'};
   char body[MAX_MSG_SIZE] = {'0', '\0'};
@@ -198,21 +208,20 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
      }
   }
 
-  #ifdef DEBUG_EN
-  Serial.println(buf);
-  Serial.println(buf[0]);
-  Serial.println(buf[1]);
-  #endif
-  
+
+
   // Respond to message : rx_msg[j]
   switch (sel) {
       
       case 0:    // Automation Channel Select <Relay><Device>
+      
               if(session_auth){
                 channel[0] = buf[0];  // Must load single char into seperate buf for atoi
                 body[0] = buf[1];
                 (auto_dat + atoi(channel))->device = (sensor_sel)atoi(body);
-                 return 1;  // Mark Succesfull 
+                
+                //auth_dat.eeprom_update = 1;
+                return 1;  // Mark Succesfull 
               }
               else{
                 Serial.println(M_AUTH M_NOAUTH); // Not Authenticated
@@ -229,10 +238,14 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
             body[BODYSIZE] = '\0';
             if(!strcmp(body, M_FALSE)){
                (auto_dat + atoi(channel))->en = false;
+               
+               //auth_dat.eeprom_update = 1;
                return 1;
             }
             else if(!strcmp(body, M_TRUE)){
               (auto_dat + atoi(channel))->en = true;
+              
+              //auth_dat.eeprom_update = 1;
               return 1;
             }
             else{
@@ -250,11 +263,13 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
       
       case 2:    // Automation Set Point      <RELAY><VALUE>
                  // Note atoi / atof return 0 if bad string
+      
           if(session_auth){       
             channel[0] = buf[0];
             strncpy(body, buf + 1, MAX_MSG_SIZE - 1);
             (auto_dat + atoi(channel))->setpoint = atof(body);
             
+            //auth_dat.eeprom_update = 1;             
             return 1;
           }
           else{
@@ -265,11 +280,14 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
         break;
       
       case 3:    // Automation Duration       <VALUE>
+
           if(session_auth){  
             channel[0] = buf[0];
             strncpy(body, buf + 1, MAX_MSG_SIZE - 1);
             (auto_dat + atoi(channel))->t_duration = atoi(body);
-            Serial.println((auto_dat + atoi(channel))->t_duration);
+            
+            //auth_dat.eeprom_update = 1;
+            return 1;
           }
           else{
             Serial.println(M_AUTH M_NOAUTH); // Not Authenticated
@@ -292,7 +310,10 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
       
       case 5:    // Configure Polling Freq.    <VALUE>
         if(session_auth){  
+ 
           auth_dat.poll_freq = (byte)atoi(buf);
+          //auth_dat.eeprom_update = 1;
+          return 1;
         }
         else{
           Serial.println(M_AUTH M_NOAUTH); // Not Authenticated
@@ -377,34 +398,96 @@ byte parseMessage(char * msg, int len, auto_data *auto_dat){
       case 8:    // Perform Auth <KEY> 
           return authenticate(atoi(buf));  
           break;
-      case 9:   // Toggle Enable <Relay><T/>
-        if(session_auth){ 
-    
-          buf[BODYSIZE] = '\0';
-          if(!strcmp(buf, M_TRUE)){
-             auth_dat.disp_data = true;
-             return 1;
-          }
           
-          if(!strcmp(buf, M_FALSE)){
-            auth_dat.disp_data = false;
+      case 9:   // Toggle Enable <Relay><T/>
+               
+        if(session_auth){
+
+            channel[0] = buf[0];
+            strncpy(body, buf + 1, 4);  // Extract only 4 Chars
+            body[BODYSIZE] = '\0';
+            if(!strcmp(body, M_FALSE)){
+               (auto_dat + atoi(channel))->toggle = false;
+               
+               //auth_dat.eeprom_update = 1;
+               return 1;
+            }
+            else if(!strcmp(body, M_TRUE)){
+              (auto_dat + atoi(channel))->toggle = true;
+              
+              //auth_dat.eeprom_update = 1;
+              return 1;
+            }
+            else{
+              // Didn't Understand
+              Serial.println(M_ERROR M_BAD);
+              return 0;
+            }
+          }
+          else{
+            Serial.println(M_AUTH M_NOAUTH); // Not Authenticated
             return 1;
           }
-
-           // Didn't Understand
-          Serial.println(M_ERROR M_BAD);
-          return 0;
-
-        }      
-        else{
-          Serial.println(M_AUTH M_NOAUTH); // Not Authenticated
-          return 1;
-        }              
-        break;
         
+        break;
+      
+      case 10:      // Decending Value Enable Flag
+
+        if(session_auth){
+            channel[0] = buf[0];
+            strncpy(body, buf + 1, 4);  // Extract only 4 Chars
+            body[BODYSIZE] = '\0';
+            if(!strcmp(body, M_FALSE)){
+               (auto_dat + atoi(channel))->desc = false;
+               
+               //auth_dat.eeprom_update = 1;
+               return 1;
+            }
+            else if(!strcmp(body, M_TRUE)){
+              (auto_dat + atoi(channel))->desc = true;
+              
+              //auth_dat.eeprom_update = 1;
+              return 1;
+            }
+            else{
+              // Didn't Understand
+              Serial.println(M_ERROR M_BAD);
+              return 0;
+            }
+          }
+          else{
+            Serial.println(M_AUTH M_NOAUTH); // Not Authenticated
+            return 1;
+          }
+    
+        break;  
+        
+         case 11:      // Write to EEPROM
+
+        if(session_auth){
+  
+            strncpy(body, buf, 4);  // Extract only 4 Chars
+            body[BODYSIZE] = '\0';
+            if(!strcmp(body, M_TRUE)){
+              auth_dat.eeprom_update = 1;
+              return 1;
+            }
+            else{
+              // Didn't Understand
+              Serial.println(M_ERROR M_BAD);
+              return 0;
+            }
+          }
+          else{
+            Serial.println(M_AUTH M_NOAUTH); // Not Authenticated
+            return 1;
+          }
+    
+        break;  
         
       default:
           // Message parsed but not understood. 
+          Serial.println(M_BADMSG M_BAD);
           return 0;
           break;
   }
@@ -438,7 +521,7 @@ byte authenticate(int key){
     auth_dat.auth_set = true;
     session_auth = true;
     // Store AUTH STRUCT TO EEPROM //
-    EEPROM.put(0, auth_dat);
+    auth_dat.eeprom_update = 1;
     Serial.println(M_AUTH M_TRUE);  // Auth + True
     return 1;
   }
@@ -688,16 +771,16 @@ void uploadSensors(sensor_data * s_dat){
   
   // SEND SENSOR DATA HERE //
   Serial.print(M_TEMP + String(s_dat->temp, PRECISION) + "\n");        // Temperature
-  delay(20);
+  //delay(20);
   
   Serial.print(M_PRESS + String(s_dat->pressure, PRECISION) + "\n");   // Pressure
-  delay(20);
+  //delay(20);
   
   Serial.print(M_HUMID + String(s_dat->humidity, PRECISION) + "\n");   // Humidity
-  delay(20);
+  //delay(20);
   
   Serial.print(M_PHOTO + String(s_dat->ls) + "\n");                    // Photo Sensor
-  delay(20);
+  //delay(20);
   
   if(s_dat->PIR){    // Motion Sensor State
    Serial.print(M_PIR M_TRUE "\n");

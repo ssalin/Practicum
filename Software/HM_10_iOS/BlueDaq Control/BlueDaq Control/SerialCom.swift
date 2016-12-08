@@ -60,7 +60,9 @@ class bludaq_core_serial{
         6: "DATA=",    // Perform Data Operations (Read Sensors)
         7: "STAT=",    // Ask for status
         8: "AUTK=",    // Send Auth Key = <KEY>
-        9: "AUTG="     // Enable Toggle <T/F>
+        9: "AUTG=",    // Enable Toggle <T/F>
+        10: "AUTE=",    // Decending Value Enabled
+        11: "EEPW="    // Write to EEPROM
     ]
     
     
@@ -172,11 +174,11 @@ class bludaq_core_serial{
     func data_read(state : Bool) -> String{
         
         if(state){      // Start
-            return (String(tx_msg_types[6]! + body_types[5]!)) // Start
+            return (String(tx_msg_types[6]! + body_types[5]! + "\n")) // Start
         
         }
         // Stop
-        return (String(tx_msg_types[6]! + body_types[6]!)) // Start
+        return (String(tx_msg_types[6]! + body_types[6]! + "\n")) // Start
 
     }
     

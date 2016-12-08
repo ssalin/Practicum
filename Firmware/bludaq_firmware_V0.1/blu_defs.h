@@ -14,7 +14,7 @@
 // Debug and Option Flags:
 //
 
-#define DEBUG_EN   // Debug print statements
+//#define DEBUG_EN   // Debug print statements
 //#define SERIAL_EN  // Enable Serial Debug Statements
 
 
@@ -49,10 +49,16 @@
 // Data Structures:
 //
 
+#define UNIQUE 0xA3
+
 // Auth Data - For validating the host
 typedef struct{
-  bool auth_set;    // Authentication Paired
-  bool disp_data;   // Sensor Upload Toggle
+  byte eeprom_update : 1;  // EEPROM Changed
+  byte auth_set : 1;  // Auth Set
+  byte disp_data : 1;
+  byte unused : 5;  
+  //bool auth_set;    // Authentication Paired
+  //bool disp_data;   // Sensor Upload Toggle
   int key;          // Auth-key
   byte poll_freq;   // Polling Frequency (power management)
 } auth_data;
@@ -107,9 +113,9 @@ typedef struct {
 #define MESSAGE_LEN 5    // Size of all Message Types
 #define BODYMSG_LEN 11   // Size of all Messages using a <Body> format (not data)
 #define BODYSIZE 4       // Size of all Bodies
-#define NUM_RX_MSG 10     // Number of RX Message Types
+#define NUM_RX_MSG 12     // Number of RX Message Types
 #define NUM_TX_MSG 12    // Number of TX Message Types
-#define NUM_BODY_MSG 10  // Number of body message types
+#define NUM_BODY_MSG 11  // Number of body message types
 
 // Transmit Message Types: 
 #define M_BADMSG "UNKO="   // Bad Message = <Incoming Message>
@@ -130,7 +136,7 @@ const char * tx_msg[] {M_BADMSG, M_HELLO, M_AUTH, M_SLEEP, M_ERROR, M_TEMP, M_HU
 
 // Recieve Message Types: <Recieve Type> = <Body Type> or <Value>
 #define RM_AUTOCHAN  "AUTN="   // Sensor Select = <Channel Value> "01"
-#define RM_AUTOFLAG  "AUTF="   // Automation Flag Set = <Byte>
+#define RM_AUTOFLAG  "AUTF="   // Automation Enable Flag Set = <Byte>
 #define RM_AUTOSET   "AUTS="   // Automation Setpoint = <Float> (4-byte)
 #define RM_AUTODUR   "AUTD="   // Automation Duration = <Int> (2-byte)
 #define RM_AUTOCONF  "AUTC="   // Automation Complete = <Channel> (for confirmation)
@@ -138,10 +144,13 @@ const char * tx_msg[] {M_BADMSG, M_HELLO, M_AUTH, M_SLEEP, M_ERROR, M_TEMP, M_HU
 #define RM_DATA      "DATA="   // Perform Data Operation = <Start / Stop>
 #define RM_STATUS    "STAT="   // Request Status  = <Operation Type>
 #define RM_AUTHKEY   "AUTK="   // Request Auth = <KEY>
-#define RM_AUTOTOG   "AUTG="    // Enable / Disalbe Toggle
+#define RM_AUTOTOG   "AUTG="   // Enable / Disalbe Toggle
+#define RM_AUTODES   "AUTE="   // Toggle Descending
+#define RM_EEPROMW   "EEPW="  // Write to EEPROM
+
 
 // Array of RX Messages
-const char * rx_msg[] {RM_AUTOCHAN, RM_AUTOFLAG, RM_AUTOSET, RM_AUTODUR, RM_AUTOCONF, RM_CONFIGP, RM_DATA, RM_STATUS, RM_AUTHKEY, RM_AUTOTOG};
+const char * rx_msg[] {RM_AUTOCHAN, RM_AUTOFLAG, RM_AUTOSET, RM_AUTODUR, RM_AUTOCONF, RM_CONFIGP, RM_DATA, RM_STATUS, RM_AUTHKEY, RM_AUTOTOG, RM_AUTODES, RM_EEPROMW};
 
 // Body Types:
 #define M_BAD    "BADC"    // Bad Message
