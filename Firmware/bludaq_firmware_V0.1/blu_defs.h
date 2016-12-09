@@ -28,7 +28,7 @@
 //#define BAUD_RATE 115200    // Better Baud Rate for Serial
 #define BAUD_RATE 9600        // Typical Baud Rate for Serial
 #define MAX_MSG_SIZE 24       // 24 Chars + Terminator
-#define RELAY_PW_DELAY  20
+#define RELAY_PW_DELAY  50
 
 
 //

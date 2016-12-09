@@ -6,7 +6,7 @@
  * 
  */
 
-//#include <MsTimer2.h>
+#include "Timer.h"
 #include "blu_defs.h"         // Macros & Prototypes
 #include <Arduino.h>          // Arduino Type Definitions
 #include <EEPROM.h>           // EEPROM Library
@@ -26,6 +26,13 @@ int relay_tog;
 
 // Setup Loop:
 void setup() {
+
+  // Pin Config:
+    pinMode(R0_SET, OUTPUT);
+    pinMode(R0_RSET, OUTPUT);
+    pinMode(R1_SET, OUTPUT);
+    pinMode(R1_RSET, OUTPUT);
+    pinMode(PIR0, INPUT);
   
   // Init Serial
   Serial.begin(BAUD_RATE);
@@ -72,6 +79,10 @@ void loop() {
   
     // Read Data (and update automation):
      auto_data *autptr = &auto_dat[0];  // Pointer to "0" element
+
+     
+     
+     
      checkSerial(autptr);    // Check for message, parse, and act.
     
     // Read Sensor Data and Update Struct:
@@ -672,13 +683,13 @@ void enable_relay(int relay, int toggle){
     case 0: // Relay 0
       digitalWrite(R0_SET, HIGH);
       delay(RELAY_PW_DELAY);
-    //  digitalWrite(R0_SET, LOW);
+      digitalWrite(R0_SET, LOW);
       break;
       
     case 1: // Relay 1
       digitalWrite(R1_SET, HIGH);
       delay(RELAY_PW_DELAY);
-   //   digitalWrite(R1_SET, LOW);
+      digitalWrite(R1_SET, LOW);
       break;
       
     default: // Both Relays
@@ -704,24 +715,6 @@ void enable_relay(int relay, int toggle){
   } 
   
 }
-
-//// Toggle relay function
-//// Creates timer for interrupt
-//void relaytimer(int Time){
-//  int period = Time * 500;    // Time * 500ms period
-//  MsTimer2::set(period, timerstop); 
-//  Serial.println("Starting timer");
-//  MsTimer2::start();
-//}
-//
-//// Function call when timer interrupt occurs
-//// Turn off timer/relay toggle off.
-//void timerstop(){
-//  Serial.println("Timer stopped. Interrupt");
-//  MsTimer2::stop();
-//  disable_relay(relay_tog);  
-//}
-
 
 void disable_relay(int relay){
    // Turn Off This Relay
@@ -771,16 +764,16 @@ void uploadSensors(sensor_data * s_dat){
   
   // SEND SENSOR DATA HERE //
   Serial.print(M_TEMP + String(s_dat->temp, PRECISION) + "\n");        // Temperature
-  //delay(20);
+  delay(20);
   
   Serial.print(M_PRESS + String(s_dat->pressure, PRECISION) + "\n");   // Pressure
-  //delay(20);
+  delay(20);
   
   Serial.print(M_HUMID + String(s_dat->humidity, PRECISION) + "\n");   // Humidity
-  //delay(20);
+  delay(20);
   
   Serial.print(M_PHOTO + String(s_dat->ls) + "\n");                    // Photo Sensor
-  //delay(20);
+  delay(20);
   
   if(s_dat->PIR){    // Motion Sensor State
    Serial.print(M_PIR M_TRUE "\n");
